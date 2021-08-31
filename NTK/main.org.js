@@ -1,3 +1,5 @@
+phina.globalize();
+
 //console.log = function () { };  // ログを出す時にはコメントアウトする
 
 const SCREEN_WIDTH = 900;             // スクリーン幅
@@ -13,84 +15,71 @@ const SCREEN_HEIGHT = 1600;                 // スクリーン高さ
 const SCREEN_CENTER_X = SCREEN_WIDTH / 2;   // スクリーン幅の半分
 const SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;  // スクリーン高さの半分
 
-const FPS = 60; // 60フレ
-const LIFE_MAX = 10;    // パワーアップ時間
-const INVINCIBLE_TIME = 1 * FPS;    // パワーアップ時間
+var ASSETS = {
+    font: {
+        misaki_gothic: "https://cdn.leafscape.be/misaki/misaki_gothic_web.woff2"
+    },
+    image: {
+        "player": "./resource/squid.png",
 
-const FONT_FAMILY = "'misaki_gothic','Meiryo',sans-serif";
-const ASSETS = {
-    "player": "./resource/squid.png",
+        "enemy01": "./resource/enemy/ice.png",
 
-    "enemy01": "./resource/enemy/ice.png",
+        "boss01": "./resource/boss/boss.png",
+        "boss02": "./resource/boss/boss.png",
+        "boss03": "./resource/boss/boss.png",
+        "boss04": "./resource/boss/boss.png",
+        "boss05": "./resource/boss/boss.png",
+        "boss06": "./resource/boss/boss.png",
+        "boss07": "./resource/boss/boss.png",
+        "boss08": "./resource/boss/boss.png",
 
-    "boss01": "./resource/boss/boss.png",
-    "boss02": "./resource/boss/boss.png",
-    "boss03": "./resource/boss/boss.png",
-    "boss04": "./resource/boss/boss.png",
-    "boss05": "./resource/boss/boss.png",
-    "boss06": "./resource/boss/boss.png",
-    "boss07": "./resource/boss/boss.png",
-    "boss08": "./resource/boss/boss.png",
+        "pl_blt": "./resource/bullet/pb_o_16.png",
 
-    "pl_blt": "./resource/bullet/pb_o_16.png",
+        "en_blt_r_16": "./resource/bullet/eb_r_16.png",
+        "en_blt_o_16": "./resource/bullet/eb_o_16.png",
+        "en_blt_y_16": "./resource/bullet/eb_y_16.png",
+        "en_blt_g_16": "./resource/bullet/eb_g_16.png",
+        "en_blt_b_16": "./resource/bullet/eb_b_16.png",
+        "en_blt_p_16": "./resource/bullet/eb_p_16.png",
+        "en_blt_m_16": "./resource/bullet/eb_m_16.png",
 
-    "en_blt_r_16": "./resource/bullet/eb_r_16.png",
-    "en_blt_o_16": "./resource/bullet/eb_o_16.png",
-    "en_blt_y_16": "./resource/bullet/eb_y_16.png",
-    "en_blt_g_16": "./resource/bullet/eb_g_16.png",
-    "en_blt_b_16": "./resource/bullet/eb_b_16.png",
-    "en_blt_p_16": "./resource/bullet/eb_p_16.png",
-    "en_blt_m_16": "./resource/bullet/eb_m_16.png",
+        "en_blt_r_24": "./resource/bullet/eb_r_24.png",
+        "en_blt_o_24": "./resource/bullet/eb_o_24.png",
+        "en_blt_y_24": "./resource/bullet/eb_y_24.png",
+        "en_blt_g_24": "./resource/bullet/eb_g_24.png",
+        "en_blt_b_24": "./resource/bullet/eb_b_24.png",
+        "en_blt_p_24": "./resource/bullet/eb_p_24.png",
+        "en_blt_m_24": "./resource/bullet/eb_m_24.png",
 
-    "en_blt_r_24": "./resource/bullet/eb_r_24.png",
-    "en_blt_o_24": "./resource/bullet/eb_o_24.png",
-    "en_blt_y_24": "./resource/bullet/eb_y_24.png",
-    "en_blt_g_24": "./resource/bullet/eb_g_24.png",
-    "en_blt_b_24": "./resource/bullet/eb_b_24.png",
-    "en_blt_p_24": "./resource/bullet/eb_p_24.png",
-    "en_blt_m_24": "./resource/bullet/eb_m_24.png",
+        "en_blt_r_48": "./resource/bullet/eb_r_48.png",
+        "en_blt_o_48": "./resource/bullet/eb_o_48.png",
+        "en_blt_y_48": "./resource/bullet/eb_y_48.png",
+        "en_blt_g_48": "./resource/bullet/eb_g_48.png",
+        "en_blt_b_48": "./resource/bullet/eb_b_48.png",
+        "en_blt_p_48": "./resource/bullet/eb_p_48.png",
+        "en_blt_m_48": "./resource/bullet/eb_m_48.png",
 
-    "en_blt_r_48": "./resource/bullet/eb_r_48.png",
-    "en_blt_o_48": "./resource/bullet/eb_o_48.png",
-    "en_blt_y_48": "./resource/bullet/eb_y_48.png",
-    "en_blt_g_48": "./resource/bullet/eb_g_48.png",
-    "en_blt_b_48": "./resource/bullet/eb_b_48.png",
-    "en_blt_p_48": "./resource/bullet/eb_p_48.png",
-    "en_blt_m_48": "./resource/bullet/eb_m_48.png",
+        "bomb01": "./resource/bomb/NTK_01.png",
+        "bomb02": "./resource/bomb/NTK_02.png",
+        "bomb03": "./resource/bomb/NTK_03.png",
+        "bomb04": "./resource/bomb/NTK_04.png",
+        "bomb05": "./resource/bomb/NTK_05.png",
+        "bomb06": "./resource/bomb/NTK_06.png",
+        "bomb07": "./resource/bomb/NTK_07.png",
+        "bomb08": "./resource/bomb/NTK_08.png",
+        "bomb09": "./resource/bomb/NTK_09.png",
+        "bomb10": "./resource/bomb/NTK_10.png",
 
-    "bomb01": "./resource/bomb/NTK_01.png",
-    "bomb02": "./resource/bomb/NTK_02.png",
-    "bomb03": "./resource/bomb/NTK_03.png",
-    "bomb04": "./resource/bomb/NTK_04.png",
-    "bomb05": "./resource/bomb/NTK_05.png",
-    "bomb06": "./resource/bomb/NTK_06.png",
-    "bomb07": "./resource/bomb/NTK_07.png",
-    "bomb08": "./resource/bomb/NTK_08.png",
-    "bomb09": "./resource/bomb/NTK_09.png",
-    "bomb10": "./resource/bomb/NTK_10.png",
-
-    "stg01": "./resource/stage/stg1.png?1",
-    "stg02": "./resource/stage/stg2.png?1",
-    "stg03": "./resource/stage/stg1.png?1",
-    "stg04": "./resource/stage/stg2.png?1",
-    "stg05": "./resource/stage/stg1.png?1",
-    "stg06": "./resource/stage/stg2.png?1",
-    "stg07": "./resource/stage/stg1.png?1",
-    "stg08": "./resource/stage/stg2.png?1",
+        "stg01": "./resource/stage/stg1.png?1",
+        "stg02": "./resource/stage/stg2.png?1",
+        "stg03": "./resource/stage/stg1.png?1",
+        "stg04": "./resource/stage/stg2.png?1",
+        "stg05": "./resource/stage/stg1.png?1",
+        "stg06": "./resource/stage/stg2.png?1",
+        "stg07": "./resource/stage/stg1.png?1",
+        "stg08": "./resource/stage/stg2.png?1",
+    },
 };
-const fallSE = new Howl({
-    src: 'https://iwasaku.github.io/test7/NEMLESSSTER/resource/fall.mp3?20200708'
-});
-const coinSE = new Howl({
-    src: 'https://iwasaku.github.io/test7/NEMLESSSTER/resource/coin05.mp3'
-});
-const explosion0SE = new Howl({
-    src: 'https://iwasaku.github.io/test8/COKS/resource/explosion_0.mp3'
-});
-const shotSE = new Howl({
-    src: 'https://iwasaku.github.io/test10/NTK/resource/se/laser2.mp3'
-});
-
 // 定義
 const PL_STATUS = defineEnum({
     INIT: {
@@ -577,42 +566,6 @@ const bombTable = [
     { bomb: BOMB_DEF.BOMB_LV_9, num: 100 },
 ];
 
-const DIR_KEY_DEF = defineEnum({
-    UP: {
-        addX: 0,
-        addY: -1,
-    },
-    UP_LEFT: {
-        addX: -1,
-        addY: -1,
-    },
-    LEFT: {
-        addX: -1,
-        addY: 0,
-    },
-    DOWN_LEFT: {
-        addX: -1,
-        addY: 1,
-    },
-    DOWN: {
-        addX: 0,
-        addY: 1,
-    },
-    DOWN_RIGHT: {
-        addX: 1,
-        addY: 1,
-    },
-    RIGHT: {
-        addX: 1,
-        addY: 0,
-    },
-    UP_RIGHT: {
-        addX: 1,
-        addY: -1,
-    },
-});
-
-
 const CMD = defineEnum({
     SET_ENEMY: {
         // 敵の配置
@@ -659,7 +612,6 @@ const CMD = defineEnum({
         value: 0,
     },
 });
-
 // 管理テーブル
 // トランジション用に先頭へ１面追加する場合はSET_SCROLL_DATAとSTOP_SCROLLを調整する
 // 周回するときのBG処理の関係上ステージ数は偶数にする
@@ -669,7 +621,10 @@ const ctrlTable = [
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
 
+        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
 
         //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 0, yPos: -64, xSpd: 0, ySpd: 8 } },
@@ -702,7 +657,7 @@ const ctrlTable = [
 
         // １画面分スクロールした辺りで次の面の準備
         { count: 900, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
-        { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg03", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg03", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
 
         { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
@@ -744,7 +699,7 @@ const ctrlTable = [
     // 上空→宇宙へのトランジション用に先頭へ１面追加する？
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 4" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg04", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg04", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
         { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
@@ -755,7 +710,7 @@ const ctrlTable = [
     // 宇宙→亜空間へのトランジション用に先頭へ１面追加する？
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 5" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg05", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg05", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
         { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
@@ -766,7 +721,7 @@ const ctrlTable = [
     // 亜空間→宇宙へのトランジション用に先頭へ１面追加する？
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 6" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg06", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg06", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
         { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
@@ -777,7 +732,7 @@ const ctrlTable = [
     // 宇宙→基地へのトランジション用に先頭へ１面追加する？
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 7" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg07", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg07", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
         { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
@@ -787,23 +742,13 @@ const ctrlTable = [
     // 基地
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 8" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg08", ypos: -SCREEN_HEIGHT * 2.5 } },
+        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg08", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
         { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
         { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
     ],
 ];
-
-//
-class CharaStatus {
-    constructor() {
-        this.lv = 1;
-        this.gavasss = 0;
-    }
-    initPlayer() {
-    }
-}
 
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
@@ -817,625 +762,246 @@ let group7 = null;  // en_shot
 let group8 = null;  // pl_shot
 let group9 = null;  // status
 
+let nowScoreLabel = null;
+let nowLifeLeftLabel = null;
+let ntkGaugeLabel = null;
+let nowNtkLeftLabel = null;
+
+let tweetButton = null;
+let restartButton = null;
+let bombButton = null;
+
 let stageBG = [null, null];
 let player = null;
+
 var plBulletArray = [];
 var plBombArray = [];
 var enemyArray = [];
 var enBulletArray = [];
+
 let nowScore = 0;
-let bombLeft = 1;
-let bombStatus = 0;
-let bombLv = 0;
-let bombGauge = 0;
-let shotIntvlTimer = 0;
-let shotLv = 0;
 let nowStageNum = 0;
 let stageScrollFlag = [true, true];
 let ctrlCounterFlag = true;
 let ctrlCounter = 0;
-var uidCounter = 0;
+let deadStatus = 0;
 
-
-let totalFrame = 0;
-let totalSec = 0;
-let fitWindowTimer = 0;
+let uidCounter = 0;
 
 let randomSeed = 3557;
 let randomMode = Boolean(0);
 
-tm.main(function () {
-    // アプリケーションクラスを生成
-    var app = tm.display.CanvasApp("#world");
-    app.resize(SCREEN_WIDTH, SCREEN_HEIGHT);    // サイズ(解像度)設定
-    app.canvas.imageSmoothingEnabled = false;   // アンチエイリアシングOFF
-    app.fitWindow();                            // 自動フィッティング有効
-    app.background = "rgba(77, 136, 255, 1.0)"; // 背景色
-    app.fps = FPS;                              // フレーム数
+// ローディング画面
+phina.define('LoadingScene', {
+    superClass: 'DisplayScene',
 
-    var loading = tm.ui.LoadingScene({
-        assets: ASSETS,
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-    });
-
-    // 読み込み完了後に呼ばれるメソッドを登録
-    loading.onload = function () {
-        app.replaceScene(LogoScene());
-    };
-
-    // ローディングシーンに入れ替える
-    app.replaceScene(loading);
-
-    // 実行
-    app.run();
-});
-
-/*
- * ロゴ
- */
-tm.define("LogoScene", {
-    superClass: "tm.app.Scene",
-
-    init: function () {
-        this.superInit();
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "logoLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y,
-                    fillStyle: "#888",
-                    fontSize: 64,
-                    fontFamily: FONT_FAMILY,
-                    text: "UNOFFICIAL GAME",
-                    align: "center",
-                },
-            ]
-        });
-        this.localTimer = 0;
-    },
-
-    update: function (app) {
-        // 時間が来たらタイトルへ
-        //if (++this.localTimer >= 5 * app.fps)
-        this.app.replaceScene(TitleScene());
-    }
-});
-
-/*
- * タイトル
- */
-tm.define("TitleScene", {
-    superClass: "tm.app.Scene",
-
-    init: function () {
-        this.superInit();
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "titleLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y,
-                    fillStyle: "#fff",
-                    fontSize: 160,
-                    fontFamily: FONT_FAMILY,
-                    text: "N.T.K.",
-                    align: "center",
-                },
-                {
-                    type: "FlatButton", name: "startButton",
-                    init: [
-                        {
-                            text: "START",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 96,
-                            width: 512,
-                            height: 160,
-                            bgColor: "hsl(240, 0%, 70%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y + 320,
-                },
-            ]
-        });
-        this.localTimer = 0;
-
+    init: function (options) {
+        this.superInit(options);
+        // 背景色
+        this.backgroundColor = 'black';
         var self = this;
-        this.startButton.onpointingstart = function () {
-            self.app.replaceScene(GameScene());
+        var loader = phina.asset.AssetLoader();
+
+        // 明滅するラベル
+        let label = phina.display.Label({
+            text: "",
+            fontSize: 64,
+            fill: 'white',
+        }).addChildTo(this).setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+
+        // ロードが進行したときの処理
+        loader.onprogress = function (e) {
+            // 進捗具合を％で表示する
+            label.text = "{0}%".format((e.progress * 100).toFixed(0));
         };
+
+        // ローダーによるロード完了ハンドラ
+        loader.onload = function () {
+            // Appコアにロード完了を伝える（==次のSceneへ移行）
+            self.flare('loaded');
+        };
+
+        // ロード開始
+        loader.load(options.assets);
     },
 
+});
+/*
+ */
+phina.define("InitScene", {
+    // 継承
+    superClass: 'DisplayScene',
+    // 初期化
+    init: function (option) {
+        // 親クラス初期化
+        this.superInit(option);
+        // 背景色
+        this.backgroundColor = 'black';
+        // ラベル
+        Label({
+            text: '',
+            fontSize: 48,
+            fill: 'yellow',
+        }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
+    },
     update: function (app) {
-        app.background = "rgba(0, 0, 0, 1.0)"; // 背景色
+        this.exit();
     }
 });
-
 /*
- * ゲーム
  */
-tm.define("GameScene", {
-    superClass: "tm.app.Scene",
+phina.define("TitleScene", {
+    // 継承
+    superClass: 'DisplayScene',
+    // 初期化
+    init: function (option) {
+        // 親クラス初期化
+        this.superInit(option);
+        // 背景色
+        this.backgroundColor = 'black';
+        // ラベル
+        Label({
+            text: 'N.T.K.',
+            fontSize: 160,
+            fontFamily: "misaki_gothic",
+            fill: 'white',
+        }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
+    },
+    // タッチで次のシーンへ
+    onpointstart: function () {
+        this.exit();
+    },
+});
+/*
+*/
+phina.define('MainScene', {
+    superClass: 'DisplayScene',
 
-    init: function () {
-        this.superInit();
+    init: function (option) {
+        that = this;
+        // 親クラス初期化
+        this.superInit(option);
+        // 背景色
+        this.backgroundColor = 'black';//    this.backgroundColor = '#ffaaaa';
+
         if (!randomMode) randomSeed = 3557;
 
-        group0 = tm.display.CanvasElement().addChildTo(this);   // BG
-        group1 = tm.display.CanvasElement().addChildTo(this);   // BG
-        group2 = tm.display.CanvasElement().addChildTo(this);   // フェード
-        group3 = tm.display.CanvasElement().addChildTo(this);   // 雲
-        group4 = tm.display.CanvasElement().addChildTo(this);   // boss, enemy, item
-        group5 = tm.display.CanvasElement().addChildTo(this);   // bomb
-        group6 = tm.display.CanvasElement().addChildTo(this);   // player
-        group7 = tm.display.CanvasElement().addChildTo(this);   // en_bullet
-        group8 = tm.display.CanvasElement().addChildTo(this);   // pl_bullet
-        group9 = tm.display.CanvasElement().addChildTo(this);   // ステータス（score, left, bomb）
+        group0 = DisplayElement().addChildTo(this);   // BG
+        group1 = DisplayElement().addChildTo(this);   // BG
+        group2 = DisplayElement().addChildTo(this);   // フェード
+        group3 = DisplayElement().addChildTo(this);   // 雲
+        group4 = DisplayElement().addChildTo(this);   // boss, enemy, item
+        group5 = DisplayElement().addChildTo(this);   // bomb
+        group6 = DisplayElement().addChildTo(this);   // player
+        group7 = DisplayElement().addChildTo(this);   // en_bullet
+        group8 = DisplayElement().addChildTo(this);   // pl_bullet
+        group9 = DisplayElement().addChildTo(this);   // ステータス（score, left, bomb）
 
         clearArrays();
-        player = new PlayerSprite().addChildTo(group6);
+        player = PlayerSprite().addChildTo(group6);
 
-        stageBG[0] = new StageSprite("stg01", -SCREEN_HEIGHT * 1.5).addChildTo(group0);
-        stageBG[1] = new StageSprite("stg02", -SCREEN_HEIGHT * 2.5).addChildTo(group1);
+        stageBG[0] = StageSprite("stg01", -SCREEN_HEIGHT * 1.5, 1600 * 5).addChildTo(group0);
+        stageBG[1] = StageSprite("stg02", -SCREEN_HEIGHT * 2.5, 1600 * 5).addChildTo(group1);
 
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "nowScoreLabel",
-                    x: SCREEN_WIDTH - 16,
-                    y: 60,
-                    fillStyle: "#fff",
-                    shadowColor: "#000",
-                    shadowBlur: 10,
-                    fontSize: 80,
-                    fontFamily: FONT_FAMILY,
-                    text: "0",
-                    align: "right",
-                },
-                {
-                    type: "Label", name: "ntkGaugeLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y,
-                    fillStyle: "#fff",
-                    shadowColor: "#000",
-                    shadowBlur: 10,
-                    fontSize: 80,
-                    fontFamily: FONT_FAMILY,
-                    text: "",
-                    align: "center",
-                },
-                {
-                    type: "Label", name: "nowLifeLeftLabel",
-                    x: 0 + 16,
-                    y: 60,
-                    fillStyle: "#fff",
-                    shadowColor: "#000",
-                    shadowBlur: 10,
-                    fontSize: 40,
-                    fontFamily: FONT_FAMILY,
-                    text: "♥♥♥♥♥♥♥♥♥♥",
-                    align: "left",
-                },
-                {
-                    type: "Label", name: "nowNtkLeftLabel",
-                    x: SCREEN_WIDTH - 16,
-                    y: SCREEN_HEIGHT - 32,
-                    fillStyle: "#fff",
-                    shadowColor: "#000",
-                    shadowBlur: 10,
-                    fontSize: 80,
-                    fontFamily: FONT_FAMILY,
-                    text: "BBBBBBBBBB",
-                    align: "right",
-                },
-                {
-                    type: "FlatButton", name: "tweetButton",
-                    init: [
-                        {
-                            text: "TWEET",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 32,
-                            bgColor: "hsl(240, 80%, 70%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 160,
-                    y: 580,
-                    alpha: 0.0,
-                },
-                {
-                    type: "FlatButton", name: "restartButton",
-                    init: [
-                        {
-                            text: "RESTART",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 32,
-                            cornerRadius: 8,
-                            bgColor: "hsl(240, 0%, 70%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X + 160,
-                    y: 580,
-                    alpha: 0.0,
-                },
+        // ラベル設定
+        nowScoreLabel = Label(
+            {
+                text: "0",
+                fontSize: 80,
+                //            fontWeight: "bold",
+                fontFamily: "misaki_gothic",
+                align: "right",
+                //baseline: "bottom",
+                //lineHeight: 3,
 
-                {
-                    type: "FlatButton", name: "keyUp",
-                    init: [
-                        {
-                            text: "↑",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216,
-                    y: SCREEN_CENTER_Y + 700 - 96 - 96,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyUpLeft",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 - 96,
-                    y: SCREEN_CENTER_Y + 700 - 96 - 96,
-
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyLeft",
-                    init: [
-                        {
-                            text: "←",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 - 96,
-                    y: SCREEN_CENTER_Y + 700 - 96,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyDownLeft",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 - 96,
-                    y: SCREEN_CENTER_Y + 700,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyDown",
-                    init: [
-                        {
-                            text: "↓",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216,
-                    y: SCREEN_CENTER_Y + 700,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyDownRight",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 + 96,
-                    y: SCREEN_CENTER_Y + 700,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyRight",
-                    init: [
-                        {
-                            text: "→",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 + 96,
-                    y: SCREEN_CENTER_Y + 700 - 96,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "keyUpRight",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 216 + 96,
-                    y: SCREEN_CENTER_Y + 700 - 96 - 96,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "buttonA",
-                    init: [
-                        {
-                            text: "A",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X + 200,
-                    y: SCREEN_CENTER_Y + 600,
-                    alpha: 0.25,
-                },
-                {
-                    type: "FlatButton", name: "buttonB",
-                    init: [
-                        {
-                            text: "B",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 72,
-                            width: 96,
-                            height: 96,
-                            bgColor: "hsl(0, 100%, 50%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X + 350,
-                    y: SCREEN_CENTER_Y + 600,
-                    alpha: 0.25,
-                },
-            ]
-        });
-
-        //        this.bombLeftSprite = tm.display.Sprite("pl_bomb").addChildTo(group7);
-        //        this.bombLeftSprite.setPosition(SCREEN_WIDTH - 128, 80);
-
-        this.tweetButton.sleep();
-        this.restartButton.sleep();
-
-        var self = this;
-        this.restartButton.onpointingstart = function () {
-            self.app.replaceScene(GameScene());
-        };
-
-        // 上
-        this.keyUp.sleep();
-        this.keyUp.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.UP);
-        };
-        // 左上
-        this.keyUpLeft.sleep();
-        this.keyUpLeft.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.UP_LEFT);
-        };
-        // 左
-        this.keyLeft.sleep();
-        this.keyLeft.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.LEFT);
-        };
-        // 左下
-        this.keyDownLeft.sleep();
-        this.keyDownLeft.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.DOWN_LEFT);
-        };
-        // 下
-        this.keyDown.sleep();
-        this.keyDown.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.DOWN);
-        };
-        // 右下
-        this.keyDownRight.sleep();
-        this.keyDownRight.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.DOWN_RIGHT);
-        };
-        // 右
-        this.keyRight.sleep();
-        this.keyRight.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.RIGHT);
-        };
-        // 右上
-        this.keyUpRight.sleep();
-        this.keyUpRight.onpointingmove = function () {
-            dirKeyProcMove(DIR_KEY_DEF.UP_RIGHT);
-        };
-
-        // A
-        this.buttonA.sleep();
-        this.buttonA.onpointingmove = function () {
-            if (!player.status.isStarted) return;
-            if (shotIntvlTimer > 0) return;
-            //            player.gotoAndPlay("shot");
-            // lv.0
-            if (shotLv >= 0) {
-                let plBullet = PlBulletSprite(++uidCounter, player.x, player.y - 64, 0, -16).addChildTo(group8);
-                plBulletArray.push(plBullet);
-                shotIntvlTimer = 16;
+                //padding: 20,
+                //backgroundColor: "lightgreen",
+                fill: "white",
+                stroke: "blue",
+                strokeWidth: 10,
+                shadow: "black",
+                shadowBlur: 10,
             }
-            // lv.1
-            if (shotLv >= 1) {
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x + 32, player.y - 32, 0, -16).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x - 32, player.y - 32, 0, -16).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                shotIntvlTimer = 14;
+        ).addChildTo(group9).setPosition(SCREEN_WIDTH - 16, 60);
+
+        nowLifeLeftLabel = Label(
+            {
+                text: "♥♥♥",
+                fontSize: 40,
+                fontFamily: "misaki_gothic",
+                align: "left",
+
+                fill: "red",
+                shadowColor: "black",
+                shadowBlur: 10,
             }
-            // lv.2
-            if (shotLv >= 2) {
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x + 32, player.y - 32, +8, -16).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x - 32, player.y - 32, -8, -16).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                shotIntvlTimer = 12;
-            }
-            // lv.3
-            if (shotLv >= 3) {
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x + 32, player.y - 32, +16, 0).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                {
-                    let plBullet = PlBulletSprite(++uidCounter, player.x - 32, player.y - 32, -16, 0).addChildTo(group8);
-                    plBulletArray.push(plBullet);
-                }
-                shotIntvlTimer = 10;
-            }
-            // lv.4
-            if (shotLv >= 4) {
-                let plBullet = PlBulletSprite(++uidCounter, player.x, player.y + 64, 0, +16).addChildTo(group8);
-                plBulletArray.push(plBullet);
-                shotIntvlTimer = 8;
-            }
+        ).addChildTo(group9).setPosition(0 + 16, 60);
+
+        bombButton = prjButton("B").addChildTo(group9)
+            .setPosition(SCREEN_CENTER_X + SCREEN_WIDTH / 4, SCREEN_CENTER_Y + SCREEN_HEIGHT / 4);
+        bombButton.alpha = 0.5;
+        // タッチ有効
+        bombButton.setInteractive(true);
+        // タッチ時の処理
+        //        bombButton.onpush = function ();
+        //        bombButton.onpointend = function ();
+        bombButton.onpointend = function () {
+            // bomb発射
+            //let tmp = bombTable[bombLv];
+            //for (let ii = 0; ii < tmp.num; ii++) {
+            //    let xPos = getRandomInt(SCREEN_WIDTH - 64) + 64;
+            //    let yPos = getRandomInt(SCREEN_HEIGHT - 64) + 64;
+            //    let bomb = PlBombSprite(++uidCounter, tmp.bomb, xPos, yPos).addChildTo(group8);
+            //    plBombArray.push(bomb);
+            //}
+            //if (--bombLeft <= 0) {
+            //    bombLeft = 0;
+            //}
+            bombButton.scaleX = 2.0;
+            bombButton.scaleY = 2.0;
         };
-        // B
-        /*
-        0:入力待ち
-        1:長押し中
-        2:発射
-        */
-        this.buttonB.sleep();
-        this.buttonB.onpointingmove = function () {
-            if (bombLeft <= 0) return;
-            if ((bombStatus != 0) && (bombStatus != 1)) return;
-            if (plBombArray.length > 0) return;
-            if (bombStatus === 0) {
-                bombStatus = 1;
-                bombLv = 0;
-                bombGauge = 0;
-            }
-            // Lvアップ
-            if (++bombGauge >= 100) {
-                if (++bombLv >= 9) {
-                    bombLv = 9;
-                    bombGauge = 100;
-                } else {
-                    bombGauge = 0;
+
+        player.status = PL_STATUS.START;
+        player.onenterframe = function (e) {
+            if (!this.status.isAccKey) return;
+
+            // ポインター（マウスやタッチ）
+            let pointer = e.app.pointer;
+
+            // 移動量×感度を自機の位置に足す
+            if (pointer.getPointing()) {
+                let oldX = this.x;
+                let oldY = this.y;
+                this.position.add(pointer.deltaPosition.mul(this.spd));
+
+                // 画面外チェック
+                if ((this.x <= 0 + 64) || (this.x >= SCREEN_WIDTH - 64)) {
+                    this.x = oldX;
+                }
+                if ((this.y <= 0 + 64) || (this.y >= SCREEN_HEIGHT - 64)) {
+                    this.y = oldY;
                 }
             }
         };
-        this.buttonB.onpointingend = function () {
-            if (bombStatus != 1) return;
-            // 発射
-            let tmp = bombTable[bombLv];
-            for (let ii = 0; ii < tmp.num; ii++) {
-                let xPos = getRandomInt(SCREEN_WIDTH - 64) + 64;
-                let yPos = getRandomInt(SCREEN_HEIGHT - 64) + 64;
-                let bomb = PlBombSprite(++uidCounter, tmp.bomb, xPos, yPos).addChildTo(group8);
-                plBombArray.push(bomb);
-            }
-            if (--bombLeft <= 0) {
-                bombLeft = 0;
-            }
-            bombStatus = 0;
-        };
 
-        // 
-        {
-            this.keyUp.wakeUp();
-            this.keyUp.setAlpha(0.25);
-            this.keyUpLeft.wakeUp();
-            this.keyUpLeft.setAlpha(0.25);
-            this.keyLeft.wakeUp();
-            this.keyLeft.setAlpha(0.25);
-            this.keyDownLeft.wakeUp();
-            this.keyDownLeft.setAlpha(0.25);
-            this.keyDown.wakeUp();
-            this.keyDown.setAlpha(0.25);
-            this.keyDownRight.wakeUp();
-            this.keyDownRight.setAlpha(0.25);
-            this.keyRight.wakeUp();
-            this.keyRight.setAlpha(0.25);
-            this.keyUpRight.wakeUp();
-            this.keyUpRight.setAlpha(0.25);
-
-            this.buttonA.wakeUp();
-            this.buttonA.setAlpha(0.25);
-            this.buttonB.wakeUp();
-            this.buttonB.setAlpha(0.25);
-
-            player.status = PL_STATUS.START;
-        }
         nowScore = 0;
-        speed = 1;
-        bombLeft = 1;
-        bombStatus = 0;
-        bombLv = 0;
-        bombGauge = 0;
         nowStageNum = 0;
         stageScrollFlag[0] = true;
         stageScrollFlag[1] = false;
         ctrlCounterFlag = true;
         ctrlCounter = 0;
         totalFrame = 0;
-        fitWindowTimer = 0;
-        shotIntvlTimer = 0;
-        shotLv = 0;
         uidCounter = 0;
-
-        this.ntkGaugeLabel.setAlpha(0.0);
-        this.frame = 0;
-        this.stopBGM = false;
+        deadStatus = 0;
+        tweetButton = null;
+        restartButton = null;
     },
-
     update: function (app) {
-        if (++fitWindowTimer % 15 === 0) app.fitWindow(false);    // 手動フィッティング
         if (!player.status.isDead) {
             if (player.status.isStarted) {
                 totalFrame++;
                 totalSec = Math.floor(totalFrame / app.fps);
 
-                if (shotIntvlTimer > 0) shotIntvlTimer--;
-
-                if (bombStatus === 0) {
-                    this.ntkGaugeLabel.setAlpha(0.0);
-                } else {
-                    this.ntkGaugeLabel.setAlpha(1.0);
-                    this.ntkGaugeLabel.text = "N.T.K. Lv." + (bombLv + 1) + "\n" + bombGauge + "%";
-                }
                 // テーブルから該当する行を読み込む
                 let ctrlArray = ctrlTable[nowStageNum];
                 for (let ii = 0; ii < ctrlArray.length; ii++) {
@@ -1445,7 +1011,7 @@ tm.define("GameScene", {
                             case CMD.SET_ENEMY:
                                 {
                                     // ctrl.param.loopで出現可能な周回かチェックする
-                                    let enemy = new EnemySprite(++uidCounter, ctrl.param).addChildTo(group4);
+                                    let enemy = EnemySprite(++uidCounter, ctrl.param).addChildTo(group6);
                                     enemyArray.push(enemy);
                                 }
                                 break;
@@ -1461,9 +1027,9 @@ tm.define("GameScene", {
                                     stageBG[ctrl.param.idx].remove();
                                 }
                                 if (ctrl.param.idx == 0) {
-                                    stageBG[ctrl.param.idx] = new StageSprite(ctrl.param.sprName, ctrl.param.yPos).addChildTo(group0);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize).addChildTo(group0);
                                 } else {
-                                    stageBG[ctrl.param.idx] = new StageSprite(ctrl.param.sprName, ctrl.param.yPos).addChildTo(group1);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize).addChildTo(group1);
                                 }
                                 break;
                             case CMD.START_SCROLL:
@@ -1494,73 +1060,139 @@ tm.define("GameScene", {
                 }
             }
 
-            this.nowScoreLabel.text = nowScore; // カンスト：999999999
+            // 当たり判定
+            checkEnemyPosition();
+            checkPlayerBombToEnemy();
+            checkPlayerBombToEnemyBullet();
+            checkPlayerBulletToEnemy();
+            checkEnemyBulletToPlayer();
+            checkPlayerToEnemy();
+
+            nowScoreLabel.text = nowScore; // カンスト：999999999
 
             let tmpLife = "";   // カンスト：♥♥♥♥♥♥♥♥♥♥
             for (let ii = 0; ii < player.lifeMax; ii++) {
                 if (ii < player.lifeLeft) tmpLife += "♥";
                 else tmpLife += "♡";
             }
-            this.nowLifeLeftLabel.text = tmpLife;
-
-
-            // 当たり判定
-            checkPlayerToEnemy();
-            checkPlayerBulletToEnemy();
-            checkEnemyBulletToPlayer();
+            nowLifeLeftLabel.text = tmpLife;
         } else {
-            if (!this.stopBGM) {
-                fallSE.play();
-                this.stopBGM = true;
-
-                var self = this;
-                // tweet ボタン
-                this.tweetButton.onclick = function () {
-                    var twitterURL = tm.social.Twitter.createURL({
-                        type: "tweet",
-                        text: "N.T.K. スコア: " + self.nowScoreLabel.text,
+            // 死亡
+            if (deadStatus === 0) {
+                deadStatus = 1;
+                bombButton.x = SCREEN_CENTER_X;
+                bombButton.y = SCREEN_CENTER_Y;
+                tweetButton = Button(
+                    {
+                        text: "TWEET",
+                        fontSize: 80,
+                        fontFamily: "misaki_gothic",
+                        align: "center",
+                        baseline: "middle",
+                        width: 300,
+                        height: 150,
+                    }
+                ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onpush = function () {
+                    var twitterURL = phina.social.Twitter.createURL({
+                        text: "N.T.K. スコア: " + nowScore,
                         hashtags: ["ネムレス", "NEMLESSS"],
                         url: "https://iwasaku.github.io/test10/NTK/",
                     });
                     window.open(twitterURL);
                 };
 
-                this.upButton.sleep();
-                this.upLeftButton.sleep();
-                this.leftButton.sleep();
-                this.downLeftButton.sleep();
-                this.downButton.sleep();
-                this.downRightButton.sleep();
-                this.rightButton.sleep();
-                this.upRightButton.sleep();
-                this.aButton.sleep();
-                this.bButton.sleep();
-            }
-            this.buttonAlpha += 0.05;
-            if (this.buttonAlpha > 1.0) {
-                this.buttonAlpha = 1.0;
-            }
-            this.tweetButton.setAlpha(this.buttonAlpha);
-            this.restartButton.setAlpha(this.buttonAlpha);
-            if (this.buttonAlpha > 0.7) {
-                this.tweetButton.wakeUp();
-                this.restartButton.wakeUp();
+                restartButton = Button(
+                    {
+                        text: "RESTART",
+                        fontSize: 80,
+                        fontFamily: "misaki_gothic",
+                        align: "center",
+                        baseline: "middle",
+                        width: 300,
+                        height: 150,
+                        fill: "rgba(0, 0, 0, 1.0)",    // ボタン色
+                    }
+                ).addChildTo(this).setPosition(SCREEN_CENTER_X + (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onpush = function () {
+                    that.exit();
+                };
+
+                bombButton.hide();
             }
         }
+    }
+});
+
+phina.main(function () {
+    var app = GameApp({
+        startLabel: 'init',
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+        assets: ASSETS,
+        // シーンのリストを引数で渡す
+        scenes: [
+            {
+                className: 'InitScene',
+                label: 'init',
+                nextLabel: 'title',
+            },
+
+            {
+                className: 'TitleScene',
+                label: 'title',
+                nextLabel: 'main',
+            },
+            {
+                className: 'MainScene',
+                label: 'main',
+                nextLabel: 'main',
+            },
+        ]
+    });
+
+    app.run();
+});
+
+/*
+ * ピースクラス
+ * 数字当て問題の選択肢。角丸Rectに数字を貼り付けたもの
+ */
+phina.define('prjButton', {
+    superClass: 'RectangleShape',
+    init: function (txt) {
+        this.superInit({
+            width: 64,
+            height: 64,
+            cornerRadius: 10,
+            fill: 'red',
+            stroke: 'white',
+        });
+        this.label = Label({
+            text: txt + "",
+            fontSize: 64 * 0.8,
+            fontFamily: "misaki_gothic",
+            fill: 'white',
+        }).addChildTo(this);
+    },
+    setSize: function (width, height) {
+        this.width = width;
+        this.height = height;
     }
 });
 
 /*
  * Stge
  */
-tm.define("StageSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("StageSprite", {
+    superClass: 'Sprite',
 
-    init: function (sprname, ypos) {
-        this.superInit(sprname, 900, 1600 * 5);
+    init: function (sprname, ypos, ysize) {
+        this.superInit(sprname);
         this.direct = '';
         this.zRot = 0;
-        this.setPosition(SCREEN_CENTER_X, ypos).setScale(1, 1);
+        this.setPosition(SCREEN_CENTER_X, ypos);
+        this.setScale(1, 1);
+        this.setSize(900, ysize);
+
         this.setInteractive(false);
         this.setBoundingType("circle");
         this.radius = 0;
@@ -1573,18 +1205,26 @@ tm.define("StageSprite", {
 /*
  * Player
  */
-tm.define("PlayerSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("PlayerSprite", {
+    superClass: 'Sprite',
 
     init: function () {
-        this.superInit("player", 128, 128);
+        this.superInit("player");
         this.direct = '';
         this.zRot = 0;
         this.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y * 1.5).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("circle");
         this.radius = 0;
+
         this.status = PL_STATUS.INIT;
+        this.spd = 1.0;
+        this.bombLeft = 1;
+        this.bombStatus = 0;
+        this.bombLv = 0;
+        this.bombGauge = 0;
+        this.shotIntvlTimer = 0;
+        this.shotLv = 0;
 
         this.lifeLeft = 3;
         this.lifeMax = 3;
@@ -1593,35 +1233,94 @@ tm.define("PlayerSprite", {
 
     update: function (app) {
         if (this.status === PL_STATUS.INIT) {
-            this.status === PL_STATUS.START;
+            this.status = PL_STATUS.START;
         };
         if (this.status === PL_STATUS.DEAD) {
-            this.setAlpha(1.0);
+            //            this.setAlpha(1.0);
             return;
         }
         if (--this.invincivleTimer < 0) this.invincivleTimer = 0;
         if (this.invincivleTimer % 2 === 0) {
-            this.setAlpha(1.0);
+            //            this.setAlpha(1.0);
+            this.alpha = 1.0;
         } else {
-            this.setAlpha(0.0);
+            //            this.setAlpha(0.0);
+            this.alpha = 0.0;
         }
+
+        if (--this.shotIntvlTimer <= 0) {
+            //            player.gotoAndPlay("shot");
+            // lv.0
+            this.shotLv = -1;
+            if (this.shotLv >= 0) {
+                let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
+                plBulletArray.push(plBullet);
+                this.shotIntvlTimer = 16;
+            }
+            // lv.1
+            if (this.shotLv >= 1) {
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x + 32, this.y - 32, 0, -16).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, 0, -16).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                this.shotIntvlTimer = 14;
+            }
+            // lv.2
+            if (this.shotLv >= 2) {
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x + 32, this.y - 32, +8, -16).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, -8, -16).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                this.shotIntvlTimer = 12;
+            }
+            // lv.3
+            if (this.shotLv >= 3) {
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x + 32, this.y - 32, +16, 0).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                {
+                    let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, -16, 0).addChildTo(group8);
+                    plBulletArray.push(plBullet);
+                }
+                this.shotIntvlTimer = 10;
+            }
+            // lv.4
+            if (this.shotLv >= 4) {
+                let plBullet = PlBulletSprite(++uidCounter, this.x, this.y + 64, 0, +16).addChildTo(group8);
+                plBulletArray.push(plBullet);
+                this.shotIntvlTimer = 8;
+            }
+        }
+
     },
 });
 
 /*
  * Enemy
  */
-tm.define("EnemySprite", {
-    superClass: "tm.app.Sprite",
+phina.define("EnemySprite", {
+    superClass: 'Sprite',
+
     init: function (uid, param) {
         this.uid = uid;
         this.define = param.ene;
-        this.superInit(param.ene.sprName, param.ene.sprSize.x, param.ene.sprSize.y);
+        this.superInit(param.ene.sprName);
+        this.setSize(param.ene.sprSize.x, param.ene.sprSize.y);
+        this.setScale(1, 1);
         this.direct = '';
         this.xSpd = param.xSpd;
         this.ySpd = param.ySpd;
         this.zRot = 0;
-        this.setPosition(param.xPos, param.yPos).setScale(1, 1);
+        this.setPosition(param.xPos, param.yPos);
         this.setInteractive(false);
         this.setBoundingType("circle");
         this.radius = 0;
@@ -1631,73 +1330,18 @@ tm.define("EnemySprite", {
         this.localStatus = 0;
         this.life = param.ene.life;
         this.invincivleTimer = 15;
+        this.isReady = false;
     },
 
     update: function (app) {
+        if (player.status.isDead) return;
         switch (this.define) {
             case EN_DEF.ENEMY01:
-                {
-                    switch (this.status) {
-                        case EN_STATUS.INIT:
-                            this.status = EN_STATUS.START;
-                            this.collisionEnable = true;
-                        // THRU
-                        case EN_STATUS.START:
-                            break;
-                        case EN_STATUS.DEAD_INIT:
-                            this.status = EN_STATUS.DEAD;
-                        // THRU
-                        case EN_STATUS.DEAD:
-                            break;
-                    }
-                }
+                enemy01(this);
                 break;
 
             case EN_DEF.BOSS01:
-                {
-                    switch (this.status) {
-                        case EN_STATUS.INIT:
-                            this.localCounter = 0;
-                            this.localStatus = 0;
-                            this.ySpd = 8
-                            this.status = EN_STATUS.START;
-                            this.collisionEnable = false;
-                        // THRU
-                        case EN_STATUS.START:
-                            switch (this.localStatus) {
-                                case 0:
-                                    // 出現
-                                    if (this.y >= 256) {
-                                        this.localStatus = 1;
-                                        this.collisionEnable = true;
-                                    }
-                                    break;
-                                case 1:
-                                    // 停止
-                                    this.ySpd = 0
-                                    this.localStatus = 2;
-                                case 2:
-                                    // 弾を撃つ
-                                    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, this.x - 32, this.y - 32, -16, 0).addChildTo(group7);
-                                    enBulletArray.push(enBullet);
-                                    this.status = EN_STATUS.DEAD_INIT;
-                                    break;
-                                default:
-                            }
-                            this.localCounter++;
-                            break;
-                        case EN_STATUS.DEAD_INIT:
-                            this.status = EN_STATUS.DEAD;
-                            this.localCounter = 0;
-                            nowStageNum++;
-                            // 次の面へ
-                            ctrlCounter = 0;
-                            ctrlCounterFlag = true;
-                        // THRU
-                        case EN_STATUS.DEAD:
-                            break;
-                    }
-                }
+                boss01(this);
                 break;
             default:
         }
@@ -1709,11 +1353,98 @@ tm.define("EnemySprite", {
     },
 });
 
+/**
+ * 
+ */
+function enemy01(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+        // THRU
+        case EN_STATUS.START:
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+function enemy02(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+            tmpEne.xSpd = +8;
+        // THRU
+        case EN_STATUS.START:
+            if (tmpEne.x < 0 + 8) {
+                tmpEne.xSpd = +8;
+            } else if (tmpEne.x > SCREEN_WIDTH - 8) {
+                tmpEne.xSpd = -8;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ */
+function boss01(tmpEne) {
+    switch (enemy.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localCounter = 0;
+            tmpEne.localStatus = 0;
+            tmpEne.ySpd = 8
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    // 出現
+                    if (tmpEne.y >= 256) {
+                        tmpEne.localStatus = 1;
+                        tmpEne.collisionEnable = true;
+                    }
+                    break;
+                case 1:
+                    // 停止
+                    tmpEne.ySpd = 0
+                    tmpEne.localStatus = 2;
+                case 2:
+                    // 弾を撃つ
+                    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x - 32, tmpEne.y - 32, -16, 0).addChildTo(group7);
+                    enBulletArray.push(enBullet);
+                    enemy.status = EN_STATUS.DEAD_INIT;
+                    break;
+                default:
+            }
+            enemy.localCounter++;
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.localCounter = 0;
+            nowStageNum++;
+            // 次の面へ
+            ctrlCounter = 0;
+            ctrlCounterFlag = true;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
 /*
  * PlayerBullet
  */
-tm.define("PlBulletSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("PlBulletSprite", {
+    superClass: 'Sprite',
 
     init: function (uid, xPos, yPos, xSpd, ySpd) {
         this.uid = uid;
@@ -1740,9 +1471,10 @@ tm.define("PlBulletSprite", {
 /*
  * PlayerBomb
  */
-tm.define("PlBombSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("PlBombSprite", {
+    superClass: 'Sprite',
 
+    // コンストラクタ
     init: function (uid, bombdef, xPos, yPos) {
         this.uid = uid;
         this.define = bombdef;
@@ -1794,9 +1526,10 @@ tm.define("PlBombSprite", {
 /*
  * EnemyBullet
  */
-tm.define("EnBulletSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("EnBulletSprite", {
+    superClass: 'Sprite',
 
+    // コンストラクタ
     init: function (uid, ebdef, xPos, yPos, xSpd, ySpd) {
         this.uid = uid;
         this.define = ebdef;
@@ -1820,20 +1553,42 @@ tm.define("EnBulletSprite", {
     },
 });
 
-// 自キャラ移動
-function dirKeyProcMove(dkDef) {
-    if (!player.status.isAccKey) return;
-    let oldX = player.x;
-    let oldY = player.y;
-    let addX = dkDef.addX * speed;
-    let addY = dkDef.addY * speed;
-    player.x += addX
-    if ((player.x <= 0 + 64) || (player.x >= SCREEN_WIDTH - 64)) {
-        player.x = oldX;
+// 敵の入場退場処理
+function checkEnemyPosition() {
+    if (player.status.isDead) return;
+
+    let deadEnemyArray = [];
+
+    for (let jj = 0; jj < self.enemyArray.length; jj++) {
+        let tmpEne = self.enemyArray[jj];
+        if (!tmpEne.isReady) {
+            // 入場チェック
+            if (
+                (tmpEne.x > 0 - tmpEne.define.sprSize.x / 2) &&
+                (tmpEne.x < SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) &&
+                (tmpEne.y > 0 - tmpEne.define.sprSize.y / 2) &&
+                (tmpEne.y < SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
+            ) {
+                tmpEne.isReady = true;
+            }
+        } else {
+            // 退場チェック
+            if (
+                (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
+                (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
+                (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
+                (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
+            ) {
+                tmpEne.isReady = false;
+                deadEnemyArray.push(tmpEne);
+            }
+        }
     }
-    player.y += addY
-    if ((player.y <= 0 + 64) || (player.y >= SCREEN_HEIGHT - 64)) {
-        player.y = oldY;
+
+    // 削除対象の敵を削除
+    for (var ii = 0; ii < deadEnemyArray.length; ii++) {
+        deadEnemyArray[ii].remove();
+        self.enemyArray.erase(deadEnemyArray[ii]);
     }
 }
 
@@ -1845,17 +1600,10 @@ function checkPlayerToEnemy() {
     let deadEnemyArray = [];
 
     // 敵との当たり判定
-    for (var jj = 0; jj < self.enemyArray.length; jj++) {
-        var tmpEne = self.enemyArray[jj];
+    for (let jj = 0; jj < self.enemyArray.length; jj++) {
+        let tmpEne = self.enemyArray[jj];
 
-        // そもそも画面外では当たらない
-        if (
-            (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
-            (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
-            (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
-            (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
-        ) continue;
-
+        if (!tmpEne.isReady) continue; // 入場前
         if (tmpEne.status.isDead) continue; // 既に死亡済み
         if (tmpEne.invincivleTimer > 0) continue; // 無敵中
 
@@ -1880,6 +1628,7 @@ function checkPlayerToEnemy() {
                     player.invincivleTimer = 60;
                 } else {
                     // 死亡
+                    player.status = PL_STATUS.DEAD_INIT;
                 }
 
                 // 敵処理
@@ -1974,14 +1723,7 @@ function checkPlayerBulletToEnemy() {
             if (tmpBlt.isDead) continue;
             var tmpEne = self.enemyArray[jj];
 
-            // そもそも画面外では当たらない
-            if (
-                (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
-                (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
-                (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
-                (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
-            ) continue;
-
+            if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
             if (tmpEne.invincivleTimer > 0) continue; // 無敵中
 
@@ -2031,6 +1773,123 @@ function checkPlayerBulletToEnemy() {
     }
 }
 
+function checkPlayerBombToEnemy() {
+    if (player.status.isDead) return;
+
+    let self = this;
+    let deadPlBombArray = [];
+    let deadEnemyArray = [];
+
+    for (let ii = 0; ii < self.plBombArray.length; ii++) {
+        let tmpBlt = self.plBombArray[ii];
+        // 敵との当たり判定
+        for (var jj = 0; jj < self.enemyArray.length; jj++) {
+            if (tmpBlt.isDead) continue;
+            var tmpEne = self.enemyArray[jj];
+
+            if (!tmpEne.isReady) continue; // 入場前
+            if (tmpEne.status.isDead) continue; // 既に死亡済み
+            if (tmpEne.invincivleTimer > 0) continue; // 無敵中
+
+            for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
+                let colliData = tmpEne.define.colliData[ii];
+                if (!colliData.attr.bullet) continue; // 弾との当たり判定用データではない
+                if (chkCollisionCircleOfs(
+                    tmpBlt.x, tmpBlt.y,
+                    0, 0,
+                    8,
+                    tmpEne.x, tmpEne.y,
+                    colliData.ofs.x, colliData.ofs.y,
+                    colliData.radius
+                ) == false) continue;   // 当たっていない
+
+                tmpBlt.isDead = true;
+                deadPlBombArray.push(tmpBlt);
+
+                // 敵処理
+                if (--tmpEne.life >= 1) {
+                    // 残ライフが1以上
+                    tmpEne.invincivleTimer = 15;
+                    continue;
+                }
+                tmpEne.status = EN_STATUS.DEAD;
+                deadEnemyArray.push(tmpEne);
+                // 爆破パターンのセット
+                break;
+            }
+        }
+    }
+
+    // 削除対象のプレイヤー弾を削除
+    for (var ii = 0; ii < deadPlBombArray.length; ii++) {
+        if (deadPlBombArray[ii].parent == null) console.log("NULL!!");
+        else deadPlBombArray[ii].remove();
+        self.plBombArray.erase(deadPlBombArray[ii]);
+    }
+
+    // 削除対象の敵を削除
+    for (var ii = 0; ii < deadEnemyArray.length; ii++) {
+        nowScore += deadEnemyArray[ii].define.pts;
+
+        if (deadEnemyArray[ii].parent == null) console.log("NULL!!");
+        else deadEnemyArray[ii].remove();
+        self.enemyArray.erase(deadEnemyArray[ii]);
+    }
+}
+function checkPlayerBombToEnemyBullet() {
+    if (player.status.isDead) return;
+
+    let self = this;
+    let deadPlBombArray = [];
+    let deadEneBulletArray = [];
+
+    for (let ii = 0; ii < self.plBombArray.length; ii++) {
+        let tmpBlt = self.plBombArray[ii];
+        // 敵弾との当たり判定
+        for (var jj = 0; jj < self.enBulletArray.length; jj++) {
+            if (tmpBlt.isDead) continue;
+            var tmpEne = self.enBulletArray[jj];
+
+            // そもそも画面外では当たらない
+            if (
+                (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
+                (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
+                (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
+                (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
+            ) continue;
+
+            if (tmpEne.status.isDead) continue; // 既に死亡済み
+
+            if (chkCollisionCircleOfs(
+                tmpBlt.x, tmpBlt.y,
+                0, 0,
+                8,
+                tmpEne.x, tmpEne.y,
+                0, 0,
+                colliData.radius
+            ) == false) continue;   // 当たっていない
+            tmpEne.status = EN_STATUS.DEAD;
+            deadEneBulletArray.push(tmpEne);
+        }
+    }
+
+
+    // 削除対象のプレイヤー弾を削除
+    for (var ii = 0; ii < deadPlBombArray.length; ii++) {
+        if (deadPlBombArray[ii].parent == null) console.log("NULL!!");
+        else deadPlBombArray[ii].remove();
+        self.plBombArray.erase(deadPlBombArray[ii]);
+    }
+
+    // 削除対象の敵を削除
+    for (var ii = 0; ii < deadEneBulletArray.length; ii++) {
+
+        if (deadEnemyArray[ii].parent == null) console.log("NULL!!");
+        else deadEnemyArray[ii].remove();
+        self.enemyArray.erase(deadEnemyArray[ii]);
+    }
+}
+
 // 敵弾とプレイヤーとの当たり判定
 function checkEnemyBulletToPlayer() {
     if (player.status.isDead) return;
@@ -2072,6 +1931,7 @@ function checkEnemyBulletToPlayer() {
     }
 }
 
+
 // 配列クリア
 function clearArrays() {
     var self = this;
@@ -2081,6 +1941,13 @@ function clearArrays() {
         if (tmp.parent == null) console.log("NULL!!");
         else tmp.remove();
         self.plBulletArray.erase(tmp);
+    }
+
+    for (let ii = self.plBombArray.length - 1; ii >= 0; ii--) {
+        let tmp = self.plBombtArray[ii];
+        if (tmp.parent == null) console.log("NULL!!");
+        else tmp.remove();
+        self.plBombArray.erase(tmp);
     }
 
     for (let ii = self.enemyArray.length - 1; ii >= 0; ii--) {
@@ -2119,6 +1986,7 @@ function myRandom(start, end) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
+
 // 矩形当たり判定
 // https://yttm-work.jp/collision/collision_0005.html
 function chkCollisionRect(rect_a_x, rect_a_y, rect_a_w, rect_a_h, rect_b_x, rect_b_y, rect_b_w, rect_b_h) {
