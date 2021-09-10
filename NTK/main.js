@@ -9,16 +9,16 @@ const FPS = 60; // 60フレ
 
 const FONT_FAMILY = "'misaki_gothic','Meiryo',sans-serif";
 const ASSETS = {
-    "ntk01": "./resource/bomb/NTK_01.png",
-    "ntk02": "./resource/bomb/NTK_02.png",
-    "ntk03": "./resource/bomb/NTK_03.png",
-    "ntk04": "./resource/bomb/NTK_04.png",
-    "ntk05": "./resource/bomb/NTK_05.png",
-    "ntk06": "./resource/bomb/NTK_06.png",
-    "ntk07": "./resource/bomb/NTK_07.png",
-    "ntk08": "./resource/bomb/NTK_08.png",
-    "ntk09": "./resource/bomb/NTK_09.png",
-    "ntk10": "./resource/bomb/NTK_10.png",
+    "ntk01": "../PRJNTK/resource/bomb/NTK_01.png",
+    "ntk02": "../PRJNTK/resource/bomb/NTK_02.png",
+    "ntk03": "../PRJNTK/resource/bomb/NTK_03.png",
+    "ntk04": "../PRJNTK/resource/bomb/NTK_04.png",
+    "ntk05": "../PRJNTK/resource/bomb/NTK_05.png",
+    "ntk06": "../PRJNTK/resource/bomb/NTK_06.png",
+    "ntk07": "../PRJNTK/resource/bomb/NTK_07.png",
+    "ntk08": "../PRJNTK/resource/bomb/NTK_08.png",
+    "ntk09": "../PRJNTK/resource/bomb/NTK_09.png",
+    "ntk10": "../PRJNTK/resource/bomb/NTK_10.png",
 };
 
 const BOMB_DEF = defineEnum({

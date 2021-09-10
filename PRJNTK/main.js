@@ -553,6 +553,21 @@ const BOMB_DEF = defineEnum({
     },
 });
 
+const BB_STATUS = defineEnum({
+    WAIT: {
+        value: 0,
+        string: 'init'
+    },
+    START: {
+        value: 1,
+        string: 'start'
+    },
+    END: {
+        value: 2,
+        string: 'end'
+    },
+});
+
 const bombTable = [
     { bomb: BOMB_DEF.BOMB_LV_0, num: 10 },
     { bomb: BOMB_DEF.BOMB_LV_1, num: 20 },
@@ -621,11 +636,17 @@ const ctrlTable = [
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
 
+        //        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        //        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        //        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        //        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+
         { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE_MAX, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_SPEED, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
 
         //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 0, yPos: -64, xSpd: 0, ySpd: 8 } },
         //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 1, yPos: -64, xSpd: 0, ySpd: 8 } },
@@ -770,6 +791,7 @@ let nowNtkLeftLabel = null;
 let tweetButton = null;
 let restartButton = null;
 let bombButton = null;
+let bombButtonStatus = BB_STATUS.INIT;
 
 let stageBG = [null, null];
 let player = null;
@@ -861,11 +883,17 @@ phina.define("TitleScene", {
         this.backgroundColor = 'black';
         // ラベル
         Label({
-            text: 'N.T.K.',
+            text: 'PROJRCT\nN.T.K.',
             fontSize: 160,
             fontFamily: "misaki_gothic",
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
+        Label({
+            text: 'TAP TO START',
+            fontSize: 80,
+            fontFamily: "misaki_gothic",
+            fill: 'white',
+        }).addChildTo(this).setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y + SCREEN_HEIGHT * 1 / 4);
     },
     // タッチで次のシーンへ
     onpointstart: function () {
@@ -937,6 +965,22 @@ phina.define('MainScene', {
             }
         ).addChildTo(group9).setPosition(0 + 16, 60);
 
+        ntkGaugeLabel = Label(
+            {
+                text: "",
+                fontSize: 80,
+                fontFamily: "misaki_gothic",
+                align: "center",
+
+                fill: "white",
+                stroke: "blue",
+                strokeWidth: 10,
+                shadow: "black",
+                shadowBlur: 10,
+            }
+        ).addChildTo(group9).setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+
+        bombButtonStatus = BB_STATUS.INIT;
         bombButton = prjButton("B").addChildTo(group9)
             .setPosition(SCREEN_CENTER_X + SCREEN_WIDTH / 4, SCREEN_CENTER_Y + SCREEN_HEIGHT / 4);
         bombButton.alpha = 0.5;
@@ -944,21 +988,22 @@ phina.define('MainScene', {
         bombButton.setInteractive(true);
         // タッチ時の処理
         //        bombButton.onpush = function ();
-        //        bombButton.onpointend = function ();
+        bombButton.onpointstart = function () {
+            console.log("onpointstart");
+            bombButtonStatus = BB_STATUS.START;
+            bombButton.scaleX = 1.25;
+            bombButton.scaleY = 1.25;
+        }
+        bombButton.onpointmove = function () {
+        }
         bombButton.onpointend = function () {
             // bomb発射
-            //let tmp = bombTable[bombLv];
-            //for (let ii = 0; ii < tmp.num; ii++) {
-            //    let xPos = getRandomInt(SCREEN_WIDTH - 64) + 64;
-            //    let yPos = getRandomInt(SCREEN_HEIGHT - 64) + 64;
-            //    let bomb = PlBombSprite(++uidCounter, tmp.bomb, xPos, yPos).addChildTo(group8);
-            //    plBombArray.push(bomb);
-            //}
-            //if (--bombLeft <= 0) {
-            //    bombLeft = 0;
-            //}
-            bombButton.scaleX = 2.0;
-            bombButton.scaleY = 2.0;
+            console.log("onpointend");
+            bombButtonStatus = BB_STATUS.END;
+            bombButton.scaleX = 1.0;
+            bombButton.scaleY = 1.0;
+        };
+        bombButton.update = function () {
         };
 
         player.status = PL_STATUS.START;
@@ -1001,6 +1046,53 @@ phina.define('MainScene', {
             if (player.status.isStarted) {
                 totalFrame++;
                 totalSec = Math.floor(totalFrame / app.fps);
+
+                // NTKゲージ管理
+                ntkGaugeLabel.text = "";
+                switch (bombButtonStatus) {
+                    case BB_STATUS.WAIT:
+                        break;
+                    case BB_STATUS.START:
+                        console.log("sw onpointstart");
+                        if (player.bombLeft <= 0) {
+                            bombButtonStatus = BB_STATUS.WAIT;
+                            player.bombStatus = 0;
+                            break;
+                        }
+                        if ((player.bombStatus != 0) && (player.bombStatus != 1)) break;
+                        if (plBombArray.length > 0) break;
+                        if (player.bombStatus === 0) {
+                            player.bombStatus = 1;
+                            player.bombLv = 0;
+                            player.bombGauge = 0;
+                        }
+                        // Lvアップ
+                        if (++player.bombGauge >= 100) {
+                            if (++player.bombLv >= 9) {
+                                player.bombLv = 9;
+                                player.bombGauge = 100;
+                            } else {
+                                player.bombGauge = 0;
+                            }
+                        }
+                        ntkGaugeLabel.text = "N.T.K. Lv." + (player.bombLv + 1) + "\n" + player.bombGauge + "%";
+                        break;
+                    case BB_STATUS.END:
+                        bombButtonStatus = BB_STATUS.WAIT;
+                        player.bombStatus = 0;
+                        if (player.bombLeft <= 0) break;
+                        let tmp = bombTable[player.bombLv];
+                        for (let ii = 0; ii < tmp.num; ii++) {
+                            let xPos = getRandomInt(SCREEN_WIDTH - 64) + 64;
+                            let yPos = getRandomInt(SCREEN_HEIGHT - 64) + 64;
+                            let bomb = PlBombSprite(++uidCounter, tmp.bomb, xPos, yPos).addChildTo(group8);
+                            plBombArray.push(bomb);
+                        }
+                        if (--player.bombLeft <= 0) {
+                            player.bombLeft = 0;
+                        }
+                        break;
+                }
 
                 // テーブルから該当する行を読み込む
                 let ctrlArray = ctrlTable[nowStageNum];
@@ -1067,6 +1159,7 @@ phina.define('MainScene', {
             checkPlayerBulletToEnemy();
             checkEnemyBulletToPlayer();
             checkPlayerToEnemy();
+            clearPlayerBombArrays();
 
             nowScoreLabel.text = nowScore; // カンスト：999999999
 
@@ -1160,18 +1253,19 @@ phina.define('prjButton', {
     superClass: 'RectangleShape',
     init: function (txt) {
         this.superInit({
-            width: 64,
-            height: 64,
+            width: 96,
+            height: 96,
             cornerRadius: 10,
             fill: 'red',
             stroke: 'white',
         });
         this.label = Label({
             text: txt + "",
-            fontSize: 64 * 0.8,
+            fontSize: 96 * 0.8,
             fontFamily: "misaki_gothic",
             fill: 'white',
         }).addChildTo(this);
+        this.label.y += 8;  // 見た目の位置合わせ
     },
     setSize: function (width, height) {
         this.width = width;
@@ -1219,7 +1313,7 @@ phina.define("PlayerSprite", {
 
         this.status = PL_STATUS.INIT;
         this.spd = 1.0;
-        this.bombLeft = 1;
+        this.bombLeft = 3;
         this.bombStatus = 0;
         this.bombLv = 0;
         this.bombGauge = 0;
@@ -1250,8 +1344,8 @@ phina.define("PlayerSprite", {
 
         if (--this.shotIntvlTimer <= 0) {
             //            player.gotoAndPlay("shot");
-            // lv.0
             this.shotLv = -1;
+            // lv.0
             if (this.shotLv >= 0) {
                 let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
                 plBulletArray.push(plBullet);
@@ -1337,11 +1431,27 @@ phina.define("EnemySprite", {
         if (player.status.isDead) return;
         switch (this.define) {
             case EN_DEF.ENEMY01:
+            case EN_DEF.ENEMY02:
                 enemy01(this);
                 break;
 
             case EN_DEF.BOSS01:
+            case EN_DEF.BOSS02:
+            case EN_DEF.BOSS03:
+            case EN_DEF.BOSS04:
+            case EN_DEF.BOSS05:
+            case EN_DEF.BOSS06:
+            case EN_DEF.BOSS07:
+            case EN_DEF.BOSS08:
                 boss01(this);
+                break;
+
+            case EN_DEF.ITEM_SHOT:
+            case EN_DEF.ITEM_SPEED:
+            case EN_DEF.ITEM_BOMB:
+            case EN_DEF.ITEM_LIFE:
+            case EN_DEF.ITEM_LIFE_MAX:
+                enemy01(this);
                 break;
             default:
         }
@@ -1397,7 +1507,7 @@ function enemy02(tmpEne) {
 /**
  */
 function boss01(tmpEne) {
-    switch (enemy.status) {
+    switch (tmpEne.status) {
         case EN_STATUS.INIT:
             tmpEne.localCounter = 0;
             tmpEne.localStatus = 0;
@@ -1422,11 +1532,11 @@ function boss01(tmpEne) {
                     // 弾を撃つ
                     let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x - 32, tmpEne.y - 32, -16, 0).addChildTo(group7);
                     enBulletArray.push(enBullet);
-                    enemy.status = EN_STATUS.DEAD_INIT;
+                    tmpEne.status = EN_STATUS.DEAD_INIT;
                     break;
                 default:
             }
-            enemy.localCounter++;
+            tmpEne.localCounter++;
             break;
         case EN_STATUS.DEAD_INIT:
             tmpEne.status = EN_STATUS.DEAD;
@@ -1487,33 +1597,37 @@ phina.define("PlBombSprite", {
         this.setBoundingType("circle");
         this.radius = 0;
         this.status = 0;
-        this.timer = getRandomInt(60);
+        this.timer = getRandomInt(30);
+        this.isDead = false;
     },
 
     update: function (app) {
         switch (this.status) {
             case 0:
+                // 開始待ち
                 if (--this.timer <= 0) {
-                    this.timer = 180;
+                    this.timer = 60;
                     this.status = 1;
                 }
                 break;
             case 1:
-                this.bombScale += 1 / 60;
+                // 拡大
+                this.bombScale += 3 / 60;
                 if (--this.timer <= 0) {
-                    this.timer = 180;
+                    this.timer = 60;
                     this.bombScale = 3;
                     this.status = 2;
                 }
                 break;
             case 2:
-                this.bombScale -= 1 / 60;
+                // 縮小
+                this.bombScale -= 3 / 60;
                 if (--this.timer <= 0) {
-                    this.timer = 180;
+                    this.timer = 60;
                     this.bombScale = 0;
                     this.status = 3;
+                    this.isDead = true;
                 }
-                break;
             default:
         }
 
@@ -1644,20 +1758,21 @@ function checkPlayerToEnemy() {
                 // 当たったのがアイテムの場合
                 switch (tmpEne.define) {
                     case EN_DEF.ITEM_SHOT:
-                        if (++shotLv >= 4) {
-                            shotLv = 4;
+                        if (++player.shotLv >= 4) {
+                            player.shotLv = 4;
                             nowScore += 1000;
                         }
                         break;
                     case EN_DEF.ITEM_SPEED:
-                        if (++speed >= 8) {
-                            speed = 8;
+                        player.spd += 0.2;
+                        if (player.spd >= 2.0) {
+                            player.spd = 2.0;
                             nowScore += 1000;
                         }
                         break;
                     case EN_DEF.ITEM_BOMB:
-                        if (++bombLeft >= 10) {
-                            speed = 10;
+                        if (++player.bombLeft >= 10) {
+                            player.bombLeft = 10;
                             nowScore += 1000;
                         }
                         break;
@@ -1666,7 +1781,8 @@ function checkPlayerToEnemy() {
                             player.lifeMax = 10;
                             nowScore += 1000;
                         }
-                    // THRU
+                        player.lifeLeft = player.lifeMax;
+                        break;
                     case EN_DEF.ITEM_LIFE:
                         if (++player.lifeLeft >= player.lifeMax) {
                             player.lifeLeft = player.lifeMax;
@@ -1721,11 +1837,12 @@ function checkPlayerBulletToEnemy() {
         // 敵との当たり判定
         for (var jj = 0; jj < self.enemyArray.length; jj++) {
             if (tmpBlt.isDead) continue;
-            var tmpEne = self.enemyArray[jj];
 
+            var tmpEne = self.enemyArray[jj];
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
             if (tmpEne.invincivleTimer > 0) continue; // 無敵中
+            if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
                 let colliData = tmpEne.define.colliData[ii];
@@ -1790,14 +1907,16 @@ function checkPlayerBombToEnemy() {
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
             if (tmpEne.invincivleTimer > 0) continue; // 無敵中
+            if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
                 let colliData = tmpEne.define.colliData[ii];
                 if (!colliData.attr.bullet) continue; // 弾との当たり判定用データではない
+                if (64 * tmpBlt.bombScale < 0.1) continue;  // あまりに小さいと何も無いのに敵が死んだように見えるので
                 if (chkCollisionCircleOfs(
                     tmpBlt.x, tmpBlt.y,
                     0, 0,
-                    8,
+                    64 * tmpBlt.bombScale,
                     tmpEne.x, tmpEne.y,
                     colliData.ofs.x, colliData.ofs.y,
                     colliData.radius
@@ -1928,6 +2047,17 @@ function checkEnemyBulletToPlayer() {
         if (deadEneBulletArray[ii].parent == null) console.log("NULL!!");
         else deadEneBulletArray[ii].remove();
         self.enBulletArray.erase(deadEneBulletArray[ii]);
+    }
+}
+function clearPlayerBombArrays() {
+    var self = this;
+
+    for (let ii = self.plBombArray.length - 1; ii >= 0; ii--) {
+        let tmp = self.plBombArray[ii];
+        if (!tmp.isDead) continue;
+        if (tmp.parent == null) console.log("NULL!!");
+        else tmp.remove();
+        self.plBombArray.erase(tmp);
     }
 }
 
