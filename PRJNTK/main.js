@@ -1187,9 +1187,9 @@ phina.define('MainScene', {
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onpush = function () {
                     var twitterURL = phina.social.Twitter.createURL({
-                        text: "N.T.K. スコア: " + nowScore,
+                        text: "PROJECT N.T.K. スコア: " + nowScore,
                         hashtags: ["ネムレス", "NEMLESSS"],
-                        url: "https://iwasaku.github.io/test10/NTK/",
+                        url: "https://iwasaku.github.io/test10/PRJNTK/",
                     });
                     window.open(twitterURL);
                 };
