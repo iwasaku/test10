@@ -1014,9 +1014,9 @@ function checkPlayerToEnemy() {
                     tmpEne.invincivleTimer = 15;
                 } else {
                     tmpEne.status = EN_STATUS.DEAD;
-                    Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
-                    // 爆破パターンのセット
                     deadEnemyArray.push(tmpEne);
+                    // 爆破パターンのセット
+                    Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                 }
             } else {
                 // 当たったのがアイテムの場合
@@ -1201,7 +1201,7 @@ function checkPlayerBombToEnemy() {
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
-                deadEnemyArray.push(tmpEne);
+                Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                 break;
             }
         }
