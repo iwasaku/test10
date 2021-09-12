@@ -472,6 +472,13 @@ phina.main(function () {
         ]
     });
 
+    app.domElement.addEventListener('touchend', function dummy() {
+        var s = phina.asset.Sound();
+        s.loadFromBuffer();
+        s.play().stop();
+        app.domElement.removeEventListener('touchend', dummy);
+    });
+
     app.run();
 });
 
