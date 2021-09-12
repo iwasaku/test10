@@ -1,775 +1,5 @@
 phina.globalize();
-
 //console.log = function () { };  // ログを出す時にはコメントアウトする
-
-const SCREEN_WIDTH = 900;             // スクリーン幅
-const SCREEN_HEIGHT = 1600;                 // スクリーン高さ
-/*
-1画面約13.3秒＝800フレーム
-1600/800＝2dot/フレーム
-1ステージ60秒＝4+1画面＝2436*(4+1)
-
-※道中4画面、ボス1画面
-背景画像90x160x5とか？
-*/
-const SCREEN_CENTER_X = SCREEN_WIDTH / 2;   // スクリーン幅の半分
-const SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;  // スクリーン高さの半分
-
-var ASSETS = {
-    font: {
-        misaki_gothic: "https://cdn.leafscape.be/misaki/misaki_gothic_web.woff2"
-    },
-    image: {
-        "player": "./resource/squid.png",
-
-        "enemy01": "./resource/enemy/ice.png",
-
-        "boss01": "./resource/boss/boss.png",
-        "boss02": "./resource/boss/boss.png",
-        "boss03": "./resource/boss/boss.png",
-        "boss04": "./resource/boss/boss.png",
-        "boss05": "./resource/boss/boss.png",
-        "boss06": "./resource/boss/boss.png",
-        "boss07": "./resource/boss/boss.png",
-        "boss08": "./resource/boss/boss.png",
-
-        "pl_blt": "./resource/bullet/pb_o_16.png",
-
-        "en_blt_r_16": "./resource/bullet/eb_r_16.png",
-        "en_blt_o_16": "./resource/bullet/eb_o_16.png",
-        "en_blt_y_16": "./resource/bullet/eb_y_16.png",
-        "en_blt_g_16": "./resource/bullet/eb_g_16.png",
-        "en_blt_b_16": "./resource/bullet/eb_b_16.png",
-        "en_blt_p_16": "./resource/bullet/eb_p_16.png",
-        "en_blt_m_16": "./resource/bullet/eb_m_16.png",
-
-        "en_blt_r_24": "./resource/bullet/eb_r_24.png",
-        "en_blt_o_24": "./resource/bullet/eb_o_24.png",
-        "en_blt_y_24": "./resource/bullet/eb_y_24.png",
-        "en_blt_g_24": "./resource/bullet/eb_g_24.png",
-        "en_blt_b_24": "./resource/bullet/eb_b_24.png",
-        "en_blt_p_24": "./resource/bullet/eb_p_24.png",
-        "en_blt_m_24": "./resource/bullet/eb_m_24.png",
-
-        "en_blt_r_48": "./resource/bullet/eb_r_48.png",
-        "en_blt_o_48": "./resource/bullet/eb_o_48.png",
-        "en_blt_y_48": "./resource/bullet/eb_y_48.png",
-        "en_blt_g_48": "./resource/bullet/eb_g_48.png",
-        "en_blt_b_48": "./resource/bullet/eb_b_48.png",
-        "en_blt_p_48": "./resource/bullet/eb_p_48.png",
-        "en_blt_m_48": "./resource/bullet/eb_m_48.png",
-
-        "bomb01": "./resource/bomb/NTK_01.png",
-        "bomb02": "./resource/bomb/NTK_02.png",
-        "bomb03": "./resource/bomb/NTK_03.png",
-        "bomb04": "./resource/bomb/NTK_04.png",
-        "bomb05": "./resource/bomb/NTK_05.png",
-        "bomb06": "./resource/bomb/NTK_06.png",
-        "bomb07": "./resource/bomb/NTK_07.png",
-        "bomb08": "./resource/bomb/NTK_08.png",
-        "bomb09": "./resource/bomb/NTK_09.png",
-        "bomb10": "./resource/bomb/NTK_10.png",
-
-        "stg01": "./resource/stage/stg1.png?1",
-        "stg02": "./resource/stage/stg2.png?1",
-        "stg03": "./resource/stage/stg1.png?1",
-        "stg04": "./resource/stage/stg2.png?1",
-        "stg05": "./resource/stage/stg1.png?1",
-        "stg06": "./resource/stage/stg2.png?1",
-        "stg07": "./resource/stage/stg1.png?1",
-        "stg08": "./resource/stage/stg2.png?1",
-    },
-};
-// 定義
-const PL_STATUS = defineEnum({
-    INIT: {
-        value: 0,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(0),         // 死んでない
-        isAccKey: Boolean(0),       // キー入力を受け付けない
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'init'
-    },
-    START: {
-        value: 1,
-        isStarted: Boolean(1),      // スタート済み
-        isDead: Boolean(0),         // 死んでない
-        isAccKey: Boolean(1),       // キー入力を受け付ける
-        isCollision: Boolean(1),    // 無敵モードOFF
-        string: 'start'
-    },
-    INVINCIBLE: {
-        value: 2,
-        isStarted: Boolean(1),      // スタート済み
-        isDead: Boolean(0),         // 死んでない
-        isAccKey: Boolean(1),       // キー入力を受け付ける
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'invincble'
-    },
-    DEAD_INIT: {
-        value: 3,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(1),         // 死んだ
-        isAccKey: Boolean(0),       // キー入力を受け付けない
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'dead_init'
-    },
-    DEAD: {
-        value: 4,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(1),         // 死んだ
-        isAccKey: Boolean(0),       // キー入力を受け付けない
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'dead'
-    },
-});
-
-const EN_STATUS = defineEnum({
-    INIT: {
-        value: 0,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(0),         // 死んでない
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'init'
-    },
-    START: {
-        value: 1,
-        isStarted: Boolean(1),      // スタート済み
-        isDead: Boolean(0),         // 死んでない
-        isCollision: Boolean(1),    // 当たり判定有り
-        string: 'start'
-    },
-    DEAD_INIT: {
-        value: 3,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(1),         // 死んだ
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'dead_init'
-    },
-    DEAD: {
-        value: 4,
-        isStarted: Boolean(0),      // スタートしてない
-        isDead: Boolean(1),         // 死んだ
-        isCollision: Boolean(0),    // 当たり判定無し
-        string: 'dead'
-    },
-});
-
-const EN_ATTR = defineEnum({
-    ENEMY: {
-        value: 0,
-    },
-    ITEM: {
-        value: 1,
-    },
-});
-const COLLI_ATTR = defineEnum({
-    BULLET: {
-        bullet: Boolean(1), // 弾に当たる
-        body: Boolean(0),   // 機体に当たらない
-    },
-    BODY: {
-        bullet: Boolean(0), // 弾に当たらない
-        body: Boolean(1),   // 機体に当たる
-    },
-    BOTH: {
-        bullet: Boolean(1), // 弾に当たる
-        body: Boolean(1),   // 機体に当たる
-    },
-});
-
-const EN_DEF = defineEnum({
-    ENEMY01: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 1,
-        pts: 10,
-    },
-    ENEMY02: {
-        sprName: "enemy01",
-        sprSize: { x: 256, y: 256 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 2,
-        pts: 20,
-    },
-
-    BOSS01: {
-        sprName: "boss01",
-        sprSize: { x: 256, y: 256 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS02: {
-        sprName: "boss02",
-        sprSize: { x: 256, y: 256 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS03: {
-        sprName: "boss03",
-        sprSize: { x: 384, y: 384 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS04: {
-        sprName: "boss04",
-        sprSize: { x: 384, y: 384 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS05: {
-        sprName: "boss05",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS06: {
-        sprName: "boss06",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS07: {
-        sprName: "boss07",
-        sprSize: { x: 640, y: 640 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS08: {
-        sprName: "boss08",
-        sprSize: { x: 768, y: 768 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.ENEMY,
-        life: 100,
-        pts: 20000,
-    },
-
-    ITEM_SHOT: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-    ITEM_SPEED: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-    ITEM_BOMB: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-    ITEM_LIFE: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-    ITEM_LIFE_MAX: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-    ITEM_FAIRY: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BODY, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        life: 0,
-        pts: 0,
-    },
-});
-
-const BULLET_DEF = defineEnum({
-    PL_O_16: {
-        sprName: "pl_blt",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 99,
-    },
-
-    EN_R_16: {
-        sprName: "en_blt_r_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_O_16: {
-        sprName: "en_blt_o_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_Y_16: {
-        sprName: "en_blt_y_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_G_16: {
-        sprName: "en_blt_g_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_B_16: {
-        sprName: "en_blt_b_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_P_16: {
-        sprName: "en_blt_p_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-    EN_M_16: {
-        sprName: "en_blt_m_16",
-        sprSize: { x: 16, y: 16 },
-        radius: 7,
-        lv: 1,
-    },
-
-    EN_R_24: {
-        sprName: "en_blt_r_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_O_24: {
-        sprName: "en_blt_o_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_Y_24: {
-        sprName: "en_blt_y_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_G_24: {
-        sprName: "en_blt_g_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_B_24: {
-        sprName: "en_blt_b_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_P_24: {
-        sprName: "en_blt_p_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-    EN_M_24: {
-        sprName: "en_blt_m_24",
-        sprSize: { x: 24, y: 24 },
-        radius: 11,
-        lv: 3,
-    },
-
-    EN_R_48: {
-        sprName: "en_blt_r_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_O_48: {
-        sprName: "en_blt_o_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_Y_48: {
-        sprName: "en_blt_y_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_G_48: {
-        sprName: "en_blt_g_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_B_48: {
-        sprName: "en_blt_b_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_P_48: {
-        sprName: "en_blt_p_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-    EN_M_48: {
-        sprName: "en_blt_m_48",
-        sprSize: { x: 48, y: 48 },
-        radius: 23,
-        lv: 5,
-    },
-});
-
-const BOMB_DEF = defineEnum({
-    BOMB_LV_0: {
-        sprName: "bomb01",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 1,
-    },
-    BOMB_LV_1: {
-        sprName: "bomb02",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_2: {
-        sprName: "bomb03",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_3: {
-        sprName: "bomb04",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_4: {
-        sprName: "bomb05",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_5: {
-        sprName: "bomb06",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_6: {
-        sprName: "bomb07",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_7: {
-        sprName: "bomb08",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_8: {
-        sprName: "bomb09",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-    BOMB_LV_9: {
-        sprName: "bomb10",
-        sprSize: { x: 128, y: 128 },
-        radius: 128,
-        lv: 0,
-    },
-});
-
-const BB_STATUS = defineEnum({
-    WAIT: {
-        value: 0,
-        string: 'init'
-    },
-    START: {
-        value: 1,
-        string: 'start'
-    },
-    END: {
-        value: 2,
-        string: 'end'
-    },
-});
-
-const bombTable = [
-    { bomb: BOMB_DEF.BOMB_LV_0, num: 10 },
-    { bomb: BOMB_DEF.BOMB_LV_1, num: 20 },
-    { bomb: BOMB_DEF.BOMB_LV_2, num: 30 },
-    { bomb: BOMB_DEF.BOMB_LV_3, num: 40 },
-    { bomb: BOMB_DEF.BOMB_LV_4, num: 50 },
-    { bomb: BOMB_DEF.BOMB_LV_5, num: 60 },
-    { bomb: BOMB_DEF.BOMB_LV_6, num: 70 },
-    { bomb: BOMB_DEF.BOMB_LV_7, num: 80 },
-    { bomb: BOMB_DEF.BOMB_LV_8, num: 90 },
-    { bomb: BOMB_DEF.BOMB_LV_9, num: 100 },
-];
-
-const CMD = defineEnum({
-    SET_ENEMY: {
-        // 敵の配置
-        value: 0,
-    },
-    STOP_CTRL_COUNTER: {
-        // コントロールカウンターを止める
-        value: 0,
-    },
-    SET_CTRL_COUNTER: {
-        // コントロールカウンターの値をセットする
-        value: 0,
-    },
-    START_SCROLL: {
-        // ボス前でスクロールを止める
-        value: 0,
-    },
-    STOP_SCROLL: {
-        // ボス前でスクロールを止める
-        value: 0,
-    },
-    SET_SCROLL_YPOS: {
-        // スクロールY座標をセット
-        value: 0,
-    },
-    SET_SCROLL_DATA: {
-        // スクロールデータを設定する
-        value: 0,
-    },
-    FADE_IN: {
-        // フェード・イン
-        value: 0,
-    },
-    FADE_NOW: {
-        // フェード中
-        value: 0,
-    },
-    FADE_OUT: {
-        // フェード・アウト
-        value: 0,
-    },
-    DISP_STAGE_NUM: {
-        // ステージ数表示
-        value: 0,
-    },
-});
-// 管理テーブル
-// トランジション用に先頭へ１面追加する場合はSET_SCROLL_DATAとSTOP_SCROLLを調整する
-// 周回するときのBG処理の関係上ステージ数は偶数にする
-const ctrlTable = [
-    // STG1
-    // 地上
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
-
-        //        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE_MAX, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_SPEED, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
-
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 0, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 1, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 2, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 3, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 4, yPos: -64, xSpd: 0, ySpd: 8 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 5, yPos: -64, xSpd: 0, ySpd: 8 } },
-
-        //        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        //        { count: 1260, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        //        { count: 1860, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        //        { count: 2460, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        //        { count: 3060, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-
-        { count: 800 * 4, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
-
-        { count: 3660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.BOSS01, xPos: SCREEN_CENTER_X, yPos: -128, xSpd: 0, ySpd: 8 } },
-
-        // 万が一オーバーフローするとめんどくさいので
-        { count: 3661, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
-    ],
-    // STG2
-    // 地上
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 2" } },
-
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-
-        // １画面分スクロールした辺りで次の面の準備
-        { count: 900, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
-        { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg03", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 1260, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 1860, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 2460, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 3060, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 3660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-
-        // ボス前
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-        { count: 4260, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.BOSS02, xPos: 0, yPos: 0 } },
-
-        // 無限に雑魚を出現させる
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 0, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 1, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 2, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 3, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 4, yPos: -64, xSpd: 0, ySpd: 8 } },
-        { count: 4260 + 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 128 + 128 * 5, yPos: -64, xSpd: 0, ySpd: 8 } },
-
-        { count: 4260 + 60 * 2, cmd: CMD.SET_CTRL_COUNTER, param: { cnt: 4260 + 59 } },
-    ],
-    // STG3
-    // 上空
-    // 地上→上空へのトランジション用に先頭へ１面追加する？
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 3" } },
-
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-    // STG4
-    // 宇宙
-    // 上空→宇宙へのトランジション用に先頭へ１面追加する？
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 4" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg04", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-    // STG5
-    // 亜空間
-    // 宇宙→亜空間へのトランジション用に先頭へ１面追加する？
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 5" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg05", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-    // STG6
-    // 宇宙
-    // 亜空間→宇宙へのトランジション用に先頭へ１面追加する？
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 6" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg06", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-    // STG7
-    // 基地
-    // 宇宙→基地へのトランジション用に先頭へ１面追加する？
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 7" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg07", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-    // STG8
-    // 基地
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 8" } },
-        { count: 0, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg08", yPos: -SCREEN_HEIGHT * 2.5, ySize: 1600 * 5 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 10, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: 0, yPos: 0 } },
-        { count: 800 * 5, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-    ],
-];
 
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
@@ -1046,7 +276,6 @@ phina.define('MainScene', {
             if (player.status.isStarted) {
                 totalFrame++;
                 totalSec = Math.floor(totalFrame / app.fps);
-
                 // NTKゲージ管理
                 ntkGaugeLabel.text = "";
                 switch (bombButtonStatus) {
@@ -1344,7 +573,7 @@ phina.define("PlayerSprite", {
 
         if (--this.shotIntvlTimer <= 0) {
             //            player.gotoAndPlay("shot");
-            this.shotLv = -1;
+            //            this.shotLv = -1;
             // lv.0
             if (this.shotLv >= 0) {
                 let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
@@ -1667,6 +896,40 @@ phina.define("EnBulletSprite", {
     },
 });
 
+// 爆発クラス
+phina.define("Explosion", {
+    // Spriteを継承
+    superClass: 'Sprite',
+    // 初期化
+    init: function (xpos, ypos) {
+        // 親クラスの初期化
+        this.superInit('explosion', 48, 48);
+        // SpriteSheetをスプライトにアタッチ
+        var anim = FrameAnimation('explosion_ss').attachTo(this);
+        // スプライトシートのサイズにフィットさせない
+        anim.fit = false;
+        //アニメーションを再生する
+        anim.gotoAndPlay('start');
+        // サイズ変更
+        this.setSize(128, 128);
+
+        //        this.blendMode = 'lighter';
+
+        this.x = xpos;
+        this.y = ypos;
+
+        // 参照用
+        this.anim = anim;
+    },
+    // 毎フレーム処理
+    update: function () {
+        // アニメーションが終わったら自身を消去
+        if (this.anim.finished) {
+            this.remove();
+        }
+    },
+});
+
 // 敵の入場退場処理
 function checkEnemyPosition() {
     if (player.status.isDead) return;
@@ -1751,9 +1014,10 @@ function checkPlayerToEnemy() {
                     tmpEne.invincivleTimer = 15;
                 } else {
                     tmpEne.status = EN_STATUS.DEAD;
+                    Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
+                    // 爆破パターンのセット
                     deadEnemyArray.push(tmpEne);
                 }
-                // 爆破パターンのセット
             } else {
                 // 当たったのがアイテムの場合
                 switch (tmpEne.define) {
@@ -1868,6 +1132,7 @@ function checkPlayerBulletToEnemy() {
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
+                Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                 break;
             }
         }
@@ -1925,6 +1190,8 @@ function checkPlayerBombToEnemy() {
                 tmpBlt.isDead = true;
                 deadPlBombArray.push(tmpBlt);
 
+                // 爆発
+
                 // 敵処理
                 if (--tmpEne.life >= 1) {
                     // 残ライフが1以上
@@ -1934,6 +1201,7 @@ function checkPlayerBombToEnemy() {
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
+                deadEnemyArray.push(tmpEne);
                 break;
             }
         }
@@ -1955,6 +1223,7 @@ function checkPlayerBombToEnemy() {
         self.enemyArray.erase(deadEnemyArray[ii]);
     }
 }
+
 function checkPlayerBombToEnemyBullet() {
     if (player.status.isDead) return;
 
@@ -1991,7 +1260,6 @@ function checkPlayerBombToEnemyBullet() {
             deadEneBulletArray.push(tmpEne);
         }
     }
-
 
     // 削除対象のプレイヤー弾を削除
     for (var ii = 0; ii < deadPlBombArray.length; ii++) {
@@ -2049,6 +1317,7 @@ function checkEnemyBulletToPlayer() {
         self.enBulletArray.erase(deadEneBulletArray[ii]);
     }
 }
+
 function clearPlayerBombArrays() {
     var self = this;
 
@@ -2060,7 +1329,6 @@ function clearPlayerBombArrays() {
         self.plBombArray.erase(tmp);
     }
 }
-
 
 // 配列クリア
 function clearArrays() {
