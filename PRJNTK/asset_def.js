@@ -64,7 +64,6 @@ var ASSETS = {
 
         "explosion": "./resource/expl/expl_48.png",
     },
-    // スプライトシート
     spritesheet: {
         "explosion_ss":
         {
@@ -84,5 +83,10 @@ var ASSETS = {
                 },
             }
         },
-    }
+    },
+    sound: {
+        "explosion": "https://iwasaku.github.io/test10/PRJNTK/resource/se/se_explode08.mp3",
+        "shot": "https://iwasaku.github.io/test10/PRJNTK/resource/se/laser2.mp3",
+        "item": "https://iwasaku.github.io/test7/NEMLESSSTER/resource/coin05.mp3",
+    },
 };

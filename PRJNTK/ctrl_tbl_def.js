@@ -58,6 +58,8 @@ const ctrlTable = [
         { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         { count: 660, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 120, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
+        { count: 150, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ITEM_LIFE_MAX, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
 
         //{ count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },
         //{ count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, ene: EN_DEF.ENEMY01, xPos: SCREEN_CENTER_X, yPos: -64, xSpd: 0, ySpd: 8 } },

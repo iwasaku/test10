@@ -127,6 +127,7 @@ phina.define("TitleScene", {
     },
     // タッチで次のシーンへ
     onpointstart: function () {
+
         this.exit();
     },
 });
@@ -1017,6 +1018,7 @@ function checkPlayerToEnemy() {
                     deadEnemyArray.push(tmpEne);
                     // 爆破パターンのセット
                     Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
+                    SoundManager.play("explosion");
                 }
             } else {
                 // 当たったのがアイテムの場合
@@ -1064,6 +1066,7 @@ function checkPlayerToEnemy() {
                 }
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
+                SoundManager.play("item");
             }
             break;
         }
@@ -1133,6 +1136,7 @@ function checkPlayerBulletToEnemy() {
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
+                SoundManager.play("explosion");
                 break;
             }
         }
@@ -1202,6 +1206,7 @@ function checkPlayerBombToEnemy() {
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
+                SoundManager.play("explosion");
                 break;
             }
         }
