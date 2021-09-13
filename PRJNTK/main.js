@@ -113,7 +113,7 @@ phina.define("TitleScene", {
         this.backgroundColor = 'black';
         // ラベル
         Label({
-            text: 'PROJRCT\nN.T.K.',
+            text: 'PROJRCT\nN.T.K\n1',
             fontSize: 160,
             fontFamily: "misaki_gothic",
             fill: 'white',
