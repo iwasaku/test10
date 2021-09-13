@@ -1,15 +1,15 @@
 phina.globalize();
 //console.log = function () { };  // ログを出す時にはコメントアウトする
 
-const explosionSE = new Howl({
-    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/se_explode08.mp3"
-});
-const shotSE = new Howl({
-    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/laser2.mp3"
-});
-const itemSE = new Howl({
-    src: "https://iwasaku.github.io/test7/NEMLESSSTER/resource/coin05.mp3"
-});
+//const explosionSE = new Howl({
+//    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/se_explode08.mp3"
+//});
+//const shotSE = new Howl({
+//    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/laser2.mp3"
+//});
+//const itemSE = new Howl({
+//    src: "https://iwasaku.github.io/test7/NEMLESSSTER/resource/coin05.mp3"
+//});
 
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
@@ -123,7 +123,7 @@ phina.define("TitleScene", {
         this.backgroundColor = 'black';
         // ラベル
         Label({
-            text: 'PROJRCT\nN.T.K\n2',
+            text: 'PROJRCT\nN.T.K\n3',
             fontSize: 160,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -480,6 +480,13 @@ phina.main(function () {
                 nextLabel: 'main',
             },
         ]
+    });
+
+    app.domElement.addEventListener('touchend', function dummy() {
+        var s = phina.asset.Sound();
+        s.loadFromBuffer();
+        s.play().stop();
+        app.domElement.removeEventListener('touchend', dummy);
     });
 
     app.run();
@@ -1028,8 +1035,8 @@ function checkPlayerToEnemy() {
                     deadEnemyArray.push(tmpEne);
                     // 爆破パターンのセット
                     Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
-                    //SoundManager.play("explosion");
-                    explosionSE.play();
+                    SoundManager.play("explosion");
+                    //explosionSE.play();
                 }
             } else {
                 // 当たったのがアイテムの場合
@@ -1077,8 +1084,8 @@ function checkPlayerToEnemy() {
                 }
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
-                //SoundManager.play("item");
-                itemSE.play();
+                SoundManager.play("item");
+                //itemSE.play();
             }
             break;
         }
@@ -1148,8 +1155,8 @@ function checkPlayerBulletToEnemy() {
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
-                //SoundManager.play("explosion");
-                explosionSE.play();
+                SoundManager.play("explosion");
+                //explosionSE.play();
                 break;
             }
         }
@@ -1219,8 +1226,8 @@ function checkPlayerBombToEnemy() {
                 deadEnemyArray.push(tmpEne);
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
-                //SoundManager.play("explosion");
-                explosionSE.play();
+                SoundManager.play("explosion");
+                //explosionSE.play();
                 break;
             }
         }
