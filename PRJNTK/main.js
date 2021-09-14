@@ -1,16 +1,6 @@
 phina.globalize();
 //console.log = function () { };  // ログを出す時にはコメントアウトする
 
-//const explosionSE = new Howl({
-//    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/se_explode08.mp3"
-//});
-//const shotSE = new Howl({
-//    src: "https://iwasaku.github.io/test10/PRJNTK/resource/se/laser2.mp3"
-//});
-//const itemSE = new Howl({
-//    src: "https://iwasaku.github.io/test7/NEMLESSSTER/resource/coin05.mp3"
-//});
-
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
 let group1 = null;  // BG
@@ -137,7 +127,6 @@ phina.define("TitleScene", {
     },
     // タッチで次のシーンへ
     onpointstart: function () {
-        //SoundManager.play("explosion");
         this.exit();
     },
 });
@@ -482,6 +471,8 @@ phina.main(function () {
         ]
     });
 
+    // iOSなどでユーザー操作がないと音がならない仕様対策
+    // 起動後初めて画面をタッチした時に『無音』を鳴らす
     app.domElement.addEventListener('touchend', function dummy() {
         var s = phina.asset.Sound();
         s.loadFromBuffer();
@@ -640,6 +631,7 @@ phina.define("PlayerSprite", {
                 plBulletArray.push(plBullet);
                 this.shotIntvlTimer = 8;
             }
+            SoundManager.play("shot");
         }
 
     },
@@ -1036,7 +1028,6 @@ function checkPlayerToEnemy() {
                     // 爆破パターンのセット
                     Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                     SoundManager.play("explosion");
-                    //explosionSE.play();
                 }
             } else {
                 // 当たったのがアイテムの場合
@@ -1085,7 +1076,6 @@ function checkPlayerToEnemy() {
                 tmpEne.status = EN_STATUS.DEAD;
                 deadEnemyArray.push(tmpEne);
                 SoundManager.play("item");
-                //itemSE.play();
             }
             break;
         }
@@ -1156,7 +1146,6 @@ function checkPlayerBulletToEnemy() {
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                 SoundManager.play("explosion");
-                //explosionSE.play();
                 break;
             }
         }
@@ -1227,7 +1216,6 @@ function checkPlayerBombToEnemy() {
                 // 爆破パターンのセット
                 Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
                 SoundManager.play("explosion");
-                //explosionSE.play();
                 break;
             }
         }
