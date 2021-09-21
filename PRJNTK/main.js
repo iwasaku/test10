@@ -166,7 +166,7 @@ phina.define('MainScene', {
             {
                 text: "0",
                 fontSize: 80,
-                //            fontWeight: "bold",
+                //fontWeight: "bold",
                 fontFamily: "misaki_gothic",
                 align: "right",
                 //baseline: "bottom",
@@ -253,7 +253,7 @@ phina.define('MainScene', {
                 if ((this.x <= 0 + 64) || (this.x >= SCREEN_WIDTH - 64)) {
                     this.x = oldX;
                 }
-                if ((this.y <= 0 + 64) || (this.y >= SCREEN_HEIGHT - 64)) {
+                if ((this.y <= 0 + 128) || (this.y >= SCREEN_HEIGHT - 64)) {
                     this.y = oldY;
                 }
             }
@@ -282,7 +282,6 @@ phina.define('MainScene', {
                     case BB_STATUS.WAIT:
                         break;
                     case BB_STATUS.START:
-                        console.log("sw onpointstart");
                         if (player.bombLeft <= 0) {
                             bombButtonStatus = BB_STATUS.WAIT;
                             player.bombStatus = 0;
@@ -388,7 +387,8 @@ phina.define('MainScene', {
             checkPlayerBulletToEnemy();
             checkEnemyBulletToPlayer();
             checkPlayerToEnemy();
-            clearPlayerBombArrays();
+            clearDeadPlayerBombArrays();
+            clearDeadEnemyArrays();
 
             nowScoreLabel.text = nowScore; // カンスト：999999999
 
@@ -483,9 +483,8 @@ phina.main(function () {
     app.run();
 });
 
-/*
- * ピースクラス
- * 数字当て問題の選択肢。角丸Rectに数字を貼り付けたもの
+/**
+ * ボタン
  */
 phina.define('prjButton', {
     superClass: 'RectangleShape',
@@ -567,22 +566,22 @@ phina.define("PlayerSprite", {
         if (this.status === PL_STATUS.INIT) {
             this.status = PL_STATUS.START;
         };
+        if (this.status === PL_STATUS.DEAD_INIT) {
+            this.status = PL_STATUS.DEAD;
+        }
         if (this.status === PL_STATUS.DEAD) {
-            //            this.setAlpha(1.0);
+            this.alpha = 1.0;
             return;
         }
         if (--this.invincivleTimer < 0) this.invincivleTimer = 0;
         if (this.invincivleTimer % 2 === 0) {
-            //            this.setAlpha(1.0);
             this.alpha = 1.0;
         } else {
-            //            this.setAlpha(0.0);
             this.alpha = 0.0;
         }
 
         if (--this.shotIntvlTimer <= 0) {
-            //            player.gotoAndPlay("shot");
-            //            this.shotLv = -1;
+            return;
             // lv.0
             if (this.shotLv >= 0) {
                 let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
@@ -645,13 +644,14 @@ phina.define("EnemySprite", {
 
     init: function (uid, param) {
         this.uid = uid;
-        this.define = param.ene;
-        this.superInit(param.ene.sprName);
-        this.setSize(param.ene.sprSize.x, param.ene.sprSize.y);
+        this.param = param;
+        this.define = param.define;
+        this.superInit(this.define.sprName);
+        this.setSize(this.define.sprSize.x, this.define.sprSize.y);
         this.setScale(1, 1);
         this.direct = '';
-        this.xSpd = param.xSpd;
-        this.ySpd = param.ySpd;
+        this.spd = Vector2(0, this.define.spd);
+        this.spdOld = this.spd;
         this.zRot = 0;
         this.setPosition(param.xPos, param.yPos);
         this.setInteractive(false);
@@ -661,17 +661,49 @@ phina.define("EnemySprite", {
         this.collisionEnable = false;
         this.localCounter = 0;
         this.localStatus = 0;
-        this.life = param.ene.life;
-        this.invincivleTimer = 15;
+        this.localTimer = 0;
+        this.shotIntervalTimer = 0;
+        this.shotBurstCounter = 0;
+        this.shotBurstTimer = 0;
+        this.life = this.define.life;
         this.isReady = false;
     },
 
     update: function (app) {
         if (player.status.isDead) return;
         switch (this.define) {
-            case EN_DEF.ENEMY01:
-            case EN_DEF.ENEMY02:
-                enemy01(this);
+            case EN_DEF.ENEMY00:
+                enemyMove00(this, true);
+                break;
+            case EN_DEF.ENEMY01_0:
+            case EN_DEF.ENEMY01_1:
+                enemyMove01(this);
+                break;
+            case EN_DEF.ENEMY02_0:
+            case EN_DEF.ENEMY02_1:
+                enemyMove02(this);
+                break;
+            case EN_DEF.ENEMY03_0:
+            case EN_DEF.ENEMY03_1:
+                enemyMove03(this);
+                break;
+            case EN_DEF.ENEMY04_0:
+            case EN_DEF.ENEMY04_1:
+                enemyMove04(this);
+                break;
+            case EN_DEF.ENEMY05:
+                enemyMove05(this);
+                break;
+            case EN_DEF.ENEMY06:
+                enemyMove06(this);
+                break;
+            case EN_DEF.ENEMY07:
+                enemyMove07(this);
+                break;
+            case EN_DEF.ENEMY08:
+            case EN_DEF.ENEMY09:
+            case EN_DEF.ENEMY10:
+                enemyMove00(this, true);
                 break;
 
             case EN_DEF.BOSS01:
@@ -690,56 +722,717 @@ phina.define("EnemySprite", {
             case EN_DEF.ITEM_BOMB:
             case EN_DEF.ITEM_LIFE:
             case EN_DEF.ITEM_LIFE_MAX:
-                enemy01(this);
+                enemyMove00(this, false);
                 break;
             default:
         }
         if (this.status === EN_STATUS.START) {
-            if (--this.invincivleTimer < 0) this.invincivleTimer = 0;
-            this.x += this.xSpd;
-            this.y += this.ySpd;
+            this.x += this.spd.x;
+            this.y += this.spd.y;
         }
+        this.localTimer++;
+        this.shotIntervalTimer++;
     },
 });
 
 /**
- * 
+ * 直進
+ * @param {*} tmpEne 
  */
-function enemy01(tmpEne) {
+function enemyMove00(tmpEne, shotFlag) {
     switch (tmpEne.status) {
         case EN_STATUS.INIT:
+            if (tmpEne.x <= 0) {
+                // 左から
+                tmpEne.spd = Vector2(tmpEne.define.spd, 0);
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                // 右から
+                tmpEne.spd = Vector2(-tmpEne.define.spd, 0);
+            } else if (tmpEne.y <= 0) {
+                // 上から
+                tmpEne.spd = Vector2(0, tmpEne.define.spd);
+            } else {
+                // 下から
+                tmpEne.spd = Vector2(0, -tmpEne.define.spd);
+            }
             tmpEne.status = EN_STATUS.START;
             tmpEne.collisionEnable = true;
         // THRU
         case EN_STATUS.START:
+            if (shotFlag) {
+                enemyShotCommon(tmpEne);
+            }
             break;
         case EN_STATUS.DEAD_INIT:
             tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
         // THRU
         case EN_STATUS.DEAD:
             break;
     }
 }
 
-function enemy02(tmpEne) {
+/**
+ * 斜め
+ * @param {*} tmpEne 
+ */
+function enemyMove01(tmpEne) {
     switch (tmpEne.status) {
         case EN_STATUS.INIT:
+            let deg;
+            if (tmpEne.x <= 0) {
+                if (tmpEne.y <= SCREEN_CENTER_Y) {
+                    // 左上から
+                    deg = 90 - 45;
+                } else {
+                    // 左下から
+                    deg = 270 + 45;
+                }
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                if (tmpEne.y <= SCREEN_CENTER_Y) {
+                    // 右上から
+                    deg = 90 + 45;
+                } else {
+                    // 右下から
+                    deg = 270 - 45;
+                }
+            } else if (tmpEne.y <= 0) {
+                if (tmpEne.x <= SCREEN_CENTER_X) {
+                    // 左上から
+                    deg = 90 - 45;
+                } else {
+                    // 右上から
+                    deg = 90 + 45;
+                }
+            } else if (tmpEne.y >= SCREEN_HEIGHT) {
+                if (tmpEne.x <= SCREEN_CENTER_X) {
+                    // 左下から
+                    deg = 270 + 45;
+                } else {
+                    // 右下から
+                    deg = 270 - 45;
+                }
+            }
+            tmpEne.spd = fromDegreeToVec(deg, tmpEne.define.spd);
+            tmpEne.localStatus = 0;
             tmpEne.status = EN_STATUS.START;
             tmpEne.collisionEnable = true;
-            tmpEne.xSpd = +8;
         // THRU
         case EN_STATUS.START:
-            if (tmpEne.x < 0 + 8) {
-                tmpEne.xSpd = +8;
-            } else if (tmpEne.x > SCREEN_WIDTH - 8) {
-                tmpEne.xSpd = -8;
+            enemyShotCommon(tmpEne);
+            if (tmpEne.define !== EN_DEF.ENEMY01_0) {
+                switch (tmpEne.localStatus) {
+                    case 0:
+                        if (tmpEne.x < 0 + 64) break;
+                        if (tmpEne.x > SCREEN_WIDTH - 64) break;
+                        if (tmpEne.y < 0 + 64) break;
+                        if (tmpEne.y > SCREEN_HEIGHT - 64) break;
+                        tmpEne.localStatus = 1;
+                    // THRU
+                    case 1:
+                        let absSpdX = Math.abs(tmpEne.spd.x);
+                        if (tmpEne.x < 0 + absSpdX) {
+                            tmpEne.spd.x *= -1;
+                            shotSector(tmpEne, SHOT_TYPE.SECTOR_RIGHT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                            enemyShot(tmpEne);
+                        } else if (tmpEne.x > SCREEN_WIDTH - absSpdX) {
+                            tmpEne.spd.x *= -1;
+                            shotSector(tmpEne, SHOT_TYPE.SECTOR_LEFT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                        }
+                        break;
+                }
             }
             break;
         case EN_STATUS.DEAD_INIT:
             tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
         // THRU
         case EN_STATUS.DEAD:
             break;
+    }
+}
+
+/**
+ * 軸が合うと自機側へ直角に曲がる
+ * @param {*} tmpEne 
+ */
+function enemyMove02(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            if (tmpEne.x <= 0) {
+                // 左から
+                tmpEne.spd = Vector2(tmpEne.define.spd, 0);
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                // 右から
+                tmpEne.spd = Vector2(-tmpEne.define.spd, 0);
+            } else if (tmpEne.y <= 0) {
+                // 上から
+                tmpEne.spd = Vector2(0, tmpEne.define.spd);
+            } else {
+                // 下から
+                tmpEne.spd = Vector2(0, -tmpEne.define.spd);
+            }
+            if (tmpEne.spd.x !== 0) {
+                tmpEne.localStatus = 1;
+            } else {
+                tmpEne.localStatus = 0;
+            }
+            tmpEne.localCounter = tmpEne.define.turn;
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (((tmpEne.spd.y > 0) && (player.y < tmpEne.y)) || ((tmpEne.spd.y < 0) && (player.y >= tmpEne.y))) {
+                        let absSpdX = Math.abs(tmpEne.spd.y);
+                        tmpEne.spd.y = 0;
+                        if (player.x < tmpEne.x) {
+                            tmpEne.spd.x = -absSpdX;
+                        } else {
+                            tmpEne.spd.x = absSpdX;
+                        }
+                        if (--tmpEne.localCounter === 0) {
+                            tmpEne.localStatus = 2;
+                        } else {
+                            tmpEne.localStatus = 1;
+                        }
+                        enemyShotCommon(tmpEne);
+                    }
+                    break;
+                case 1:
+                    if (((tmpEne.spd.x > 0) && (player.x < tmpEne.x)) || ((tmpEne.spd.x < 0) && (player.x >= tmpEne.x))) {
+                        let absSpdY = Math.abs(tmpEne.spd.x);
+                        tmpEne.spd.x = 0;
+                        if (player.y > tmpEne.y) {
+                            tmpEne.spd.y = absSpdY;
+                        } else {
+                            tmpEne.spd.y = -absSpdY;
+                        }
+                        if (--tmpEne.localCounter === 0) {
+                            tmpEne.localStatus = 2;
+                        } else {
+                            tmpEne.localStatus = 0;
+                        }
+                        enemyShotCommon(tmpEne);
+                    }
+                    break;
+                // THRU
+                case 2:
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ * 自機の近くまで来たら反転
+ * @param {*} tmpEne 
+ */
+function enemyMove03(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            if (tmpEne.x <= 0) {
+                // 左から
+                tmpEne.spd = Vector2(tmpEne.define.spd, 0);
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                // 右から
+                tmpEne.spd = Vector2(-tmpEne.define.spd, 0);
+            } else if (tmpEne.y <= 0) {
+                // 上から
+                tmpEne.spd = Vector2(0, tmpEne.define.spd);
+            } else {
+                // 下から
+                tmpEne.spd = Vector2(0, -tmpEne.define.spd);
+            }
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+            tmpEne.localStatus = 0;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (tmpEne.define === EN_DEF.ENEMY03_0) {
+                        // 軸でチェック
+                        if (tmpEne.spd.x === 0) {
+                            if (tmpEne.spd.y >= 0) {
+                                // 上から
+                                if (tmpEne.y + 256 > player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 下から
+                                if (tmpEne.y - 256 < player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        } else {
+                            if (tmpEne.spd.x >= 0) {
+                                // 右から
+                                if (tmpEne.x + 256 > player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 左から
+                                if (tmpEne.x - 256 < player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        // 円コリジョンでチェック
+                        if (chkCollisionCircle(player.x, player.y, 0, tmpEne.x, tmpEne.y, 256)) {
+                            tmpEne.localStatus = 1;
+                        }
+                    }
+                    break;
+                case 1:
+                    // 停止
+                    tmpEne.spdOld = tmpEne.spd;
+                    tmpEne.spd = Vector2(0, 0);
+
+                    tmpEne.localStatus = 2;
+                    tmpEne.localCounter = 0;
+                // THRU
+                case 2:
+                    if (++tmpEne.localCounter >= 6) {
+                        // 反転
+                        tmpEne.spd.x = -tmpEne.spdOld.x * 1.5;
+                        tmpEne.spd.y = -tmpEne.spdOld.y * 1.5;
+
+                        tmpEne.localStatus = 3;
+                    }
+                    break;
+                case 3:
+                    enemyShotCommon(tmpEne);
+                    break;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ * 自機の近くまで来たら自機の方向へ進行方向を変える
+ * @param {*} tmpEne 
+ */
+function enemyMove04(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            if (tmpEne.x <= 0) {
+                // 左から
+                tmpEne.spd = Vector2(tmpEne.define.spd, 0);
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                // 右から
+                tmpEne.spd = Vector2(-tmpEne.define.spd, 0);
+            } else if (tmpEne.y <= 0) {
+                // 上から
+                tmpEne.spd = Vector2(0, tmpEne.define.spd);
+            } else {
+                // 下から
+                tmpEne.spd = Vector2(0, -tmpEne.define.spd);
+            }
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+            tmpEne.localStatus = 0;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (tmpEne.define === EN_DEF.ENEMY04_0) {
+                        // 軸でチェック
+                        if (tmpEne.spd.x === 0) {
+                            if (tmpEne.spd.y >= 0) {
+                                // 上から
+                                if (tmpEne.y + 384 > player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 下から
+                                if (tmpEne.y - 384 < player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        } else {
+                            if (tmpEne.spd.x >= 0) {
+                                // 右から
+                                if (tmpEne.x + 384 > player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 左から
+                                if (tmpEne.x - 384 < player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        // 円コリジョンでチェック
+                        if (chkCollisionCircle(player.x, player.y, 0, tmpEne.x, tmpEne.y, 384)) {
+                            tmpEne.localStatus = 1;
+                        }
+                    }
+                    break;
+                case 1:
+                    // 停止
+                    tmpEne.spdOld = tmpEne.spd;
+                    tmpEne.spd = Vector2(0, 0);
+
+                    tmpEne.localStatus = 2;
+                    tmpEne.localCounter = 0;
+                // THRU
+                case 2:
+                    if (++tmpEne.localCounter >= 6) {
+                        // 方向転換
+                        let from = Vector2(tmpEne.x, tmpEne.y);
+                        let to = Vector2(player.x, player.y);
+                        tmpEne.spd = Vector2.sub(to, from).normalize().mul(tmpEne.define.spd * 1.5);
+
+                        tmpEne.localStatus = 3;
+                    }
+                    break;
+                case 3:
+                    enemyShotCommon(tmpEne);
+                    break;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ *　高速で画面内に入って来て低速で弾を打ちながら進む
+ * @param {*} tmpEne 
+ */
+function enemyMove05(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localStatus = 0;
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (tmpEne.y < SCREEN_HEIGHT / 4) break;
+                    tmpEne.localStatus = 1;
+                    tmpEne.spd = Vector2(0, 4);
+                // THRU
+                case 1:
+                    enemyShotCommon(tmpEne);
+                    break;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ * 自機の近くまで来たら弾を撃って消える
+ * @param {*} tmpEne 
+ */
+function enemyMove06(tmpEne) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            if (tmpEne.x <= 0) {
+                // 左から
+                tmpEne.spd = Vector2(tmpEne.define.spd, 0);
+            } else if (tmpEne.x >= SCREEN_WIDTH) {
+                // 右から
+                tmpEne.spd = Vector2(-tmpEne.define.spd, 0);
+            } else if (tmpEne.y <= 0) {
+                // 上から
+                tmpEne.spd = Vector2(0, tmpEne.define.spd);
+            } else {
+                // 下から
+                tmpEne.spd = Vector2(0, -tmpEne.define.spd);
+            }
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+            tmpEne.localStatus = 0;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (tmpEne.define === EN_DEF.ENEMY03_0) {
+                        // 軸でチェック
+                        if (tmpEne.spd.x === 0) {
+                            if (tmpEne.spd.y >= 0) {
+                                // 上から
+                                if (tmpEne.y + 256 > player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 下から
+                                if (tmpEne.y - 256 < player.y) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        } else {
+                            if (tmpEne.spd.x >= 0) {
+                                // 右から
+                                if (tmpEne.x + 256 > player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            } else {
+                                // 左から
+                                if (tmpEne.x - 256 < player.x) {
+                                    tmpEne.localStatus = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        // 円コリジョンでチェック
+                        if (chkCollisionCircle(player.x, player.y, 0, tmpEne.x, tmpEne.y, 256)) {
+                            tmpEne.localStatus = 1;
+                        }
+                    }
+                    break;
+                case 1:
+                    // 停止
+                    tmpEne.spdOld = tmpEne.spd;
+                    tmpEne.spd = Vector2(0, 0);
+                    tmpEne.localStatus = 2;
+                // THRU
+                case 2:
+                    tmpEne.status = EN_STATUS.DEAD_INIT;
+                    enemyShotCommon(tmpEne);
+                    break;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ * 自機と反対側の前方から死出現して自機と軸があったら方向転換して逃げる
+ * @param {*} tmpEne 
+ */
+function enemyMove07(tmpEne, shotFlag) {
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            // 
+            tmpEne.x = -player.x + SCREEN_CENTER_X * 2;
+            if (tmpEne.x < SCREEN_CENTER_X) {
+                tmpEne.spd = Vector2(0.5, 1).normalize().mul(tmpEne.define.spd);
+            } else {
+                tmpEne.spd = Vector2(-0.5, 1).normalize().mul(tmpEne.define.spd);
+            }
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = true;
+            tmpEne.localStatus = 0;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    if (tmpEne.spd.x >= 0) {
+                        if (tmpEne.x >= player.x) {
+                            tmpEne.spd = Vector2(-1, 1).normalize().mul(tmpEne.define.spd * 2);
+                            tmpEne.localStatus = 1;
+                        }
+                    } else {
+                        if (tmpEne.x <= player.x) {
+                            tmpEne.spd = Vector2(1, 1).normalize().mul(tmpEne.define.spd * 2);
+                            tmpEne.localStatus = 1;
+                        }
+                    }
+                    break;
+                case 1:
+                    enemyShotCommon(tmpEne);
+                    break;
+            }
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+
+/**
+ * EN_DEFで指定した弾を撃つ処理
+ * @param {\} tmpEne 
+ */
+function enemyShot(tmpEne) {
+    switch (tmpEne.define.shotType) {
+        case SHOT_TYPE.SNIPE_N:
+        case SHOT_TYPE.SNIPE_H:
+            shotSnipe(tmpEne, tmpEne.define.shotType.spd);
+            break;
+        case SHOT_TYPE.WAY_OF_4_N:
+        case SHOT_TYPE.WAY_OF_8_N:
+        case SHOT_TYPE.WAY_OF_16_N:
+        case SHOT_TYPE.WAY_OF_32_N:
+            shotNWay(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            break;
+        case SHOT_TYPE.SECTOR_UP_N:
+        case SHOT_TYPE.SECTOR_DOWN_N:
+        case SHOT_TYPE.SECTOR_LEFT_N:
+        case SHOT_TYPE.SECTOR_RIGHT_N:
+            shotSector(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            break;
+        case SHOT_TYPE.SEMICIRCLE_UP_N:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_N:
+        case SHOT_TYPE.SEMICIRCLE_LEFT_N:
+        case SHOT_TYPE.SEMICIRCLE_RIGHT_N:
+            shotSemicircle(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            break;
+    }
+}
+
+/**
+ * 間隔とかをいい感じに調整してEN_DEFで指定した弾を撃つ処理
+ * @param {*} tmpEne 
+ */
+function enemyShotCommon(tmpEne) {
+    if (tmpEne.shotIntervalTimer % tmpEne.define.shotInterval === 0) {
+        if (--tmpEne.shotBurstTimer <= 0) {
+            enemyShot(tmpEne);
+            tmpEne.shotBurstTimer = 2;
+            if (++tmpEne.shotBurstCounter >= tmpEne.define.shotBurst) {
+                tmpEne.shotBurstCounter = 0;
+            } else {
+                tmpEne.shotIntervalTimer--;
+            }
+        } else {
+            tmpEne.shotIntervalTimer--;
+        }
+    }
+}
+
+/**
+ * 自機をめがけて射撃
+ * @param {*} tmpEne 
+ */
+function shotSnipe(tmpEne, spd) {
+    shotSnipeOfs(tmpEne, Vector2(0, 0), spd);
+}
+/**
+ * 自機をめがけて射撃
+ * オフセット有り
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} spd 
+ */
+function shotSnipeOfs(tmpEne, ofs, spd) {
+    let from = Vector2(tmpEne.x + ofs.x, tmpEne.y + ofs.y);
+    let to = Vector2(player.x, player.y);
+    let vec = Vector2.sub(to, from).normalize().mul(spd);
+    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
+    enBulletArray.push(enBullet);
+}
+/**
+ * 指定の角度で射撃
+ * @param {*} tmpEne 
+ * @param {*} degree 
+ */
+function shotByDegree(tmpEne, degree, spd) {
+    shotByDegreeOfs(tmpEne, Vector2(0, 0), degree, spd);
+}
+/**
+ * 指定の角度で射撃
+ * オフセット有り
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} degree 
+ * @param {*} spd 
+ */
+function shotByDegreeOfs(tmpEne, ofs, degree, spd) {
+    let vec = fromDegreeToVec(degree, spd);
+    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
+    enBulletArray.push(enBullet);
+}
+/**
+ * 360°をn分割した方向に射撃
+ * @param {*} tmpEne 
+ * @param {*} n 
+ */
+function shotNWay(tmpEne, n, spd) {
+    shotNWayOfs(tmpEne, Vector2(0, 0), n, spd);
+}
+/**
+ * 360°をn分割した方向に射撃
+ * オフセット有り
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} n 
+ * @param {*} spd 
+ */
+function shotNWayOfs(tmpEne, ofs, n, spd) {
+    for (let ii = 0; ii < n; ii++) {
+        shotByDegreeOfs(tmpEne, ofs, (360 / n) * ii, spd);
+    }
+}
+/**
+ * 扇形に射撃
+ * 0,90,180,270とか
+ * @param {*} tmpEne 
+ * @param {*} deg 
+ */
+function shotSector(tmpEne, deg, spd) {
+    shotSectorOfs(tmpEne, Vector2(0, 0), deg, spd);
+}
+/**
+ * 扇形に射撃
+ * オフセット有り
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} deg 
+ * @param {*} spd 
+ */
+function shotSectorOfs(tmpEne, ofs, deg, spd) {
+    for (let ii = 0; ii < 9; ii++) {
+        shotByDegree(tmpEne, ofs, (10 * ii) + deg, spd);
+    }
+}
+/**
+ * 半円に射撃
+ * 180°を18分割して指定した角度から射撃
+ * 0,90,180,270とか
+ * @param {*} tmpEne 
+ * @param {*} deg 
+ */
+function shotSemicircle(tmpEne, deg, spd) {
+    shotSemicircleOfs(tmpEne, Vector2(0, 0), deg, spd);
+}
+/**
+ * 半円に射撃
+ * オフセット有り
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} deg 
+ * @param {*} spd 
+ */
+function shotSemicircleOfs(tmpEne, ofs, deg, spd) {
+    for (let ii = 0; ii < 18; ii++) {
+        shotByDegree(tmpEne, ofs, (10 * ii) + deg, spd);
     }
 }
 
@@ -750,7 +1443,7 @@ function boss01(tmpEne) {
         case EN_STATUS.INIT:
             tmpEne.localCounter = 0;
             tmpEne.localStatus = 0;
-            tmpEne.ySpd = 8
+            tmpEne.spd = Vector2(0, 8);
             tmpEne.status = EN_STATUS.START;
             tmpEne.collisionEnable = false;
         // THRU
@@ -765,12 +1458,11 @@ function boss01(tmpEne) {
                     break;
                 case 1:
                     // 停止
-                    tmpEne.ySpd = 0
+                    tmpEne.spd = Vector2(0, 0);
                     tmpEne.localStatus = 2;
                 case 2:
                     // 弾を撃つ
-                    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x - 32, tmpEne.y - 32, -16, 0).addChildTo(group7);
-                    enBulletArray.push(enBullet);
+                    shotSector(tmpEne, 180, 10)
                     tmpEne.status = EN_STATUS.DEAD_INIT;
                     break;
                 default:
@@ -799,8 +1491,7 @@ phina.define("PlBulletSprite", {
         this.uid = uid;
         this.superInit(BULLET_DEF.PL_O_16.sprName, BULLET_DEF.PL_O_16.sprSize.x, BULLET_DEF.PL_O_16.sprSize.y);
         this.direct = '';
-        this.xSpd = xSpd;
-        this.ySpd = ySpd;
+        this.spd = Vector2(xSpd, ySpd);
         this.zRot = 0;
         this.setPosition(xPos, yPos).setScale(1, 1);
         this.setInteractive(false);
@@ -812,8 +1503,8 @@ phina.define("PlBulletSprite", {
     update: function (app) {
         this.zRot += 20;
         this.rotation = this.zRot;
-        this.x += this.xSpd;
-        this.y += this.ySpd;
+        this.x += this.spd.x;
+        this.y += this.spd.y;
     },
 });
 
@@ -841,6 +1532,7 @@ phina.define("PlBombSprite", {
     },
 
     update: function (app) {
+        if (player.status.isDead) return;
         switch (this.status) {
             case 0:
                 // 開始待ち
@@ -888,8 +1580,7 @@ phina.define("EnBulletSprite", {
         this.define = ebdef;
         this.superInit(ebdef.sprName, ebdef.sprSize.x, ebdef.sprSize.y);
         this.direct = '';
-        this.xSpd = xSpd;
-        this.ySpd = ySpd;
+        this.spd = Vector2(xSpd, ySpd);
         this.zRot = 0;
         this.setPosition(xPos, yPos).setScale(1, 1);
         this.setInteractive(false);
@@ -899,10 +1590,11 @@ phina.define("EnBulletSprite", {
     },
 
     update: function (app) {
+        if (player.status.isDead) return;
         this.zRot += 20;
         this.rotation = this.zRot;
-        this.x += this.xSpd;
-        this.y += this.ySpd;
+        this.x += this.spd.x;
+        this.y += this.spd.y;
     },
 });
 
@@ -923,8 +1615,6 @@ phina.define("Explosion", {
         // サイズ変更
         this.setSize(128, 128);
 
-        //        this.blendMode = 'lighter';
-
         this.x = xpos;
         this.y = ypos;
 
@@ -933,6 +1623,7 @@ phina.define("Explosion", {
     },
     // 毎フレーム処理
     update: function () {
+        if (player.status.isDead) return;
         // アニメーションが終わったら自身を消去
         if (this.anim.finished) {
             this.remove();
@@ -992,7 +1683,6 @@ function checkPlayerToEnemy() {
 
         if (!tmpEne.isReady) continue; // 入場前
         if (tmpEne.status.isDead) continue; // 既に死亡済み
-        if (tmpEne.invincivleTimer > 0) continue; // 無敵中
 
         for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
             let colliData = tmpEne.define.colliData[ii];
@@ -1008,26 +1698,27 @@ function checkPlayerToEnemy() {
 
             if (tmpEne.define.attr === EN_ATTR.ENEMY) {
                 // 当たったのが敵の場合
-
                 // プレイヤー処理
-                if (--player.lifeLeft >= 1) {
-                    // 残ライフが1以上
-                    player.invincivleTimer = 60;
-                } else {
-                    // 死亡
-                    player.status = PL_STATUS.DEAD_INIT;
-                }
+                if (player.invincivleTimer <= 0) {
+                    // 無敵時間外
+                    if (--player.lifeLeft >= 1) {
+                        // 残ライフが1以上
+                        player.invincivleTimer = 60;
+                    } else {
+                        // 死亡
+                        player.status = PL_STATUS.DEAD_INIT;
+                    }
 
-                // 敵処理
-                if (--tmpEne.life >= 1) {
-                    // 残ライフが1以上
-                    tmpEne.invincivleTimer = 15;
-                } else {
-                    tmpEne.status = EN_STATUS.DEAD;
-                    deadEnemyArray.push(tmpEne);
-                    // 爆破パターンのセット
-                    Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
-                    SoundManager.play("explosion");
+                    // 敵処理
+                    if (--tmpEne.life >= 1) {
+                        // 残ライフが1以上
+                    } else {
+                        tmpEne.status = EN_STATUS.DEAD;
+                        deadEnemyArray.push(tmpEne);
+                        // 爆破パターンのセット
+                        Explosion(tmpEne.x, tmpEne.y).addChildTo(group8);
+                        SoundManager.play("explosion");
+                    }
                 }
             } else {
                 // 当たったのがアイテムの場合
@@ -1104,7 +1795,7 @@ function checkPlayerBulletToEnemy() {
             (tmpBlt.x < 0 - 8) ||
             (tmpBlt.x > SCREEN_WIDTH + 8) ||
             (tmpBlt.y < 0 - 8) ||
-            (tmpBlt.xy > SCREEN_HEIGHT + 8)
+            (tmpBlt.y > SCREEN_HEIGHT + 8)
         ) {
             deadPlBulletArray.push(tmpBlt);
             continue;
@@ -1117,7 +1808,6 @@ function checkPlayerBulletToEnemy() {
             var tmpEne = self.enemyArray[jj];
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
-            if (tmpEne.invincivleTimer > 0) continue; // 無敵中
             if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
@@ -1138,7 +1828,6 @@ function checkPlayerBulletToEnemy() {
                 // 敵処理
                 if (--tmpEne.life >= 1) {
                     // 残ライフが1以上
-                    tmpEne.invincivleTimer = 15;
                     continue;
                 }
                 tmpEne.status = EN_STATUS.DEAD;
@@ -1184,7 +1873,6 @@ function checkPlayerBombToEnemy() {
 
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
-            if (tmpEne.invincivleTimer > 0) continue; // 無敵中
             if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
@@ -1208,7 +1896,6 @@ function checkPlayerBombToEnemy() {
                 // 敵処理
                 if (--tmpEne.life >= 1) {
                     // 残ライフが1以上
-                    tmpEne.invincivleTimer = 15;
                     continue;
                 }
                 tmpEne.status = EN_STATUS.DEAD;
@@ -1249,7 +1936,7 @@ function checkPlayerBombToEnemyBullet() {
         let tmpBlt = self.plBombArray[ii];
         // 敵弾との当たり判定
         for (var jj = 0; jj < self.enBulletArray.length; jj++) {
-            if (tmpBlt.isDead) continue;
+            if (tmpBlt.status.isDead) continue;
             var tmpEne = self.enBulletArray[jj];
 
             // そもそも画面外では当たらない
@@ -1268,14 +1955,14 @@ function checkPlayerBombToEnemyBullet() {
                 8,
                 tmpEne.x, tmpEne.y,
                 0, 0,
-                colliData.radius
+                tmpEne.define.radius
             ) == false) continue;   // 当たっていない
             tmpEne.status = EN_STATUS.DEAD;
             deadEneBulletArray.push(tmpEne);
         }
     }
 
-    // 削除対象のプレイヤー弾を削除
+    // 削除対象のボムを削除
     for (var ii = 0; ii < deadPlBombArray.length; ii++) {
         if (deadPlBombArray[ii].parent == null) console.log("NULL!!");
         else deadPlBombArray[ii].remove();
@@ -1284,16 +1971,17 @@ function checkPlayerBombToEnemyBullet() {
 
     // 削除対象の敵を削除
     for (var ii = 0; ii < deadEneBulletArray.length; ii++) {
-
-        if (deadEnemyArray[ii].parent == null) console.log("NULL!!");
-        else deadEnemyArray[ii].remove();
-        self.enemyArray.erase(deadEnemyArray[ii]);
+        if (deadEneBulletArray[ii].parent == null) console.log("NULL!!");
+        else deadEneBulletArray[ii].remove();
+        self.enBulletArray.erase(deadEneBulletArray[ii]);
     }
 }
 
 // 敵弾とプレイヤーとの当たり判定
 function checkEnemyBulletToPlayer() {
     if (player.status.isDead) return;
+    if (player.invincivleTimer > 0) return;
+
     let deadEneBulletArray = [];
 
     var self = this;
@@ -1311,16 +1999,22 @@ function checkEnemyBulletToPlayer() {
             continue;
         }
 
-        let tmpEneBullet = self.enBulletArray[ii];
         // 判定
         if (chkCollisionCircle(
-            player.xPos, player.yPos,
+            player.x, player.y,
             4,
-            tmpEneBullet.xPos, tmpEneBullet.yPos,
-            tmpEneBullet.define.radius)) {
+            tmpBlt.x, tmpBlt.y,
+            tmpBlt.define.radius)) {
 
-            player.status = PL_STATUS.DEAD;
-            break;
+            if (--player.lifeLeft >= 1) {
+                // 残ライフが1以上
+                player.invincivleTimer = 60;
+            } else {
+                // 死亡
+                player.status = PL_STATUS.DEAD_INIT;
+            }
+
+            deadEneBulletArray.push(tmpBlt);
         }
     }
 
@@ -1332,16 +2026,28 @@ function checkEnemyBulletToPlayer() {
     }
 }
 
-function clearPlayerBombArrays() {
+function clearDeadPlayerBombArrays() {
     var self = this;
 
     for (let ii = self.plBombArray.length - 1; ii >= 0; ii--) {
         let tmp = self.plBombArray[ii];
-        if (!tmp.isDead) continue;
+        if (!tmp.status.isDead) continue;
         if (tmp.parent == null) console.log("NULL!!");
         else tmp.remove();
         self.plBombArray.erase(tmp);
     }
+}
+function clearDeadEnemyArrays() {
+    var self = this;
+
+    for (let ii = self.enemyArray.length - 1; ii >= 0; ii--) {
+        let tmp = self.enemyArray[ii];
+        if (!tmp.status.isDead) continue;
+        if (tmp.parent == null) console.log("NULL!!");
+        else tmp.remove();
+        self.enemyArray.erase(tmp);
+    }
+
 }
 
 // 配列クリア
@@ -1399,8 +2105,19 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-// 矩形当たり判定
-// https://yttm-work.jp/collision/collision_0005.html
+/**
+ * 矩形当たり判定
+ * https://yttm-work.jp/collision/collision_0005.html
+ * @param {*} rect_a_x 
+ * @param {*} rect_a_y 
+ * @param {*} rect_a_w 
+ * @param {*} rect_a_h 
+ * @param {*} rect_b_x 
+ * @param {*} rect_b_y 
+ * @param {*} rect_b_w 
+ * @param {*} rect_b_h 
+ * @returns 
+ */
 function chkCollisionRect(rect_a_x, rect_a_y, rect_a_w, rect_a_h, rect_b_x, rect_b_y, rect_b_w, rect_b_h) {
     // X軸、Y軸の距離
     distance_x = abs(rect_a_x - rect_b_x);
@@ -1420,7 +2137,16 @@ function chkCollisionRectOfs(rect_a_x, rect_a_y, rect_a_x_ofs, rect_a_y_ofs, rec
     return chkCollisionRect(rect_a_x + rect_a_x_ofs, rect_a_y + rect_a_y_ofs, rect_a_w, rect_a_h, rect_b_x + rect_b_x_ofs, rect_b_y + rect_b_y_ofs, rect_b_w, rect_b_h);
 }
 
-// 円当たり判定
+/**
+ * 円当たり判定
+ * @param {*} a_x 
+ * @param {*} a_y 
+ * @param {*} a_r 
+ * @param {*} b_x 
+ * @param {*} b_y 
+ * @param {*} b_r 
+ * @returns 
+ */
 function chkCollisionCircle(a_x, a_y, a_r, b_x, b_y, b_r) {
     const x = (a_x - b_x) ** 2
     const y = (a_y - b_y) ** 2
@@ -1430,6 +2156,21 @@ function chkCollisionCircle(a_x, a_y, a_r, b_x, b_y, b_r) {
     }
     return false;
 }
+
+/**
+ * 円当たり判定
+ * @param {*} a_x 
+ * @param {*} a_y 
+ * @param {*} a_x_ofs 
+ * @param {*} a_y_ofs 
+ * @param {*} a_r 
+ * @param {*} b_x 
+ * @param {*} b_y 
+ * @param {*} b_x_ofs 
+ * @param {*} b_y_ofs 
+ * @param {*} b_r 
+ * @returns 
+ */
 function chkCollisionCircleOfs(a_x, a_y, a_x_ofs, a_y_ofs, a_r, b_x, b_y, b_x_ofs, b_y_ofs, b_r) {
     return chkCollisionCircle(
         a_x + a_x_ofs,
@@ -1439,4 +2180,35 @@ function chkCollisionCircleOfs(a_x, a_y, a_x_ofs, a_y_ofs, a_r, b_x, b_y, b_x_of
         b_y + b_y_ofs,
         b_r
     );
+}
+
+/**
+ * 
+ * @param {*} rad 
+ * @param {*} len 
+ * @returns 
+ */
+function fromAngleToVec(rad, len) {
+    let ret = Vector2(0, 0);
+    len = len || 1;
+    ret.x = Math.cos(rad) * len;
+    ret.y = Math.sin(rad) * len;
+    return ret;
+}
+
+/**
+ * 右　＝0
+ * 右下＝45
+ * 下　＝90
+ * 左下＝135
+ * 左　＝180
+ * 左上＝225
+ * 上　＝270
+ * 右上＝315
+ * @param {*} deg 
+ * @param {*} len 
+ * @returns 
+ */
+function fromDegreeToVec(deg, len) {
+    return fromAngleToVec(deg.toRadian(), len);
 }
