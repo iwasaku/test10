@@ -53,8 +53,7 @@ const ctrlTable = [
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
 
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY07, xPos: 0, yPos: -64 } },
-        { count: 120, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY07, xPos: SCREEN_CENTER_X + 256, yPos: -64 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03, xPos: SCREEN_CENTER_X, yPos: -128 } },
 
         //        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
         //        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
@@ -76,7 +75,7 @@ const ctrlTable = [
 
         { count: 800 * 4, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
 
-        { count: 3660, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01, xPos: SCREEN_CENTER_X, yPos: -128, xSpd: 0, ySpd: 8 } },
+        { count: 3660, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01, xPos: SCREEN_CENTER_X, yPos: -128 } },
 
         // 万が一オーバーフローするとめんどくさいので
         { count: 3661, cmd: CMD.STOP_CTRL_COUNTER, param: {} },

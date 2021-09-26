@@ -700,6 +700,7 @@ phina.define("EnemySprite", {
             case EN_DEF.ENEMY07:
                 enemyMove07(this);
                 break;
+            // 以下未実装
             case EN_DEF.ENEMY08:
             case EN_DEF.ENEMY09:
             case EN_DEF.ENEMY10:
@@ -707,8 +708,15 @@ phina.define("EnemySprite", {
                 break;
 
             case EN_DEF.BOSS01:
+                bossMove01(this);
+                break;
             case EN_DEF.BOSS02:
+                bossMove02(this);
+                break;
             case EN_DEF.BOSS03:
+                bossMove03(this);
+                break;
+            // 以下未実装
             case EN_DEF.BOSS04:
             case EN_DEF.BOSS05:
             case EN_DEF.BOSS06:
@@ -1276,6 +1284,799 @@ function enemyMove07(tmpEne, shotFlag) {
     }
 }
 
+
+/**
+ * 1面ボス
+ * 上から出現
+ * 左右に直線で動く
+ * 
+ * @param {*} tmpEne 
+ */
+function bossMove01(tmpEne) {
+    let lifeStep;
+    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+        //1~3/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+        // 4/3~2/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+        // 2/4~1/4
+        lifeStep = 1;
+    } else {
+        // 1/4~0
+        lifeStep = 2;
+    }
+    lifeStep = 2;
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localCounter = 0;
+            tmpEne.localStatus = 0;
+            tmpEne.spd = Vector2(0, 8);
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    // 出現
+                    if (tmpEne.y >= 256 + 64) {
+                        tmpEne.y = 256 + 64;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                        tmpEne.collisionEnable = true;
+                    }
+                    break;
+                case 1:
+                    // 0.5秒待って右へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.localStatus = 2;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 2:
+                    // 右端へ来たら停止
+                    if (tmpEne.x >= SCREEN_WIDTH - (128 + 64)) {
+                        tmpEne.x = SCREEN_WIDTH - (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 3;
+                    }
+                    break;
+                case 3:
+                    // 0.5秒待って左へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(-8, 0); // 左へ移動
+
+                        tmpEne.localStatus = 4;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 4:
+                    // 中央に来たら停止
+                    if (tmpEne.x <= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 5;
+                    }
+                    break;
+                case 5:
+                    // 0.5秒待って左へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                        tmpEne.localStatus = 6;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 6:
+                    // 左端に来たら停止
+                    if (tmpEne.x <= 0 + (128 + 64)) {
+                        tmpEne.x = 0 + (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 7;
+                    }
+                    break;
+                case 7:
+                    // 0.5秒待って右へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.localStatus = 8;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 8:
+                    // 中央に来たら停止
+                    if (tmpEne.x >= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                    }
+                    break;
+                default:
+            }
+            tmpEne.localCounter++;
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.localCounter = 0;
+            nowStageNum++;
+            // 次の面へ
+            ctrlCounter = 0;
+            ctrlCounterFlag = true;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+function boss01Shot(tmpEne, lifeStep) {
+    switch (lifeStep) {
+        case 0:
+            if (tmpEne.shotIntervalTimer % 2 === 0) {
+                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        case 1:
+            boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N, 10, 4);
+            break;
+        case 2:
+            if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N, 2, 8)) {
+                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        default:
+    }
+}
+function boss01Shot01(tmpEne, shotType, interval, shotBurst) {
+    if (tmpEne.shotIntervalTimer % interval === 0) {
+        if (--tmpEne.shotBurstTimer <= 0) {
+            shotSemicircle(tmpEne, shotType.cnt, shotType.spd);
+            tmpEne.shotBurstTimer = 2;
+            if (++tmpEne.shotBurstCounter >= shotBurst) {
+                tmpEne.shotBurstCounter = 0;
+            } else {
+                tmpEne.shotIntervalTimer--;
+            }
+            return true;
+        } else {
+            tmpEne.shotIntervalTimer--;
+        }
+    }
+    return false;
+}
+
+/**
+ * 2面ボス
+ * 上から出現
+ * 左右に正弦波で動く
+ * 
+ * @param {*} tmpEne 
+ */
+function bossMove02(tmpEne) {
+    let lifeStep;
+    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+        //1~3/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+        // 4/3~2/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+        // 2/4~1/4
+        lifeStep = 1;
+    } else {
+        // 1/4~0
+        lifeStep = 2;
+    }
+    let sign = 1;
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localCounter = 0;
+            tmpEne.localStatus = 0;
+            tmpEne.spd = Vector2(0, 8);
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    // 出現
+                    if (tmpEne.y >= 256 + 64) {
+                        tmpEne.y = 256 + 64;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                        tmpEne.collisionEnable = true;
+                    }
+                    break;
+                case 1:
+                    tmpEne.spd = Vector2(8, 0); // 右へ移動
+                    tmpEne.localStatus = 2;
+                    sign = 1;
+                    break;
+                case 2:
+                    // 右端へ来たら停止
+                    if (tmpEne.x >= SCREEN_WIDTH - (128 + 64)) {
+                        tmpEne.x = SCREEN_WIDTH - (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 3;
+                        if (lifeStep === 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                        }
+                    }
+                    boss02Shot(tmpEne, lifeStep);
+                    sign = 1;
+                    break;
+                case 3:
+                    tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                    tmpEne.localStatus = 4;
+                    sign = -1;
+                    break;
+                case 4:
+                    // 中央に来たら停止
+                    if (tmpEne.x <= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 5;
+                        if (lifeStep === 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                        }
+                    }
+                    boss02Shot(tmpEne, lifeStep);
+                    sign = -1;
+                    break;
+                case 5:
+                    tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                    tmpEne.localStatus = 6;
+                    sign = -1;
+                    break;
+                case 6:
+                    // 左端に来たら停止
+                    if (tmpEne.x <= 0 + (128 + 64)) {
+                        tmpEne.x = 0 + (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 7;
+                        if (lifeStep === 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                        }
+                    }
+                    boss02Shot(tmpEne, lifeStep);
+                    sign = -1;
+                    break;
+                case 7:
+                    tmpEne.spd = Vector2(8, 0); // 右へ移動
+                    tmpEne.localStatus = 8;
+                    sign = 1;
+                    break;
+                case 8:
+                    // 中央に来たら停止
+                    if (tmpEne.x >= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                        if (lifeStep === 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                        }
+                    }
+                    boss02Shot(tmpEne, lifeStep);
+                    sign = 1;
+                    break;
+                default:
+            }
+            if (tmpEne.localStatus !== 0) {
+                //移動範囲
+                let RANGE = SCREEN_WIDTH - (128 + 64) * 2
+                //xPosが0オリジンになるようにする
+                let nowX = tmpEne.x - (128 + 64)
+                //現在の角度
+                let rad = 2 * Math.PI * (nowX / RANGE)
+                // Yオフセット
+                let yOfs = Math.sin(rad) * 128 * sign;
+                tmpEne.y = yOfs + 256 + 64;
+            }
+            tmpEne.localCounter++;
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.localCounter = 0;
+            nowStageNum++;
+            // 次の面へ
+            ctrlCounter = 0;
+            ctrlCounterFlag = true;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+function boss02Shot(tmpEne, lifeStep) {
+    switch (lifeStep) {
+        case 0:
+            if (tmpEne.shotIntervalTimer % 12 === 0) {
+                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        case 1:
+            if (tmpEne.shotIntervalTimer % 10 === 0) {
+                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        case 2:
+        case 3:
+            if (tmpEne.shotIntervalTimer % 8 === 0) {
+                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        default:
+    }
+}
+
+/**
+ * 3面ボス
+ * 上から出現
+ * ４辺に沿って移動する
+ * ４隅で一旦停止して弾を撃つ
+ * 徐々に加速する
+ * @param {*} tmpEne 
+ */
+function bossMove03(tmpEne) {
+    let lifeStep;
+    let spd;
+    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+        //1~3/4
+        lifeStep = 0;
+        spd = 8 * 2;
+    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+        // 4/3~2/4
+        lifeStep = 1;
+        spd = 8 * 3;
+    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+        // 2/4~1/4
+        lifeStep = 2;
+        spd = 8 * 4;
+    } else {
+        // 1/4~0
+        lifeStep = 3;
+        spd = 8 * 5;
+    }
+    lifeStep = 3;
+    spd = 40;
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localCounter = 0;
+            tmpEne.localStatus = 0;
+            tmpEne.spd = Vector2(0, 8);
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    // 出現
+                    if (tmpEne.y >= 256 + 64) {
+                        tmpEne.y = 256 + 64;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                        tmpEne.collisionEnable = true;
+                    }
+                    break;
+                case 1:
+                    // 0.5秒待って右へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(spd, 0); // 右へ移動
+                        tmpEne.localStatus = 2;
+                    } else {
+                        boss03Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 2:
+                    // 右端へ来たら停止
+                    if (tmpEne.x >= SCREEN_WIDTH - (128 + 64)) {
+                        tmpEne.x = SCREEN_WIDTH - (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 3;
+                    }
+                    break;
+                case 3:
+                    // 0.5秒待って下へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(0, spd); // 下へ移動
+
+                        tmpEne.localStatus = 4;
+                    } else {
+                        boss03Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 4:
+                    // 下端に来たら停止
+                    if (tmpEne.y >= SCREEN_HEIGHT - (128 + 64)) {
+                        tmpEne.y = SCREEN_HEIGHT - (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 5;
+                    }
+                    break;
+                case 5:
+                    // 0.5秒待って左へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(-spd, 0); // 左へ移動
+                        tmpEne.localStatus = 6;
+                    } else {
+                        boss03Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 6:
+                    // 左端に来たら停止
+                    if (tmpEne.x <= 0 + (128 + 64)) {
+                        tmpEne.x = 0 + (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 7;
+                    }
+                    break;
+                case 7:
+                    // 0.5秒待って上へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(0, -spd); // 上へ移動
+                        tmpEne.localStatus = 8;
+                    } else {
+                        boss03Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 8:
+                    // 上端に来たら停止
+                    if (tmpEne.y <= 256 + 64) {
+                        tmpEne.y = 256 + 64;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                    }
+                    break;
+                default:
+            }
+            tmpEne.localCounter++;
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.localCounter = 0;
+            nowStageNum++;
+            // 次の面へ
+            ctrlCounter = 0;
+            ctrlCounterFlag = true;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+}
+function boss03Shot(tmpEne, lifeStep) {
+    let shotType;
+    switch (tmpEne.localStatus) {
+        case 1:
+        case 3:
+            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_N;
+            break;
+        case 5:
+        case 7:
+            shotType = SHOT_TYPE.SEMICIRCLE_UP_N;
+            break;
+    }
+    /**
+     * tmpEne.localStatus
+     */
+    switch (lifeStep) {
+        case 0:
+        case 1:
+            if (tmpEne.shotIntervalTimer % 2 === 0) {
+                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+            }
+            break;
+        case 2:
+            boss03Shot01(tmpEne, shotType, 10, 4);
+            break;
+        case 3:
+            boss03Shot01(tmpEne, shotType, 2, 8);
+            break;
+        default:
+    }
+}
+function boss03Shot01(tmpEne, shotType, interval, shotBurst) {
+    if (tmpEne.shotIntervalTimer % interval === 0) {
+        if (--tmpEne.shotBurstTimer <= 0) {
+            shotSemicircle(tmpEne, shotType.cnt, shotType.spd);
+            tmpEne.shotBurstTimer = 2;
+            if (++tmpEne.shotBurstCounter >= shotBurst) {
+                tmpEne.shotBurstCounter = 0;
+            } else {
+                tmpEne.shotIntervalTimer--;
+            }
+            return true;
+        } else {
+            tmpEne.shotIntervalTimer--;
+        }
+    }
+    return false;
+}
+
+/**
+ * 4面ボス
+ * 上から出現
+ * 左右に直線で動く
+ * 周囲にザコが発生
+ * ボスを中心に円軌道で移動
+ * ザコが全滅するまでボスはノーダメ
+ */
+function bossMove04(tmpEne) {
+    let lifeStep;
+    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+        //1~3/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+        // 4/3~2/4
+        lifeStep = 0;
+    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+        // 2/4~1/4
+        lifeStep = 1;
+    } else {
+        // 1/4~0
+        lifeStep = 2;
+    }
+    lifeStep = 2;
+
+    if (tmpEne.status != EN_STATUS.INIT) {
+        var self = this;
+        //  ザコの存在チェック
+        let zakoCnt = 0;
+        for (let jj = 0; jj < self.enemyArray.length; jj++) {
+            let zako = self.enemyArray[jj];
+            if (zako.define === EN_DEF.BOSS04ZAKO01) {
+                zakoCnt++;
+            }
+        }
+        if (zakoCnt != 0) {
+            tmpEne.collisionEnable = true;
+        }
+    }
+    switch (tmpEne.status) {
+        case EN_STATUS.INIT:
+            tmpEne.localCounter = 0;
+            tmpEne.localStatus = 0;
+            tmpEne.spd = Vector2(0, 8);
+            tmpEne.status = EN_STATUS.START;
+            tmpEne.collisionEnable = false;
+        // THRU
+        case EN_STATUS.START:
+            switch (tmpEne.localStatus) {
+                case 0:
+                    // 出現
+                    if (tmpEne.y >= 256 + 64) {
+                        tmpEne.y = 256 + 64;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                    }
+                    break;
+                case 1:
+                    // 0.5秒待って右へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.localStatus = 2;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 2:
+                    // 右端へ来たら停止
+                    if (tmpEne.x >= SCREEN_WIDTH - (128 + 64)) {
+                        tmpEne.x = SCREEN_WIDTH - (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 3;
+                    }
+                    break;
+                case 3:
+                    // 0.5秒待って左へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(-8, 0); // 左へ移動
+
+                        tmpEne.localStatus = 4;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 4:
+                    // 中央に来たら停止
+                    if (tmpEne.x <= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 5;
+                    }
+                    break;
+                case 5:
+                    // 0.5秒待って左へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                        tmpEne.localStatus = 6;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 6:
+                    // 左端に来たら停止
+                    if (tmpEne.x <= 0 + (128 + 64)) {
+                        tmpEne.x = 0 + (128 + 64);
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 7;
+                    }
+                    break;
+                case 7:
+                    // 0.5秒待って右へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.localStatus = 8;
+                    } else {
+                        boss01Shot(tmpEne, lifeStep);
+                    }
+                    break;
+                case 8:
+                    // 中央に来たら停止
+                    if (tmpEne.x >= SCREEN_CENTER_X) {
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.spd = Vector2(0, 0); // 停止
+                        tmpEne.shotIntervalTimer = 0;
+                        tmpEne.shotBurstCounter = 0;
+                        tmpEne.shotBurstTimer = 0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 1;
+                    }
+                    break;
+                default:
+            }
+            tmpEne.localCounter++;
+            break;
+        case EN_STATUS.DEAD_INIT:
+            tmpEne.status = EN_STATUS.DEAD;
+            tmpEne.localCounter = 0;
+            nowStageNum++;
+            // 次の面へ
+            ctrlCounter = 0;
+            ctrlCounterFlag = true;
+        // THRU
+        case EN_STATUS.DEAD:
+            break;
+    }
+
+}
+
+/**
+ * 5面ボス
+ * 上から出現
+ * 左右に直線で動く
+ * 周囲にザコが発生
+ * ボスを中心に円軌道で移動
+ * ザコが全滅するまでボスはノーダメ
+ * ザコが全滅すると左右に移動しつつまれに体当たり（上下移動）を行う
+ * 下限到達時にN方向へ弾を撃つ
+ * 徐々に加速する
+ * 徐々に弾の数が増える
+ * @param {*} tmpEne 
+ */
+function bossMove05(tmpEne) {
+}
+
+/**
+ * 6面ボス
+ * 上から出てきて左右に正弦波で動く
+ * 周囲にザコが発生
+ * ボスを中心に円軌道で移動
+ * ザコが全滅するまでボスはノーダメ
+ * @param {*} tmpEne 
+ */
+function bossMove06(tmpEne) {
+}
+
+
+/**
+ * 7面ボス
+ * 上から出現
+ * ４辺に沿って移動する
+ * ４隅で一旦停止して弾を撃つ
+ * 周囲にザコが発生
+ * ボスを中心に円軌道で移動
+ * ザコが全滅するまでボスはノーダメ
+ * 徐々に加速する
+ * 
+ * @param {*} tmpEne 
+ */
+function bossMove07(tmpEne) {
+}
+
+/**
+ * 8面ボス
+ * 下から出現
+ * 
+ * @param {*} tmpEne 
+ */
+function bossMove08(tmpEne) {
+}
+
 /**
  * EN_DEFで指定した弾を撃つ処理
  * @param {\} tmpEne 
@@ -1409,7 +2210,7 @@ function shotSector(tmpEne, deg, spd) {
  */
 function shotSectorOfs(tmpEne, ofs, deg, spd) {
     for (let ii = 0; ii < 9; ii++) {
-        shotByDegree(tmpEne, ofs, (10 * ii) + deg, spd);
+        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
     }
 }
 /**
@@ -1431,56 +2232,11 @@ function shotSemicircle(tmpEne, deg, spd) {
  * @param {*} spd 
  */
 function shotSemicircleOfs(tmpEne, ofs, deg, spd) {
-    for (let ii = 0; ii < 18; ii++) {
-        shotByDegree(tmpEne, ofs, (10 * ii) + deg, spd);
+    for (let ii = 0; ii <= 18; ii++) {
+        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
     }
 }
 
-/**
- */
-function boss01(tmpEne) {
-    switch (tmpEne.status) {
-        case EN_STATUS.INIT:
-            tmpEne.localCounter = 0;
-            tmpEne.localStatus = 0;
-            tmpEne.spd = Vector2(0, 8);
-            tmpEne.status = EN_STATUS.START;
-            tmpEne.collisionEnable = false;
-        // THRU
-        case EN_STATUS.START:
-            switch (tmpEne.localStatus) {
-                case 0:
-                    // 出現
-                    if (tmpEne.y >= 256) {
-                        tmpEne.localStatus = 1;
-                        tmpEne.collisionEnable = true;
-                    }
-                    break;
-                case 1:
-                    // 停止
-                    tmpEne.spd = Vector2(0, 0);
-                    tmpEne.localStatus = 2;
-                case 2:
-                    // 弾を撃つ
-                    shotSector(tmpEne, 180, 10)
-                    tmpEne.status = EN_STATUS.DEAD_INIT;
-                    break;
-                default:
-            }
-            tmpEne.localCounter++;
-            break;
-        case EN_STATUS.DEAD_INIT:
-            tmpEne.status = EN_STATUS.DEAD;
-            tmpEne.localCounter = 0;
-            nowStageNum++;
-            // 次の面へ
-            ctrlCounter = 0;
-            ctrlCounterFlag = true;
-        // THRU
-        case EN_STATUS.DEAD:
-            break;
-    }
-}
 /*
  * PlayerBullet
  */
@@ -1651,14 +2407,17 @@ function checkEnemyPosition() {
             }
         } else {
             // 退場チェック
-            if (
-                (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
-                (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
-                (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
-                (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
-            ) {
-                tmpEne.isReady = false;
-                deadEnemyArray.push(tmpEne);
+            // BossZakoは退場チェックしない
+            if (!tmpEne.define.attr.isBossZako) {
+                if (
+                    (tmpEne.x < 0 - tmpEne.define.sprSize.x / 2) ||
+                    (tmpEne.x > SCREEN_WIDTH + tmpEne.define.sprSize.x / 2) ||
+                    (tmpEne.y < 0 - tmpEne.define.sprSize.y / 2) ||
+                    (tmpEne.y > SCREEN_HEIGHT + tmpEne.define.sprSize.y / 2)
+                ) {
+                    tmpEne.isReady = false;
+                    deadEnemyArray.push(tmpEne);
+                }
             }
         }
     }
@@ -1696,7 +2455,7 @@ function checkPlayerToEnemy() {
                 colliData.radius
             ) == false) continue;   // 当たっていない
 
-            if (tmpEne.define.attr === EN_ATTR.ENEMY) {
+            if (tmpEne.define.attr.isEnemy) {
                 // 当たったのが敵の場合
                 // プレイヤー処理
                 if (player.invincivleTimer <= 0) {
@@ -1808,7 +2567,7 @@ function checkPlayerBulletToEnemy() {
             var tmpEne = self.enemyArray[jj];
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
-            if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
+            if (tmpEne.define.attr.isItem) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
                 let colliData = tmpEne.define.colliData[ii];
@@ -1873,7 +2632,7 @@ function checkPlayerBombToEnemy() {
 
             if (!tmpEne.isReady) continue; // 入場前
             if (tmpEne.status.isDead) continue; // 既に死亡済み
-            if (tmpEne.define.attr === EN_ATTR.ITEM) continue; // アイテム
+            if (tmpEne.define.attr.isItem) continue; // アイテム
 
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
                 let colliData = tmpEne.define.colliData[ii];
@@ -2000,21 +2759,22 @@ function checkEnemyBulletToPlayer() {
         }
 
         // 判定
-        if (chkCollisionCircle(
-            player.x, player.y,
-            4,
-            tmpBlt.x, tmpBlt.y,
-            tmpBlt.define.radius)) {
+        if (player.invincivleTimer <= 0) {
+            if (chkCollisionCircle(
+                player.x, player.y,
+                4,
+                tmpBlt.x, tmpBlt.y,
+                tmpBlt.define.radius)) {
 
-            if (--player.lifeLeft >= 1) {
-                // 残ライフが1以上
-                player.invincivleTimer = 60;
-            } else {
-                // 死亡
-                player.status = PL_STATUS.DEAD_INIT;
+                if (--player.lifeLeft >= 1) {
+                    // 残ライフが1以上
+                    player.invincivleTimer = 60;
+                } else {
+                    // 死亡
+                    player.status = PL_STATUS.DEAD_INIT;
+                }
+                deadEneBulletArray.push(tmpBlt);
             }
-
-            deadEneBulletArray.push(tmpBlt);
         }
     }
 
