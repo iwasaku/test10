@@ -455,7 +455,7 @@ const EN_DEF = defineEnum({
         pts: 30,
 
         shotType: SHOT_TYPE.SNIPE_N,
-        shotInterval: 5,
+        shotInterval: 30,
         shotBurst: 1,
     },
     BOSS05: {
@@ -481,6 +481,22 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+    },
+    BOSS06ZAKO01: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 3,
+        pts: 30,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
     },
     BOSS07: {
         sprName: "boss07",

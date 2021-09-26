@@ -53,7 +53,19 @@ const ctrlTable = [
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
 
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
+
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06, xPos: SCREEN_CENTER_X, yPos: -128 } },
 
         //        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
         //        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
