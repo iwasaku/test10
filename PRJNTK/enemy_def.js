@@ -393,10 +393,56 @@ const EN_DEF = defineEnum({
         shotBurst: 1,
     },
 
+    // ボス用ザコ
+    BOSS_ZAKO01: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 3,
+        pts: 30,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+    BOSS_ZAKO02: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 3,
+        pts: 30,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+
     // ボス
     BOSS01: {
         sprName: "boss01",
         sprSize: { x: 256, y: 256 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+        ],
+        attr: EN_ATTR.BOSS,
+        spd: 8,
+        life: 2,
+        pts: 20000,
+    },
+    BOSS01MOD: {
+        sprName: "boss04",
+        sprSize: { x: 384, y: 384 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
             { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
@@ -415,6 +461,18 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
+        life: 2,
+        pts: 20000,
+    },
+    BOSS02MOD: {
+        sprName: "boss06",
+        sprSize: { x: 512, y: 512 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+        ],
+        attr: EN_ATTR.BOSS,
+        spd: 8,
         life: 100,
         pts: 20000,
     },
@@ -427,78 +485,10 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
+        life: 2,
         pts: 20000,
     },
-    BOSS04: {
-        sprName: "boss04",
-        sprSize: { x: 384, y: 384 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS04ZAKO01: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.BOSS_ZAKO,
-        isBossZako: true,
-        spd: 8,
-        life: 3,
-        pts: 30,
-
-        shotType: SHOT_TYPE.SNIPE_N,
-        shotInterval: 30,
-        shotBurst: 1,
-    },
-    BOSS05: {
-        sprName: "boss05",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS06: {
-        sprName: "boss06",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 100,
-        pts: 20000,
-    },
-    BOSS06ZAKO01: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.BOSS_ZAKO,
-        isBossZako: true,
-        spd: 8,
-        life: 3,
-        pts: 30,
-
-        shotType: SHOT_TYPE.SNIPE_N,
-        shotInterval: 30,
-        shotBurst: 1,
-    },
-    BOSS07: {
+    BOSS03MOD: {
         sprName: "boss07",
         sprSize: { x: 640, y: 640 },
         colliData: [
@@ -510,16 +500,16 @@ const EN_DEF = defineEnum({
         life: 100,
         pts: 20000,
     },
-    BOSS08: {
-        sprName: "boss08",
-        sprSize: { x: 768, y: 768 },
+    BOSS04: {
+        sprName: "boss05",
+        sprSize: { x: 512, y: 512 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
             { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
+        life: 2,
         pts: 20000,
     },
 

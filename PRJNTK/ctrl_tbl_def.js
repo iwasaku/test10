@@ -27,6 +27,14 @@ const CMD = defineEnum({
         // スクロールデータを設定する
         value: 0,
     },
+    SET_BOSSSRUSH: {
+        // スクロールデータを設定する
+        value: 0,
+    },
+    RESET_BOSSSRUSH: {
+        // スクロールデータを設定する
+        value: 0,
+    },
     FADE_IN: {
         // フェード・イン
         value: 0,
@@ -53,19 +61,44 @@ const ctrlTable = [
     [
         { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 1" } },
 
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
         //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
 
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
-        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        //        { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS06, xPos: SCREEN_CENTER_X, yPos: -128 } },
+
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        //{ count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS07, xPos: SCREEN_CENTER_X, yPos: -128 } },
+
+        { count: 60, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
+        { count: 90, cmd: CMD.SET_BOSSSRUSH, param: {} },
+        { count: 90, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 91, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
+
+        { count: 120, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS02, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 121, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
+
+        { count: 150, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 151, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
+
+        { count: 180, cmd: CMD.RESET_BOSSSRUSH, param: {} },
+        { count: 180, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 181, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
 
         //        { count: 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
         //        { count: 30, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00, xPos: 0 + 128, yPos: 0 - 64 } },
