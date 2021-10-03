@@ -40,6 +40,9 @@ const COLLI_ATTR = defineEnum({
     },
 });
 const SHOT_TYPE = defineEnum({
+    NONE: {
+        spd: 0,
+    },
     SNIPE_N: {
         spd: 16,
     },
@@ -97,6 +100,14 @@ const SHOT_TYPE = defineEnum({
         spd: 16,
         cnt: 0 - 90,
     },
+    SPIRAL_LEFT_N: {
+        spd: 16,
+        cnt: -4,
+    },
+    SPIRAL_RIGHT_N: {
+        spd: 16,
+        cnt: 4,
+    },
     DEGREE_N: {
         spd: 16,
     },
@@ -107,7 +118,7 @@ const EN_DEF = defineEnum({
      * 直進
      * 初期位置で進行方向が決まる
      */
-    ENEMY00: {
+    ENEMY00_0: {
         sprName: "enemy01",
         sprSize: { x: 128, y: 128 },
         colliData: [
@@ -119,9 +130,92 @@ const EN_DEF = defineEnum({
         pts: 10,
 
         shotType: SHOT_TYPE.SNIPE_N,
-        shotInterval: 60,
+        shotInterval: 90,
         shotBurst: 5,
     },
+    /**
+     * 直進
+     * ゆっくり
+     * 硬い
+     * 初期位置で進行方向が決まる
+     */
+    ENEMY00_1: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 4,
+        life: 10,
+        pts: 10,
+
+        shotType: SHOT_TYPE.WAY_OF_8_N,
+        shotInterval: 60,
+        shotBurst: 1,
+    },
+    /**
+     * 直進
+     * 軟い
+     * 弾を撃たない
+     * 初期位置で進行方向が決まる
+     */
+    ENEMY00_2: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 8,
+        life: 2,
+        pts: 10,
+
+        shotType: SHOT_TYPE.NONE,
+        shotInterval: 90,
+        shotBurst: 5,
+    },
+    /**
+     * 直進
+     * 左回りの螺旋状に弾を撃つ
+     * 初期位置で進行方向が決まる
+     */
+    ENEMY00_3_LEFT: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 8,
+        life: 2,
+        pts: 10,
+
+        shotType: SHOT_TYPE.SPIRAL_LEFT_N,
+        shotInterval: 3,
+        shotBurst: 0,
+    },
+    /**
+     * 直進
+     * 左回りの螺旋状に弾を撃つ
+     * 初期位置で進行方向が決まる
+     */
+    ENEMY00_3_RIGHT: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 8,
+        life: 2,
+        pts: 10,
+
+        shotType: SHOT_TYPE.SPIRAL_RIGHT_N,
+        shotInterval: 3,
+        shotBurst: 0,
+    },
+
     /**
      * 斜め
      * 初期位置で進行方向が決まる
@@ -219,7 +313,7 @@ const EN_DEF = defineEnum({
         life: 3,
         pts: 30,
 
-        shotType: SHOT_TYPE.SECTOR_RIGHT_N,
+        shotType: SHOT_TYPE.SECTOR_DOWN_N,
         shotInterval: 5,
         shotBurst: 1,
     },

@@ -1,5 +1,7 @@
 phina.globalize();
 //console.log = function () { };  // ログを出す時にはコメントアウトする
+let isMUTEKI = false;
+let isNoSHOT = false;
 
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
@@ -333,7 +335,7 @@ phina.define('MainScene', {
                             case CMD.SET_ENEMY:
                                 {
                                     // ctrl.param.loopで出現可能な周回かチェックする
-                                    let enemy = EnemySprite(++uidCounter, ctrl.param).addChildTo(group6);
+                                    let enemy = EnemySprite(++uidCounter, ctrl.param, ctrl.count).addChildTo(group6);
                                     enemyArray.push(enemy);
                                 }
                                 break;
@@ -582,6 +584,7 @@ phina.define("PlayerSprite", {
             return;
         }
         if (--this.invincivleTimer < 0) this.invincivleTimer = 0;
+        if (isMUTEKI) this.invincivleTimer = 10;
         if (this.invincivleTimer % 2 === 0) {
             this.alpha = 1.0;
         } else {
@@ -589,12 +592,12 @@ phina.define("PlayerSprite", {
         }
 
         if (--this.shotIntvlTimer <= 0) {
-            //return;
+            if (isNoSHOT) return;
             // lv.0
             if (this.shotLv >= 0) {
                 let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
                 plBulletArray.push(plBullet);
-                this.shotIntvlTimer = 16;
+                this.shotIntvlTimer = 10;
             }
             // lv.1
             if (this.shotLv >= 1) {
@@ -606,7 +609,7 @@ phina.define("PlayerSprite", {
                     let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, 0, -16).addChildTo(group8);
                     plBulletArray.push(plBullet);
                 }
-                this.shotIntvlTimer = 14;
+                this.shotIntvlTimer = 9;
             }
             // lv.2
             if (this.shotLv >= 2) {
@@ -618,7 +621,7 @@ phina.define("PlayerSprite", {
                     let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, -8, -16).addChildTo(group8);
                     plBulletArray.push(plBullet);
                 }
-                this.shotIntvlTimer = 12;
+                this.shotIntvlTimer = 9;
             }
             // lv.3
             if (this.shotLv >= 3) {
@@ -630,7 +633,7 @@ phina.define("PlayerSprite", {
                     let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, -16, 0).addChildTo(group8);
                     plBulletArray.push(plBullet);
                 }
-                this.shotIntvlTimer = 10;
+                this.shotIntvlTimer = 8;
             }
             // lv.4
             if (this.shotLv >= 4) {
@@ -650,7 +653,8 @@ phina.define("PlayerSprite", {
 phina.define("EnemySprite", {
     superClass: 'Sprite',
 
-    init: function (uid, param) {
+    init: function (uid, param, ctrlCount) {
+        //        console.log(">>>>" + ctrlCount + ":" + param.define + ":" + param.xPos + ":" + param.yPos)
         this.uid = uid;
         this.param = param;
         this.define = param.define;
@@ -685,7 +689,11 @@ phina.define("EnemySprite", {
     update: function (app) {
         if (player.status.isDead) return;
         switch (this.define) {
-            case EN_DEF.ENEMY00:
+            case EN_DEF.ENEMY00_0:
+            case EN_DEF.ENEMY00_1:
+            case EN_DEF.ENEMY00_2:
+            case EN_DEF.ENEMY00_3_LEFT:
+            case EN_DEF.ENEMY00_3_RIGHT:
                 enemy00Move(this, true);
                 break;
             case EN_DEF.ENEMY01_0:
@@ -698,7 +706,7 @@ phina.define("EnemySprite", {
                 break;
             case EN_DEF.ENEMY03_0:
             case EN_DEF.ENEMY03_1:
-                enemy03Move(this);
+                enemy03Move(this, false);
                 break;
             case EN_DEF.ENEMY04_0:
             case EN_DEF.ENEMY04_1:
@@ -966,7 +974,7 @@ function enemy02Move(tmpEne) {
  * 自機の近くまで来たら反転
  * @param {*} tmpEne 
  */
-function enemy03Move(tmpEne) {
+function enemy03Move(tmpEne, isRapidFire) {
     switch (tmpEne.status) {
         case EN_STATUS.INIT:
             if (tmpEne.x <= 0) {
@@ -1038,10 +1046,15 @@ function enemy03Move(tmpEne) {
                         tmpEne.spd.y = -tmpEne.spdOld.y * 1.5;
 
                         tmpEne.localStatus = 3;
+                        if (!isRapidFire) {
+                            enemyShot(tmpEne);
+                        }
                     }
                     break;
                 case 3:
-                    enemyShotCommon(tmpEne);
+                    if (isRapidFire) {
+                        enemyShotCommon(tmpEne);
+                    }
                     break;
             }
             break;
@@ -2789,6 +2802,8 @@ function boss08Move(tmpEne) {
  */
 function enemyShot(tmpEne) {
     switch (tmpEne.define.shotType) {
+        case SHOT_TYPE.NONE:
+            break;
         case SHOT_TYPE.SNIPE_N:
         case SHOT_TYPE.SNIPE_H:
             shotSnipe(tmpEne, tmpEne.define.shotType.spd);
@@ -2810,6 +2825,10 @@ function enemyShot(tmpEne) {
         case SHOT_TYPE.SEMICIRCLE_LEFT_N:
         case SHOT_TYPE.SEMICIRCLE_RIGHT_N:
             shotSemicircle(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            break;
+        case SHOT_TYPE.SPIRAL_LEFT_N:
+        case SHOT_TYPE.SPIRAL_RIGHT_N:
+            shotSpiral(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
             break;
     }
 }
@@ -2941,6 +2960,12 @@ function shotSemicircleOfs(tmpEne, ofs, deg, spd) {
     for (let ii = 0; ii <= 18; ii++) {
         shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
     }
+}
+function shotSpiral(tmpEne, deg, spd) {
+    shotSpiralOfs(tmpEne, Vector2(0, 0), deg, spd);
+}
+function shotSpiralOfs(tmpEne, ofs, deg, spd) {
+    shotByDegreeOfs(tmpEne, ofs, tmpEne.localTimer * deg, spd);
 }
 
 /*
