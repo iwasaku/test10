@@ -17,8 +17,8 @@ let group9 = null;  // status
 
 let nowScoreLabel = null;
 let nowLifeLeftLabel = null;
+let nowBombLeftLabel = null;
 let ntkGaugeLabel = null;
-let nowNtkLeftLabel = null;
 
 let tweetButton = null;
 let restartButton = null;
@@ -197,6 +197,20 @@ phina.define('MainScene', {
                 shadowBlur: 10,
             }
         ).addChildTo(group9).setPosition(0 + 16, 60);
+        nowBombLeftLabel = Label(
+            {
+                text: "●●●",
+                fontSize: 40,
+                fontFamily: "misaki_gothic",
+                align: "left",
+
+                fill: "black",
+                stroke: "blue",
+                strokeWidth: 10,
+                shadow: "white",
+                shadowBlur: 10,
+            }
+        ).addChildTo(group9).setPosition(0 + 16, 115);
 
         ntkGaugeLabel = Label(
             {
@@ -408,6 +422,12 @@ phina.define('MainScene', {
                 else tmpLife += "♡";
             }
             nowLifeLeftLabel.text = tmpLife;
+
+            let tmpBomb = "";   // カンスト：BBBBBBBBBB
+            for (let ii = 0; ii < player.bombLeft; ii++) {
+                tmpBomb += "●";
+            }
+            nowBombLeftLabel.text = tmpBomb;
         } else {
             // 死亡
             if (deadStatus === 0) {
@@ -2988,6 +3008,7 @@ phina.define("PlBulletSprite", {
     },
 
     update: function (app) {
+        if (player.status.isDead) return;
         this.zRot += 20;
         this.rotation = this.zRot;
         this.x += this.spd.x;

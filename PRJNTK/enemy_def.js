@@ -156,7 +156,7 @@ const EN_DEF = defineEnum({
     },
     /**
      * 直進
-     * 軟い
+     * 硬い
      * 弾を撃たない
      * 初期位置で進行方向が決まる
      */
@@ -167,8 +167,8 @@ const EN_DEF = defineEnum({
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
         attr: EN_ATTR.ENEMY,
-        spd: 8,
-        life: 2,
+        spd: 2,
+        life: 10,
         pts: 10,
 
         shotType: SHOT_TYPE.NONE,
@@ -531,8 +531,8 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 2,
-        pts: 20000,
+        life: 100,
+        pts: 1000,
     },
     BOSS01MOD: {
         sprName: "boss04",
