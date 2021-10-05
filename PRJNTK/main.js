@@ -23,7 +23,7 @@ let ntkGaugeLabel = null;
 let tweetButton = null;
 let restartButton = null;
 let bombButton = null;
-let bombButtonStatus = BB_STATUS.INIT;
+let bombButtonStatus = BB_STATUS.WAIT;
 
 let stageBG = [null, null];
 let player = null;
@@ -227,7 +227,7 @@ phina.define('MainScene', {
             }
         ).addChildTo(group9).setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 
-        bombButtonStatus = BB_STATUS.INIT;
+        bombButtonStatus = BB_STATUS.WAIT;
         bombButton = prjButton("B").addChildTo(group9)
             .setPosition(SCREEN_CENTER_X + SCREEN_WIDTH / 4, SCREEN_CENTER_Y + SCREEN_HEIGHT / 4);
         bombButton.alpha = 0.5;
@@ -236,19 +236,21 @@ phina.define('MainScene', {
         // タッチ時の処理
         //        bombButton.onpush = function ();
         bombButton.onpointstart = function () {
+            if (bombButtonStatus !== BB_STATUS.WAIT) {
+                return;
+            }
             console.log("onpointstart");
-            bombButtonStatus = BB_STATUS.START;
-            bombButton.scaleX = 1.25;
-            bombButton.scaleY = 1.25;
+            bombButtonStatus = BB_STATUS.CHARGE;
         }
         bombButton.onpointmove = function () {
         }
         bombButton.onpointend = function () {
+            if (bombButtonStatus !== BB_STATUS.CHARGE) {
+                return;
+            }
             // bomb発射
             console.log("onpointend");
-            bombButtonStatus = BB_STATUS.END;
-            bombButton.scaleX = 1.0;
-            bombButton.scaleY = 1.0;
+            bombButtonStatus = BB_STATUS.SHOOT;
         };
         bombButton.update = function () {
         };
@@ -296,24 +298,28 @@ phina.define('MainScene', {
                 totalSec = Math.floor(totalFrame / app.fps);
                 // NTKゲージ管理
                 ntkGaugeLabel.text = "";
+                bombButton.scaleX = 1.0;
+                bombButton.scaleY = 1.0;
                 switch (bombButtonStatus) {
                     case BB_STATUS.WAIT:
                         break;
-                    case BB_STATUS.START:
-                        if (player.bombLeft <= 0) {
+                    case BB_STATUS.CHARGE:
+                        if ((player.bombLeft <= 0) || (plBombArray.length > 0)) {
                             bombButtonStatus = BB_STATUS.WAIT;
                             player.bombStatus = 0;
                             break;
                         }
+                        bombButton.scaleX = 1.25;
+                        bombButton.scaleY = 1.25;
                         if ((player.bombStatus != 0) && (player.bombStatus != 1)) break;
-                        if (plBombArray.length > 0) break;
                         if (player.bombStatus === 0) {
                             player.bombStatus = 1;
                             player.bombLv = 0;
                             player.bombGauge = 0;
                         }
                         // Lvアップ
-                        if (++player.bombGauge >= 100) {
+                        player.bombGauge += 3;
+                        if (player.bombGauge >= 100) {
                             if (++player.bombLv >= 9) {
                                 player.bombLv = 9;
                                 player.bombGauge = 100;
@@ -323,7 +329,7 @@ phina.define('MainScene', {
                         }
                         ntkGaugeLabel.text = "N.T.K. Lv." + (player.bombLv + 1) + "\n" + player.bombGauge + "%";
                         break;
-                    case BB_STATUS.END:
+                    case BB_STATUS.SHOOT:
                         bombButtonStatus = BB_STATUS.WAIT;
                         player.bombStatus = 0;
                         if (player.bombLeft <= 0) break;
@@ -331,8 +337,9 @@ phina.define('MainScene', {
                         for (let ii = 0; ii < tmp.num; ii++) {
                             let xPos = getRandomInt(SCREEN_WIDTH - 64) + 64;
                             let yPos = getRandomInt(SCREEN_HEIGHT - 64) + 64;
-                            let bomb = PlBombSprite(++uidCounter, tmp.bomb, xPos, yPos).addChildTo(group8);
-                            plBombArray.push(bomb);
+                            let bomb = tmp.bomb[getRandomInt(tmp.bomb.length)];
+                            let bombSpr = PlBombSprite(++uidCounter, bomb, xPos, yPos).addChildTo(group8);
+                            plBombArray.push(bombSpr);
                         }
                         if (--player.bombLeft <= 0) {
                             player.bombLeft = 0;
@@ -702,6 +709,7 @@ phina.define("EnemySprite", {
         this.shotIntervalTimer = 0;
         this.shotBurstCounter = 0;
         this.shotBurstTimer = 0;
+        this.shotTarget = Vector2(player.x, player.y);
         this.life = this.define.life;
         this.isReady = false;
     },
@@ -2870,6 +2878,8 @@ function enemyShotCommon(tmpEne) {
         } else {
             tmpEne.shotIntervalTimer--;
         }
+    } else {
+        tmpEne.shotTarget = Vector2(player.x, player.y);
     }
 }
 
@@ -2889,7 +2899,7 @@ function shotSnipe(tmpEne, spd) {
  */
 function shotSnipeOfs(tmpEne, ofs, spd) {
     let from = Vector2(tmpEne.x + ofs.x, tmpEne.y + ofs.y);
-    let to = Vector2(player.x, player.y);
+    let to = tmpEne.shotTarget;
     let vec = Vector2.sub(to, from).normalize().mul(spd);
     let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
     enBulletArray.push(enBullet);
@@ -3376,10 +3386,10 @@ function checkPlayerBombToEnemy() {
     let deadEnemyArray = [];
 
     for (let ii = 0; ii < self.plBombArray.length; ii++) {
-        let tmpBlt = self.plBombArray[ii];
+        let tmpBomb = self.plBombArray[ii];
         // 敵との当たり判定
         for (var jj = 0; jj < self.enemyArray.length; jj++) {
-            if (tmpBlt.isDead) continue;
+            if (tmpBomb.isDead) continue;
             var tmpEne = self.enemyArray[jj];
 
             if (!tmpEne.isReady) continue; // 入場前
@@ -3389,18 +3399,18 @@ function checkPlayerBombToEnemy() {
             for (let ii = 0; ii < tmpEne.define.colliData.length; ii++) {
                 let colliData = tmpEne.define.colliData[ii];
                 if (!colliData.attr.bullet) continue; // 弾との当たり判定用データではない
-                if (64 * tmpBlt.bombScale < 0.1) continue;  // あまりに小さいと何も無いのに敵が死んだように見えるので
+                if (64 * tmpBomb.bombScale < 0.1) continue;  // あまりに小さいと何も無いのに敵が死んだように見えるので
                 if (chkCollisionCircleOfs(
-                    tmpBlt.x, tmpBlt.y,
+                    tmpBomb.x, tmpBomb.y,
                     0, 0,
-                    64 * tmpBlt.bombScale,
+                    64 * tmpBomb.bombScale,
                     tmpEne.x, tmpEne.y,
                     colliData.ofs.x, colliData.ofs.y,
                     colliData.radius
                 ) == false) continue;   // 当たっていない
 
-                tmpBlt.isDead = true;
-                deadPlBombArray.push(tmpBlt);
+                tmpBomb.isDead = true;
+                deadPlBombArray.push(tmpBomb);
 
                 // 爆発
 
@@ -3444,10 +3454,10 @@ function checkPlayerBombToEnemyBullet() {
     let deadEneBulletArray = [];
 
     for (let ii = 0; ii < self.plBombArray.length; ii++) {
-        let tmpBlt = self.plBombArray[ii];
+        let tmpBomb = self.plBombArray[ii];
         // 敵弾との当たり判定
         for (var jj = 0; jj < self.enBulletArray.length; jj++) {
-            if (tmpBlt.status.isDead) continue;
+            if (tmpBomb.status.isDead) continue;
             var tmpEne = self.enBulletArray[jj];
 
             // そもそも画面外では当たらない
@@ -3461,7 +3471,7 @@ function checkPlayerBombToEnemyBullet() {
             if (tmpEne.status.isDead) continue; // 既に死亡済み
 
             if (chkCollisionCircleOfs(
-                tmpBlt.x, tmpBlt.y,
+                tmpBomb.x, tmpBomb.y,
                 0, 0,
                 8,
                 tmpEne.x, tmpEne.y,
@@ -3543,7 +3553,7 @@ function clearDeadPlayerBombArrays() {
 
     for (let ii = self.plBombArray.length - 1; ii >= 0; ii--) {
         let tmp = self.plBombArray[ii];
-        if (!tmp.status.isDead) continue;
+        if (!tmp.isDead) continue;
         if (tmp.parent == null) console.log("NULL!!");
         else tmp.remove();
         self.plBombArray.erase(tmp);

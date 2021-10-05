@@ -75,14 +75,14 @@ const EN_STATUS = defineEnum({
 const BB_STATUS = defineEnum({
     WAIT: {
         value: 0,
-        string: 'init'
+        string: 'wait'
     },
-    START: {
+    CHARGE: {
         value: 1,
-        string: 'start'
+        string: 'charge'
     },
-    END: {
+    SHOOT: {
         value: 2,
-        string: 'end'
+        string: 'shoot'
     },
 });

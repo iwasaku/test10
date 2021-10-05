@@ -3,7 +3,8 @@ var ASSETS = {
         misaki_gothic: "https://cdn.leafscape.be/misaki/misaki_gothic_web.woff2"
     },
     image: {
-        "player": "./resource/squid.png",
+        //        "player": "./resource/squid.png",
+        "player": "./resource/arrow_u_128.png",
 
         "enemy01": "./resource/enemy/ice.png",
 
