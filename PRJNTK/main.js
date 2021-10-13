@@ -451,7 +451,7 @@ phina.define('MainScene', {
                         width: 300,
                         height: 150,
                     }
-                ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onpush = function () {
+                ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
                     var twitterURL = phina.social.Twitter.createURL({
                         text: "PROJECT N.T.K. スコア: " + nowScore,
                         hashtags: ["ネムレス", "NEMLESSS"],
