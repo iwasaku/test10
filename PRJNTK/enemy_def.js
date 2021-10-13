@@ -555,7 +555,7 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 2,
+        life: 100,
         pts: 20000,
     },
     BOSS02MOD: {

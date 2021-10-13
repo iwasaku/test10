@@ -200,7 +200,7 @@ const BOMB_DEF = defineEnum({
 });
 
 const bombTable = [
-    { bomb: [BOMB_DEF.BOMB_LV_0], num: 20 },
+    { bomb: [BOMB_DEF.BOMB_LV_0], num: 10 },
     { bomb: [BOMB_DEF.BOMB_LV_0, BOMB_DEF.BOMB_LV_1], num: 40 },
     { bomb: [BOMB_DEF.BOMB_LV_0, BOMB_DEF.BOMB_LV_1, BOMB_DEF.BOMB_LV_2], num: 60 },
     { bomb: [BOMB_DEF.BOMB_LV_0, BOMB_DEF.BOMB_LV_1, BOMB_DEF.BOMB_LV_2, BOMB_DEF.BOMB_LV_3], num: 80 },

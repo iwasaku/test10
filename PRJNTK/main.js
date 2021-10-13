@@ -161,8 +161,8 @@ phina.define('MainScene', {
         clearArrays();
         player = PlayerSprite().addChildTo(group6);
 
-        stageBG[0] = StageSprite("stg01", -SCREEN_HEIGHT * 1.5, 1600 * 5).addChildTo(group0);
-        stageBG[1] = StageSprite("stg02", -SCREEN_HEIGHT * 2.5, 1600 * 5).addChildTo(group1);
+        stageBG[0] = StageSprite("stg01", -SCREEN_HEIGHT * 1.5, 1600 * 5, 1.0).addChildTo(group0);
+        stageBG[1] = StageSprite("stg02", -SCREEN_HEIGHT * 1.5, 1600 * 5, 0.0).addChildTo(group1);
 
         // ラベル設定
         nowScoreLabel = Label(
@@ -372,9 +372,9 @@ phina.define('MainScene', {
                                     stageBG[ctrl.param.idx].remove();
                                 }
                                 if (ctrl.param.idx == 0) {
-                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize).addChildTo(group0);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alppha).addChildTo(group0);
                                 } else {
-                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize).addChildTo(group1);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alppha).addChildTo(group1);
                                 }
                                 break;
                             case CMD.START_SCROLL:
@@ -393,10 +393,10 @@ phina.define('MainScene', {
                                 isBOSSSRUSH = false;
                                 break;
                             case CMD.FADE_IN:
-                                break;
-                            case CMD.FADE_NOW:
+                                stageBG[ctrl.param.idx].alphaFlag = 1;
                                 break;
                             case CMD.FADE_OUT:
+                                stageBG[ctrl.param.idx].alphaFlag = -1;
                                 break;
                             default:
                         }
@@ -553,7 +553,7 @@ phina.define('prjButton', {
 phina.define("StageSprite", {
     superClass: 'Sprite',
 
-    init: function (sprname, ypos, ysize) {
+    init: function (sprname, ypos, ysize, alphaVal) {
         this.superInit(sprname);
         this.direct = '';
         this.zRot = 0;
@@ -564,9 +564,34 @@ phina.define("StageSprite", {
         this.setInteractive(false);
         this.setBoundingType("circle");
         this.radius = 0;
+
+        this.alphaFlag = 0;
+        this.alpha = alphaVal;
     },
 
     update: function (app) {
+        if (player.status.isDead) return;
+        switch (this.alphaFlag) {
+            case 0:
+                // 現状維持
+                break;
+            case 1:
+                // FADE_IN
+                this.alpha += 1 / 60;
+                if (this.alpha >= 1.0) {
+                    this.alpha = 1.0;
+                    this.alphaFlag = 0;
+                }
+                break;
+            case -1:
+                // FADE_OUT
+                this.alpha -= 1 / 60;
+                if (this.alpha <= 0) {
+                    this.alpha = 0;
+                    this.alphaFlag = 0;
+                }
+                break;
+        }
     },
 });
 
