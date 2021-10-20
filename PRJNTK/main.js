@@ -352,6 +352,11 @@ phina.define('MainScene', {
                 for (let ii = 0; ii < ctrlArray.length; ii++) {
                     let ctrl = ctrlArray[ii];
                     if (ctrlCounter === ctrl.count) {
+                        //                        let sn = "undef";
+                        //                        if (ctrl.param.define !== undefined) {
+                        //                            sn = ctrl.param.define.sprName;
+                        //                        }
+                        //                        console.log("" + ctrl.count + ":" + ctrl.cmd.value + ":" + sn);
                         switch (ctrl.cmd) {
                             case CMD.SET_ENEMY:
                                 {
@@ -372,9 +377,9 @@ phina.define('MainScene', {
                                     stageBG[ctrl.param.idx].remove();
                                 }
                                 if (ctrl.param.idx == 0) {
-                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alppha).addChildTo(group0);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alpha).addChildTo(group0);
                                 } else {
-                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alppha).addChildTo(group1);
+                                    stageBG[ctrl.param.idx] = StageSprite(ctrl.param.sprName, ctrl.param.yPos, ctrl.param.ySize, ctrl.param.alpha).addChildTo(group1);
                                 }
                                 break;
                             case CMD.START_SCROLL:
@@ -926,11 +931,11 @@ function enemy01Move(tmpEne) {
                         let absSpdX = Math.abs(tmpEne.spd.x);
                         if (tmpEne.x < 0 + absSpdX) {
                             tmpEne.spd.x *= -1;
-                            shotSector(tmpEne, SHOT_TYPE.SECTOR_RIGHT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_RIGHT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
                             enemyShot(tmpEne);
                         } else if (tmpEne.x > SCREEN_WIDTH - absSpdX) {
                             tmpEne.spd.x *= -1;
-                            shotSector(tmpEne, SHOT_TYPE.SECTOR_LEFT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_LEFT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
                         }
                         break;
                 }
@@ -990,7 +995,7 @@ function enemy02Move(tmpEne) {
                         } else {
                             tmpEne.localStatus = 1;
                         }
-                        enemyShotCommon(tmpEne);
+                        enemyShot(tmpEne);
                     }
                     break;
                 case 1:
@@ -1007,11 +1012,11 @@ function enemy02Move(tmpEne) {
                         } else {
                             tmpEne.localStatus = 0;
                         }
-                        enemyShotCommon(tmpEne);
+                        enemyShot(tmpEne);
                     }
                     break;
-                // THRU
                 case 2:
+                    enemyShotCommon(tmpEne);
             }
             break;
         case EN_STATUS.DEAD_INIT:
@@ -2867,11 +2872,14 @@ function enemyShot(tmpEne) {
         case SHOT_TYPE.WAY_OF_32_N:
             shotNWay(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
             break;
+        case SHOT_TYPE.SECTOR_N:
+            shotSector(tmpEne, tmpEne.define.shotType.spd);
+            break;
         case SHOT_TYPE.SECTOR_UP_N:
         case SHOT_TYPE.SECTOR_DOWN_N:
         case SHOT_TYPE.SECTOR_LEFT_N:
         case SHOT_TYPE.SECTOR_RIGHT_N:
-            shotSector(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            shotSectorDeg(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
             break;
         case SHOT_TYPE.SEMICIRCLE_UP_N:
         case SHOT_TYPE.SEMICIRCLE_DOWN_N:
@@ -2971,14 +2979,29 @@ function shotNWayOfs(tmpEne, ofs, n, spd) {
         shotByDegreeOfs(tmpEne, ofs, (360 / n) * ii, spd);
     }
 }
+
+function shotSector(tmpEne, spd) {
+    const deg = fromVecToDegree(tmpEne.spd);
+    let cnt = 0;
+    if ((deg <= 45) && (deg >= -45)) {
+        cnt = SHOT_TYPE.SECTOR_LEFT_N.cnt;
+    } else if ((deg >= 45) && (deg <= 135)) {
+        cnt = SHOT_TYPE.SECTOR_UP_N.cnt;
+    } else if ((deg <= -45) && (deg >= -135)) {
+        cnt = SHOT_TYPE.SECTOR_DOWN_N.cnt;
+    } else {
+        cnt = SHOT_TYPE.SECTOR_RIGHT_N.cnt;
+    }
+    shotSectorDeg(tmpEne, cnt, spd);
+}
 /**
  * 扇形に射撃
  * 0,90,180,270とか
  * @param {*} tmpEne 
  * @param {*} deg 
  */
-function shotSector(tmpEne, deg, spd) {
-    shotSectorOfs(tmpEne, Vector2(0, 0), deg, spd);
+function shotSectorDeg(tmpEne, deg, spd) {
+    shotSectorDegOfs(tmpEne, Vector2(0, 0), deg, spd);
 }
 /**
  * 扇形に射撃
@@ -2988,7 +3011,7 @@ function shotSector(tmpEne, deg, spd) {
  * @param {*} deg 
  * @param {*} spd 
  */
-function shotSectorOfs(tmpEne, ofs, deg, spd) {
+function shotSectorDegOfs(tmpEne, ofs, deg, spd) {
     for (let ii = 0; ii < 9; ii++) {
         shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
     }
@@ -3440,7 +3463,12 @@ function checkPlayerBombToEnemy() {
                 // 爆発
 
                 // 敵処理
-                if (--tmpEne.life >= 1) {
+                if (tmpEne.define.isBoss) {
+                    tmpEne.life -= 1;
+                } else {
+                    tmpEne.life -= 100;
+                }
+                if (tmpEne.life >= 1) {
                     // 残ライフが1以上
                     continue;
                 }
@@ -3735,7 +3763,7 @@ function chkCollisionCircleOfs(a_x, a_y, a_x_ofs, a_y_ofs, a_r, b_x, b_y, b_x_of
  * @param {*} len 
  * @returns 
  */
-function fromAngleToVec(rad, len) {
+function fromRadianToVec(rad, len) {
     let ret = Vector2(0, 0);
     len = len || 1;
     ret.x = Math.cos(rad) * len;
@@ -3757,5 +3785,13 @@ function fromAngleToVec(rad, len) {
  * @returns 
  */
 function fromDegreeToVec(deg, len) {
-    return fromAngleToVec(deg.toRadian(), len);
+    return fromRadianToVec(deg.toRadian(), len);
+}
+
+function fromVecToDegree(vec) {
+    return fromVecToRadian(vec) * (180 / Math.PI);
+}
+function fromVecToRadian(vec) {
+    var rad = Math.atan2(vec.y, vec.x);
+    return rad;
 }

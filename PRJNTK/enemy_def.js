@@ -65,6 +65,9 @@ const SHOT_TYPE = defineEnum({
         spd: 16,
         cnt: 32,
     },
+    SECTOR_N: {
+        spd: 16,
+    },
     SECTOR_UP_N: {
         spd: 16,
         cnt: 270 - 45,
@@ -271,8 +274,8 @@ const EN_DEF = defineEnum({
         pts: 30,
 
         shotType: SHOT_TYPE.SNIPE_N,
-        shotInterval: 5,
-        shotBurst: 1,
+        shotInterval: 45,
+        shotBurst: 5,
 
         turn: 1,
     },
@@ -292,8 +295,8 @@ const EN_DEF = defineEnum({
         pts: 30,
 
         shotType: SHOT_TYPE.WAY_OF_16_N,
-        shotInterval: 5,
-        shotBurst: 1,
+        shotInterval: 45,
+        shotBurst: 5,
 
         turn: 2,
     },
@@ -313,7 +316,7 @@ const EN_DEF = defineEnum({
         life: 3,
         pts: 30,
 
-        shotType: SHOT_TYPE.SECTOR_DOWN_N,
+        shotType: SHOT_TYPE.SECTOR_N,
         shotInterval: 5,
         shotBurst: 1,
     },
@@ -333,7 +336,7 @@ const EN_DEF = defineEnum({
         life: 3,
         pts: 30,
 
-        shotType: SHOT_TYPE.SNIPE_N,
+        shotType: SHOT_TYPE.SECTOR_N,
         shotInterval: 5,
         shotBurst: 1,
     },
@@ -579,7 +582,7 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 2,
+        life: 100,
         pts: 20000,
     },
     BOSS03MOD: {
