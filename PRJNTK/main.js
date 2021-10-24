@@ -398,10 +398,14 @@ phina.define('MainScene', {
                                 isBOSSSRUSH = false;
                                 break;
                             case CMD.FADE_IN:
-                                stageBG[ctrl.param.idx].alphaFlag = 1;
+                                if (nowStageNum !== 0) {
+                                    stageBG[ctrl.param.idx].alphaFlag = 1;
+                                }
                                 break;
                             case CMD.FADE_OUT:
-                                stageBG[ctrl.param.idx].alphaFlag = -1;
+                                if (nowStageNum !== 0) {
+                                    stageBG[ctrl.param.idx].alphaFlag = -1;
+                                }
                                 break;
                             default:
                         }
@@ -749,21 +753,26 @@ phina.define("EnemySprite", {
         switch (this.define) {
             case EN_DEF.ENEMY00_0:
             case EN_DEF.ENEMY00_1:
-            case EN_DEF.ENEMY00_2:
+            case EN_DEF.ENEMY00_2_N:
+            case EN_DEF.ENEMY00_2_H:
             case EN_DEF.ENEMY00_3_LEFT:
             case EN_DEF.ENEMY00_3_RIGHT:
+                // 直進
                 enemy00Move(this, true);
                 break;
             case EN_DEF.ENEMY01_0:
             case EN_DEF.ENEMY01_1:
+                // 斜め
                 enemy01Move(this);
                 break;
             case EN_DEF.ENEMY02_0:
             case EN_DEF.ENEMY02_1:
+                // 軸が合うと自機側へ直角に曲がる
                 enemy02Move(this);
                 break;
             case EN_DEF.ENEMY03_0:
             case EN_DEF.ENEMY03_1:
+                // 自機の近くまで来たら反転
                 enemy03Move(this, false);
                 break;
             case EN_DEF.ENEMY04_0:
@@ -881,34 +890,34 @@ function enemy01Move(tmpEne) {
             if (tmpEne.x <= 0) {
                 if (tmpEne.y <= SCREEN_CENTER_Y) {
                     // 左上から
-                    deg = 90 - 45;
+                    deg = 90 - 30;
                 } else {
                     // 左下から
-                    deg = 270 + 45;
+                    deg = 270 + 30;
                 }
             } else if (tmpEne.x >= SCREEN_WIDTH) {
                 if (tmpEne.y <= SCREEN_CENTER_Y) {
                     // 右上から
-                    deg = 90 + 45;
+                    deg = 90 + 30;
                 } else {
                     // 右下から
-                    deg = 270 - 45;
+                    deg = 270 - 30;
                 }
             } else if (tmpEne.y <= 0) {
                 if (tmpEne.x <= SCREEN_CENTER_X) {
                     // 左上から
-                    deg = 90 - 45;
+                    deg = 90 - 30;
                 } else {
                     // 右上から
-                    deg = 90 + 45;
+                    deg = 90 + 30;
                 }
             } else if (tmpEne.y >= SCREEN_HEIGHT) {
                 if (tmpEne.x <= SCREEN_CENTER_X) {
                     // 左下から
-                    deg = 270 + 45;
+                    deg = 270 + 30;
                 } else {
                     // 右下から
-                    deg = 270 - 45;
+                    deg = 270 - 30;
                 }
             }
             tmpEne.spd = fromDegreeToVec(deg, tmpEne.define.spd);
@@ -1521,7 +1530,7 @@ function boss01Move(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -1690,7 +1699,7 @@ function boss01ModMove(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -1892,7 +1901,7 @@ function boss02Move(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -2078,7 +2087,7 @@ function boss02ModMove(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -2262,7 +2271,7 @@ function boss03Move(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -2443,7 +2452,7 @@ function boss03ModMove(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -2789,7 +2798,7 @@ function boss04Move(tmpEne) {
                 ctrlCounter++;
             } else {
                 // 次の面へ
-                nowStageNum++;
+                if (++nowStageNum >= 8) nowStageNum = 0;
                 ctrlCounter = 0;
             }
             ctrlCounterFlag = true;
@@ -3623,6 +3632,23 @@ function clearDeadEnemyArrays() {
         self.enemyArray.erase(tmp);
     }
 
+}
+function clearEnemyArrays() {
+    var self = this;
+
+    for (let ii = self.enemyArray.length - 1; ii >= 0; ii--) {
+        let tmp = self.enemyArray[ii];
+        if (tmp.parent == null) console.log("NULL!!");
+        else tmp.remove();
+        self.enemyArray.erase(tmp);
+    }
+
+    for (let ii = self.enBulletArray.length - 1; ii >= 0; ii--) {
+        let tmp = self.enBulletArray[ii];
+        if (tmp.parent == null) console.log("NULL!!");
+        else tmp.remove();
+        self.enBulletArray.erase(tmp);
+    }
 }
 
 // 配列クリア

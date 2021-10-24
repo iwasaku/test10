@@ -163,7 +163,7 @@ const EN_DEF = defineEnum({
      * 弾を撃たない
      * 初期位置で進行方向が決まる
      */
-    ENEMY00_2: {
+    ENEMY00_2_N: {
         sprName: "enemy01",
         sprSize: { x: 128, y: 128 },
         colliData: [
@@ -172,6 +172,28 @@ const EN_DEF = defineEnum({
         attr: EN_ATTR.ENEMY,
         spd: 2,
         life: 10,
+        pts: 10,
+
+        shotType: SHOT_TYPE.NONE,
+        shotInterval: 90,
+        shotBurst: 5,
+    },
+    /**
+     * 直進
+     * 事実上無敵
+     * ボム以外では多分壊れない
+     * 弾を撃たない
+     * 初期位置で進行方向が決まる
+     */
+    ENEMY00_2_H: {
+        sprName: "enemy01",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 2,
+        life: 100,
         pts: 10,
 
         shotType: SHOT_TYPE.NONE,
@@ -606,7 +628,7 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 2,
+        life: 100,
         pts: 20000,
     },
 
