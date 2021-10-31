@@ -1,4 +1,5 @@
 const BULLET_DEF = defineEnum({
+    // プレイヤー弾
     PL_O_16: {
         sprName: "pl_blt",
         sprSize: { x: 16, y: 16 },
@@ -6,6 +7,8 @@ const BULLET_DEF = defineEnum({
         lv: 99,
     },
 
+    // 敵弾
+    // 小
     EN_R_16: {
         sprName: "en_blt_r_16",
         sprSize: { x: 16, y: 16 },
@@ -49,6 +52,7 @@ const BULLET_DEF = defineEnum({
         lv: 1,
     },
 
+    // 中
     EN_R_24: {
         sprName: "en_blt_r_24",
         sprSize: { x: 24, y: 24 },
@@ -92,6 +96,7 @@ const BULLET_DEF = defineEnum({
         lv: 3,
     },
 
+    // 大
     EN_R_48: {
         sprName: "en_blt_r_48",
         sprSize: { x: 48, y: 48 },

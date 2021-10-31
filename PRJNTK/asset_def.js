@@ -4,7 +4,6 @@ var ASSETS = {
     },
     image: {
         "player": "./resource/squid.png",
-        //"player": "./resource/arrow_u_128.png",
 
         "enemy01": "./resource/enemy/enemy_a.png",
         "enemy02": "./resource/enemy/enemy_b.png",
@@ -15,14 +14,12 @@ var ASSETS = {
         "enemy07": "./resource/enemy/enemy_g.png",
         "enemy08": "./resource/enemy/enemy_h.png",
 
-        "boss01": "./resource/boss/boss.png",
-        "boss02": "./resource/boss/boss.png",
-        "boss03": "./resource/boss/boss.png",
-        "boss04": "./resource/boss/boss.png",
-        "boss05": "./resource/boss/boss.png",
-        "boss06": "./resource/boss/boss.png",
-        "boss07": "./resource/boss/boss.png",
-        "boss08": "./resource/boss/boss.png",
+        "boss01": "./resource/boss/boss_1.png",
+        "boss02": "./resource/boss/boss_2.png",
+        "boss03": "./resource/boss/boss_3.png",
+        "boss04": "./resource/boss/boss_4.png",
+        "boss05": "./resource/boss/boss_5.png",
+        "boss06": "./resource/boss/boss_6.png",
 
         "pl_blt": "./resource/bullet/pb_o_16.png",
 
@@ -61,18 +58,16 @@ var ASSETS = {
         "bomb09": "./resource/bomb/NTK_09.png",
         "bomb10": "./resource/bomb/NTK_10.png",
 
-        "stg01": "./resource/stage/stg_1.png?2",
-        "stg02": "./resource/stage/stg_2.png?2",
-        "stg03": "./resource/stage/stg_3.png?2",
-        "stg04": "./resource/stage/stg_4.png?2",
-        "stg05": "./resource/stage/stg_5.png?2",
-        "stg06": "./resource/stage/stg_6.png?2",
-        "stg07": "./resource/stage/stg_7.png?2",
-        "stg08": "./resource/stage/stg_8.png?2",
+        "stg01": "./resource/stage/stg_2.png?2",
+        "stg02": "./resource/stage/stg_3.png?2",
+        "stg03": "./resource/stage/stg_4.png?2",
+        "stg04": "./resource/stage/stg_5.png?2",
+        "stg05": "./resource/stage/stg_6.png?2",
+        "stg06": "./resource/stage/stg_7.png?2",
 
         "item_shot": "./resource/item/item_shot.png?2",
         "item_speed": "./resource/item/item_speed.png?2",
-        "item_bomb": "./resource/item/item_life_max.png?2",
+        "item_bomb": "./resource/item/item_ntk.png?2",
         "item_life": "./resource/item/item_life.png?2",
         "item_fairy": "./resource/item/fairly.png?2",
 

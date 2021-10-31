@@ -52,9 +52,9 @@ let warningLabelTimer = 0;
 
 let itemAppearCounter = 0;
 let itemAppearKind = 0;
-let itemAppearShootCounter = 0;
-let itemAppearFairyCounter = 0;
-let itemAppearBombCounter = 0;
+let itemAppearShootCounter = 1;
+let itemAppearFairyCounter = 5;
+let itemAppearBombCounter = 5;
 
 let uidCounter = 0;
 
@@ -66,7 +66,7 @@ const SPEED_MAX = 3;
 const BOMB_LEFT_MAX = 10;
 const LIFE_MAX = 10;
 const SCORE_MAX = 999999999;
-const STG_NUM_MAX = 8;
+const STG_NUM_MAX = 6;
 
 // ローディング画面
 phina.define('LoadingScene', {
@@ -144,7 +144,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: 'β0.0.1',
+            text: 'β1.0.0',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -258,7 +258,7 @@ phina.define('MainScene', {
         stageNumLabel = Label(
             {
                 text: "",
-                fontSize: 160,
+                fontSize: 150,
                 fontFamily: "misaki_gothic",
                 align: "center",
 
@@ -297,7 +297,6 @@ phina.define('MainScene', {
             if (bombButtonStatus !== BB_STATUS.WAIT) {
                 return;
             }
-            console.log("onpointstart");
             bombButtonStatus = BB_STATUS.CHARGE;
         }
         bombButton.onpointmove = function () {
@@ -307,7 +306,6 @@ phina.define('MainScene', {
                 return;
             }
             // bomb発射
-            console.log("onpointend");
             bombButtonStatus = BB_STATUS.SHOOT;
         };
         bombButton.update = function () {
@@ -353,9 +351,9 @@ phina.define('MainScene', {
         warningLabelTimer = 0;
         itemAppearCounter = 0;
         itemAppearKind = 0;
-        itemAppearShootCounter = 0;
-        itemAppearFairyCounter = 0;
-        itemAppearBombCounter = 0;
+        itemAppearShootCounter = 1;
+        itemAppearFairyCounter = 5;
+        itemAppearBombCounter = 5;
         tweetButton = null;
         restartButton = null;
     },
@@ -940,7 +938,7 @@ phina.define("EnemySprite", {
     superClass: 'Sprite',
 
     init: function (uid, param, ctrlCount) {
-        console.log(">>>>" + ctrlCount + ":" + param.define + ":" + param.xPos + ":" + param.yPos)
+        //        console.log(">>>>" + ctrlCount + ":" + param.define + ":" + param.xPos + ":" + param.yPos)
         this.uid = uid;
         this.param = param;
         this.define = param.define;
@@ -1022,10 +1020,14 @@ phina.define("EnemySprite", {
                 enemy00Move(this, true);
                 break;
 
-            case EN_DEF.BOSS_ZAKO01:
+            case EN_DEF.BOSS_ZAKO01_0:
+            case EN_DEF.BOSS_ZAKO01_1:
+            case EN_DEF.BOSS_ZAKO01_2:
                 bossZako01Move(this, true);
                 break;
-            case EN_DEF.BOSS_ZAKO02:
+            case EN_DEF.BOSS_ZAKO02_0:
+            case EN_DEF.BOSS_ZAKO02_2:
+            case EN_DEF.BOSS_ZAKO02_3:
                 bossZako01Move(this, false);
                 break;
 
@@ -1077,7 +1079,6 @@ phina.define("CollisionSprite", {
     superClass: 'Sprite',
 
     init: function (uid, param, ctrlCount) {
-        console.log(">>>>" + ctrlCount + ":" + param.define + ":" + param.xPos + ":" + param.yPos)
         this.uid = uid;
         this.param = param;
         this.define = param.define;
@@ -1212,11 +1213,11 @@ function enemy01Move(tmpEne) {
                         let absSpdX = Math.abs(tmpEne.spd.x);
                         if (tmpEne.x < 0 + absSpdX) {
                             tmpEne.spd.x *= -1;
-                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_RIGHT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_RIGHT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd, SHOT_TYPE.SECTOR_RIGHT_N.bullet);
                             enemyShot(tmpEne);
                         } else if (tmpEne.x > SCREEN_WIDTH - absSpdX) {
                             tmpEne.spd.x *= -1;
-                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_LEFT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd);
+                            shotSectorDeg(tmpEne, SHOT_TYPE.SECTOR_LEFT_N.cnt, SHOT_TYPE.SECTOR_RIGHT_N.spd, SHOT_TYPE.SECTOR_RIGHT_N.bullet);
                         }
                         break;
                 }
@@ -1688,6 +1689,7 @@ function boss02Move(tmpEne) {
             tmpEne.localCounter = 0;
             tmpEne.localStatus = 0;
             tmpEne.spd = Vector2(0, 8);
+            tmpEne.setScale(-1, 1); // 右向き
             tmpEne.status = EN_STATUS.START;
             tmpEne.collisionEnable = false;
         // THRU
@@ -1702,6 +1704,7 @@ function boss02Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         tmpEne.collisionEnable = true;
                     }
@@ -1710,6 +1713,7 @@ function boss02Move(tmpEne) {
                     // 0.5秒待って右へ移動
                     if (++tmpEne.localCounter > 30) {
                         tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.setScale(-1, 1); // 右向き
                         tmpEne.localStatus = 2;
                     } else {
                         boss01Shot(tmpEne, lifeStep);
@@ -1724,6 +1728,7 @@ function boss02Move(tmpEne) {
                         tmpEne.shotIntervalTimer = 0;
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localCounter = 0;
                         tmpEne.localStatus = 3;
                     }
@@ -1733,6 +1738,7 @@ function boss02Move(tmpEne) {
                     // 0.5秒待って左へ移動
                     if (++tmpEne.localCounter > 30) {
                         tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                        tmpEne.setScale(1, 1);  //左向き
 
                         tmpEne.localStatus = 4;
                     } else {
@@ -1749,6 +1755,7 @@ function boss02Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                     }
                     sign = -1;
@@ -1757,6 +1764,7 @@ function boss02Move(tmpEne) {
                     // 0.5秒待って左へ移動
                     if (++tmpEne.localCounter > 30) {
                         tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                        tmpEne.setScale(1, 1); // 左向き
                         tmpEne.localStatus = 6;
                     } else {
                         boss01Shot(tmpEne, lifeStep);
@@ -1772,6 +1780,7 @@ function boss02Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                     }
                     sign = -1;
@@ -1780,6 +1789,7 @@ function boss02Move(tmpEne) {
                     // 0.5秒待って右へ移動
                     if (++tmpEne.localCounter > 30) {
                         tmpEne.spd = Vector2(8, 0); // 右へ移動
+                        tmpEne.setScale(-1, 1); // 右向き
                         tmpEne.localStatus = 8;
                     } else {
                         boss01Shot(tmpEne, lifeStep);
@@ -1795,6 +1805,7 @@ function boss02Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                     }
                     sign = 1;
@@ -1826,6 +1837,7 @@ function boss02Move(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -1897,6 +1909,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                     }
                     break;
@@ -1919,6 +1932,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 3;
                     }
                     sign = 1;
@@ -1943,6 +1957,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                     }
                     sign = -1;
@@ -1966,6 +1981,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                     }
                     sign = -1;
@@ -1989,6 +2005,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                     }
                     sign = 1;
@@ -2020,6 +2037,7 @@ function boss02ModMove(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -2033,16 +2051,16 @@ function boss01Shot(tmpEne, lifeStep) {
     switch (lifeStep) {
         case 0:
             if (tmpEne.shotIntervalTimer % 2 === 0) {
-                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
         case 1:
-            boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N, 10, 4);
+            boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 10, 4);
             break;
         case 2:
-            if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N, 2, 8)) {
-                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_N.spd);
+            if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 2, 8)) {
+                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
         default:
@@ -2051,7 +2069,7 @@ function boss01Shot(tmpEne, lifeStep) {
 function boss01Shot01(tmpEne, shotType, interval, shotBurst) {
     if (tmpEne.shotIntervalTimer % interval === 0) {
         if (--tmpEne.shotBurstTimer <= 0) {
-            shotSemicircle(tmpEne, shotType.cnt, shotType.spd);
+            shotSemicircle(tmpEne, shotType.cnt, shotType.spd, shotType.bullet);
             tmpEne.shotBurstTimer = 2;
             if (++tmpEne.shotBurstCounter >= shotBurst) {
                 tmpEne.shotBurstCounter = 0;
@@ -2107,6 +2125,7 @@ function boss01Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         tmpEne.collisionEnable = true;
                     }
@@ -2124,9 +2143,10 @@ function boss01Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 3;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2144,9 +2164,10 @@ function boss01Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2164,9 +2185,10 @@ function boss01Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2184,9 +2206,10 @@ function boss01Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2207,6 +2230,7 @@ function boss01Move(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -2295,9 +2319,10 @@ function boss01ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 3;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2315,9 +2340,10 @@ function boss01ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2335,9 +2361,10 @@ function boss01ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2355,9 +2382,10 @@ function boss01ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_N.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_N.spd);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2378,6 +2406,7 @@ function boss01ModMove(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -2391,24 +2420,30 @@ function boss02Shot(tmpEne, lifeStep) {
     switch (lifeStep) {
         case 0:
             if (tmpEne.shotIntervalTimer % 12 === 0) {
-                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
         case 1:
             if (tmpEne.shotIntervalTimer % 10 === 0) {
-                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
         case 2:
         case 3:
             if (tmpEne.shotIntervalTimer % 8 === 0) {
-                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_N.spd);
-                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_N.spd);
+                shotSnipeOfs(tmpEne, Vector2(+96, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(+32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(0, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-32, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-96, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
         default:
@@ -2421,6 +2456,8 @@ function boss02Shot(tmpEne, lifeStep) {
  * ４辺に沿って移動する
  * ４隅で一旦停止して弾を撃つ
  * 徐々に加速する
+ * ※未使用！！！！
+ * →後で消す
  * @param {*} tmpEne 
  */
 function boss03Move(tmpEne) {
@@ -2567,6 +2604,7 @@ function boss03Move(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -2648,6 +2686,7 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         tmpEne.collisionEnable = true;
                     }
@@ -2670,6 +2709,7 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 3;
                     }
                     break;
@@ -2692,6 +2732,7 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                     }
                     break;
@@ -2713,6 +2754,7 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                     }
                     break;
@@ -2734,6 +2776,7 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                     }
                     break;
@@ -2753,6 +2796,7 @@ function boss03ModMove(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -2768,11 +2812,11 @@ function boss03Shot(tmpEne, lifeStep) {
     switch (tmpEne.localStatus) {
         case 1:
         case 3:
-            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_N;
+            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_L;
             break;
         case 5:
         case 7:
-            shotType = SHOT_TYPE.SEMICIRCLE_UP_N;
+            shotType = SHOT_TYPE.SEMICIRCLE_UP_L;
             break;
     }
     /**
@@ -2780,9 +2824,22 @@ function boss03Shot(tmpEne, lifeStep) {
      */
     switch (lifeStep) {
         case 0:
+            if (tmpEne.shotIntervalTimer % 2 === 0) {
+                shotSnipeOfs(tmpEne, Vector2(-158, -128), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+            }
+            break;
         case 1:
             if (tmpEne.shotIntervalTimer % 2 === 0) {
-                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_N.spd);
+                let orgTarget = tmpEne.shotTarget;
+                tmpEne.shotTarget = Vector2(orgTarget.x + 128, orgTarget.y + 128);
+                shotSnipeOfs(tmpEne, Vector2(-158, -128), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                tmpEne.shotTarget = Vector2(orgTarget.x - 128, orgTarget.y + 128);
+                shotSnipeOfs(tmpEne, Vector2(-158, -128), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                tmpEne.shotTarget = Vector2(orgTarget.x + 128, orgTarget.y - 128);
+                shotSnipeOfs(tmpEne, Vector2(-158, -128), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                tmpEne.shotTarget = Vector2(orgTarget.x - 128, orgTarget.y - 128);
+                shotSnipeOfs(tmpEne, Vector2(-158, -128), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                tmpEne.shotTarget = orgTarget;
             }
             break;
         case 2:
@@ -2797,7 +2854,7 @@ function boss03Shot(tmpEne, lifeStep) {
 function boss03Shot01(tmpEne, shotType, interval, shotBurst) {
     if (tmpEne.shotIntervalTimer % interval === 0) {
         if (--tmpEne.shotBurstTimer <= 0) {
-            shotSemicircle(tmpEne, shotType.cnt, shotType.spd);
+            shotSemicircle(tmpEne, shotType.cnt, shotType.spd, shotType.bullet);
             tmpEne.shotBurstTimer = 2;
             if (++tmpEne.shotBurstCounter >= shotBurst) {
                 tmpEne.shotBurstCounter = 0;
@@ -2880,6 +2937,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                         tmpEne.collisionEnable = true;
                     }
@@ -2895,7 +2953,7 @@ function boss04Move(tmpEne) {
                             tmpEne.localStatus = 2;
                         }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss04Shot(tmpEne, lifeStep);
                     }
                     break;
                 case 9:
@@ -2907,8 +2965,9 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 10;
-                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_N.cnt, SHOT_TYPE.SEMICIRCLE_UP_N.spd);
+                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
                     }
                     break;
                 case 10:
@@ -2920,6 +2979,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 2;
                     }
                     break;
@@ -2932,6 +2992,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 3;
                     }
                     break;
@@ -2946,7 +3007,7 @@ function boss04Move(tmpEne) {
                             tmpEne.localStatus = 4;
                         }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss04Shot(tmpEne, lifeStep);
                     }
                     break;
                 case 11:
@@ -2958,8 +3019,9 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 12;
-                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_N.cnt, SHOT_TYPE.SEMICIRCLE_UP_N.spd);
+                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
                     }
                     break;
                 case 12:
@@ -2971,6 +3033,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 4;
                     }
                     break;
@@ -2983,6 +3046,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
                     }
                     break;
@@ -2997,7 +3061,7 @@ function boss04Move(tmpEne) {
                             tmpEne.localStatus = 6;
                         }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss04Shot(tmpEne, lifeStep);
                     }
                     break;
                 case 13:
@@ -3009,8 +3073,9 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 14;
-                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_N.cnt, SHOT_TYPE.SEMICIRCLE_UP_N.spd);
+                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
                     }
                     break;
                 case 14:
@@ -3022,6 +3087,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 6;
                     }
                     break;
@@ -3034,6 +3100,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 7;
                     }
                     break;
@@ -3048,7 +3115,7 @@ function boss04Move(tmpEne) {
                             tmpEne.localStatus = 8;
                         }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss04Shot(tmpEne, lifeStep);
                     }
                     break;
                 case 15:
@@ -3060,8 +3127,9 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 16;
-                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_N.cnt, SHOT_TYPE.SEMICIRCLE_UP_N.spd);
+                        shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
                     }
                     break;
                 case 16:
@@ -3073,6 +3141,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 8;
                     }
                     break;
@@ -3085,6 +3154,7 @@ function boss04Move(tmpEne) {
                         tmpEne.shotBurstCounter = 0;
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
+                        tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 1;
                     }
                     break;
@@ -3104,6 +3174,7 @@ function boss04Move(tmpEne) {
                 if (++nowStageNum >= STG_NUM_MAX) {
                     nowStageNum = 0;
                     nowLoopCount++;
+                    nowScore++;
                 }
                 ctrlCounter = 0;
             }
@@ -3111,6 +3182,26 @@ function boss04Move(tmpEne) {
         // THRU
         case EN_STATUS.DEAD:
             break;
+    }
+}
+function boss04Shot(tmpEne, lifeStep) {
+    switch (lifeStep) {
+        case 0:
+            if (tmpEne.shotIntervalTimer % 2 === 0) {
+                shotSnipeOfs(tmpEne, Vector2(0, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+            }
+            break;
+        case 1:
+            boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 10, 4);
+            break;
+        case 2:
+            if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 2, 8)) {
+                shotSnipeOfs(tmpEne, Vector2(+128, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(0, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                shotSnipeOfs(tmpEne, Vector2(-128, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+            }
+            break;
+        default:
     }
 }
 
@@ -3142,12 +3233,13 @@ function bossZako01Move(tmpEne, rotateRight) {
             if (boss === null) break;
             // ボスの座標を中心に円軌道
             let rad = (2 * Math.PI * ((tmpEne.localTimer / 120))) + tmpEne.localRadian;
+            let radius = (tmpEne.define.sprSize.x / 2) + (boss.define.sprSize.x / 2);
             if (rotateRight) {
-                tmpEne.x = boss.x + (Math.cos(rad) * 256);
-                tmpEne.y = boss.y + (Math.sin(rad) * 256);
+                tmpEne.x = boss.x + (Math.cos(rad) * radius);
+                tmpEne.y = boss.y + (Math.sin(rad) * radius);
             } else {
-                tmpEne.x = boss.x + (Math.sin(rad) * 256);
-                tmpEne.y = boss.y + (Math.cos(rad) * 256);
+                tmpEne.x = boss.x + (Math.sin(rad) * radius);
+                tmpEne.y = boss.y + (Math.cos(rad) * radius);
             }
             enemyShotCommon(tmpEne);
             break;
@@ -3235,34 +3327,46 @@ function enemyShot(tmpEne) {
     switch (tmpEne.define.shotType) {
         case SHOT_TYPE.NONE:
             break;
+        case SHOT_TYPE.SNIPE_L:
         case SHOT_TYPE.SNIPE_N:
         case SHOT_TYPE.SNIPE_H:
-            shotSnipe(tmpEne, tmpEne.define.shotType.spd);
+            shotSnipe(tmpEne, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
         case SHOT_TYPE.WAY_OF_4_N:
         case SHOT_TYPE.WAY_OF_8_N:
         case SHOT_TYPE.WAY_OF_16_N:
         case SHOT_TYPE.WAY_OF_32_N:
-            shotNWay(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            shotNWay(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
+        case SHOT_TYPE.SECTOR_L:
         case SHOT_TYPE.SECTOR_N:
-            shotSector(tmpEne, tmpEne.define.shotType.spd);
+            shotSector(tmpEne, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
+        case SHOT_TYPE.SECTOR_UP_L:
+        case SHOT_TYPE.SECTOR_DOWN_L:
+        case SHOT_TYPE.SECTOR_LEFT_L:
+        case SHOT_TYPE.SECTOR_RIGHT_L:
         case SHOT_TYPE.SECTOR_UP_N:
         case SHOT_TYPE.SECTOR_DOWN_N:
         case SHOT_TYPE.SECTOR_LEFT_N:
         case SHOT_TYPE.SECTOR_RIGHT_N:
-            shotSectorDeg(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            shotSectorDeg(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
+        case SHOT_TYPE.SEMICIRCLE_UP_L:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_L:
+        case SHOT_TYPE.SEMICIRCLE_LEFT_L:
+        case SHOT_TYPE.SEMICIRCLE_RIGHT_L:
         case SHOT_TYPE.SEMICIRCLE_UP_N:
         case SHOT_TYPE.SEMICIRCLE_DOWN_N:
         case SHOT_TYPE.SEMICIRCLE_LEFT_N:
         case SHOT_TYPE.SEMICIRCLE_RIGHT_N:
-            shotSemicircle(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            shotSemicircle(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
+        case SHOT_TYPE.SPIRAL_LEFT_L:
+        case SHOT_TYPE.SPIRAL_RIGHT_L:
         case SHOT_TYPE.SPIRAL_LEFT_N:
         case SHOT_TYPE.SPIRAL_RIGHT_N:
-            shotSpiral(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd);
+            shotSpiral(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
     }
 }
@@ -3293,8 +3397,8 @@ function enemyShotCommon(tmpEne) {
  * 自機をめがけて射撃
  * @param {*} tmpEne 
  */
-function shotSnipe(tmpEne, spd) {
-    shotSnipeOfs(tmpEne, Vector2(0, 0), spd);
+function shotSnipe(tmpEne, spd, bulletDefine) {
+    shotSnipeOfs(tmpEne, Vector2(0, 0), spd, bulletDefine);
 }
 /**
  * 自機をめがけて射撃
@@ -3303,11 +3407,11 @@ function shotSnipe(tmpEne, spd) {
  * @param {*} ofs 
  * @param {*} spd 
  */
-function shotSnipeOfs(tmpEne, ofs, spd) {
+function shotSnipeOfs(tmpEne, ofs, spd, bulletDefine) {
     let from = Vector2(tmpEne.x + ofs.x, tmpEne.y + ofs.y);
     let to = tmpEne.shotTarget;
     let vec = Vector2.sub(to, from).normalize().mul(spd);
-    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
+    let enBullet = EnBulletSprite(++uidCounter, bulletDefine, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
     enBulletArray.push(enBullet);
 }
 /**
@@ -3315,8 +3419,8 @@ function shotSnipeOfs(tmpEne, ofs, spd) {
  * @param {*} tmpEne 
  * @param {*} degree 
  */
-function shotByDegree(tmpEne, degree, spd) {
-    shotByDegreeOfs(tmpEne, Vector2(0, 0), degree, spd);
+function shotByDegree(tmpEne, degree, spd, bulletDefine) {
+    shotByDegreeOfs(tmpEne, Vector2(0, 0), degree, spd, bulletDefine);
 }
 /**
  * 指定の角度で射撃
@@ -3326,9 +3430,9 @@ function shotByDegree(tmpEne, degree, spd) {
  * @param {*} degree 
  * @param {*} spd 
  */
-function shotByDegreeOfs(tmpEne, ofs, degree, spd) {
+function shotByDegreeOfs(tmpEne, ofs, degree, spd, bulletDefine) {
     let vec = fromDegreeToVec(degree, spd);
-    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_B_24, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
+    let enBullet = EnBulletSprite(++uidCounter, bulletDefine, tmpEne.x + ofs.x, tmpEne.y + ofs.y, vec.x, vec.y).addChildTo(group7);
     enBulletArray.push(enBullet);
 }
 /**
@@ -3336,8 +3440,8 @@ function shotByDegreeOfs(tmpEne, ofs, degree, spd) {
  * @param {*} tmpEne 
  * @param {*} n 
  */
-function shotNWay(tmpEne, n, spd) {
-    shotNWayOfs(tmpEne, Vector2(0, 0), n, spd);
+function shotNWay(tmpEne, n, spd, bulletDefine) {
+    shotNWayOfs(tmpEne, Vector2(0, 0), n, spd, bulletDefine);
 }
 /**
  * 360°をn分割した方向に射撃
@@ -3347,13 +3451,18 @@ function shotNWay(tmpEne, n, spd) {
  * @param {*} n 
  * @param {*} spd 
  */
-function shotNWayOfs(tmpEne, ofs, n, spd) {
+function shotNWayOfs(tmpEne, ofs, n, spd, bulletDefine) {
     for (let ii = 0; ii < n; ii++) {
-        shotByDegreeOfs(tmpEne, ofs, (360 / n) * ii, spd);
+        shotByDegreeOfs(tmpEne, ofs, (360 / n) * ii, spd, bulletDefine);
     }
 }
 
-function shotSector(tmpEne, spd) {
+/**
+ * 
+ * @param {*} tmpEne 
+ * @param {*} spd 
+ */
+function shotSector(tmpEne, spd, bulletDefine) {
     const deg = fromVecToDegree(tmpEne.spd);
     let cnt = 0;
     if ((deg <= 45) && (deg >= -45)) {
@@ -3365,7 +3474,7 @@ function shotSector(tmpEne, spd) {
     } else {
         cnt = SHOT_TYPE.SECTOR_RIGHT_N.cnt;
     }
-    shotSectorDeg(tmpEne, cnt, spd);
+    shotSectorDeg(tmpEne, cnt, spd, bulletDefine);
 }
 /**
  * 扇形に射撃
@@ -3373,8 +3482,8 @@ function shotSector(tmpEne, spd) {
  * @param {*} tmpEne 
  * @param {*} deg 
  */
-function shotSectorDeg(tmpEne, deg, spd) {
-    shotSectorDegOfs(tmpEne, Vector2(0, 0), deg, spd);
+function shotSectorDeg(tmpEne, deg, spd, bulletDefine) {
+    shotSectorDegOfs(tmpEne, Vector2(0, 0), deg, spd, bulletDefine);
 }
 /**
  * 扇形に射撃
@@ -3384,9 +3493,9 @@ function shotSectorDeg(tmpEne, deg, spd) {
  * @param {*} deg 
  * @param {*} spd 
  */
-function shotSectorDegOfs(tmpEne, ofs, deg, spd) {
+function shotSectorDegOfs(tmpEne, ofs, deg, spd, bulletDefine) {
     for (let ii = 0; ii < 9; ii++) {
-        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
+        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd, bulletDefine);
     }
 }
 /**
@@ -3396,8 +3505,8 @@ function shotSectorDegOfs(tmpEne, ofs, deg, spd) {
  * @param {*} tmpEne 
  * @param {*} deg 
  */
-function shotSemicircle(tmpEne, deg, spd) {
-    shotSemicircleOfs(tmpEne, Vector2(0, 0), deg, spd);
+function shotSemicircle(tmpEne, deg, spd, bulletDefine) {
+    shotSemicircleOfs(tmpEne, Vector2(0, 0), deg, spd, bulletDefine);
 }
 /**
  * 半円に射撃
@@ -3407,16 +3516,31 @@ function shotSemicircle(tmpEne, deg, spd) {
  * @param {*} deg 
  * @param {*} spd 
  */
-function shotSemicircleOfs(tmpEne, ofs, deg, spd) {
+function shotSemicircleOfs(tmpEne, ofs, deg, spd, bulletDefine) {
     for (let ii = 0; ii <= 18; ii++) {
-        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd);
+        shotByDegreeOfs(tmpEne, ofs, (10 * ii) + deg, spd, bulletDefine);
     }
 }
-function shotSpiral(tmpEne, deg, spd) {
-    shotSpiralOfs(tmpEne, Vector2(0, 0), deg, spd);
+/**
+ * 
+ * @param {*} tmpEne 
+ * @param {*} deg 
+ * @param {*} spd 
+ * @param {*} bulletDefine 
+ */
+function shotSpiral(tmpEne, deg, spd, bulletDefine) {
+    shotSpiralOfs(tmpEne, Vector2(0, 0), deg, spd, bulletDefine);
 }
-function shotSpiralOfs(tmpEne, ofs, deg, spd) {
-    shotByDegreeOfs(tmpEne, ofs, tmpEne.localTimer * deg, spd);
+/**
+ * 
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} deg 
+ * @param {*} spd 
+ * @param {*} bulletDefine 
+ */
+function shotSpiralOfs(tmpEne, ofs, deg, spd, bulletDefine) {
+    shotByDegreeOfs(tmpEne, ofs, tmpEne.localTimer * deg, spd, bulletDefine);
 }
 
 /*
@@ -3697,7 +3821,7 @@ function checkPlayerToEnemy() {
                             nowScore += 1000;
                             break;
                         }
-                        if (++player.lifeParts >= 5) {
+                        if (++player.lifeParts >= 4) {
                             player.lifeParts = 0;
                             player.lifeMax++;
                         }
@@ -3730,7 +3854,7 @@ function checkPlayerToEnemy() {
 function itemAppear(tmpEne) {
     // アイテム出現
     if (tmpEne.define.item) {
-        if (++itemAppearCounter >= 10) {
+        if (++itemAppearCounter >= 5) {
             itemAppearCounter = 0;
             let itemDefine;
             switch (itemAppearKind) {
@@ -3769,7 +3893,7 @@ function itemAppear(tmpEne) {
                     }
                     break;
                 case 16:
-                    if (++itemAppearBombCounter > 10) {
+                    if (++itemAppearBombCounter > 5) {
                         itemAppearBombCounter = 0;
                         itemDefine = EN_DEF.ITEM_BOMB;
                     } else {

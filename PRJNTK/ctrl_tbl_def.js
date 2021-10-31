@@ -58,7 +58,6 @@ const CMD = defineEnum({
 const ctrlTable = [
     //    [
     //
-    //
     //        { count: 800 * 4, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
     //
     //        { count: 3200, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01, xPos: SCREEN_CENTER_X, yPos: -128 } },
@@ -662,7 +661,11 @@ const ctrlTable = [
         { count: 3200, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
 
         // ボス
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 3200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
     ],
     // STG4
@@ -846,11 +849,13 @@ const ctrlTable = [
         { count: 3200, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
 
         // ボス
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS02MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 3200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
     ],
     // STG5
@@ -867,147 +872,6 @@ const ctrlTable = [
         // １画面分スクロールした辺りで次の面の準備
         { count: 900, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
         { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 1, sprName: "stg06", yPos: -SCREEN_HEIGHT * 1.5, ySize: 1600 * 5, alpha: 0.0 } },
-
-        // ザコ
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 1 } },
-
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 2 } },
-
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 3 } },
-
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 4 } },
-
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 0, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 5 } },
-
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 1, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 6 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 5 } },
-
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 6 } },
-        { count: 60 + 120 * 4 * 2, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 6 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 4 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 5 } },
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 5 } },
-
-        { count: 60 + 120 * 4 * 3, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 6 } },
-
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 1, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 1 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 1 } },
-
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 1, yPos: 0 - 64 - (128 + 32) * 2 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 2 } },
-
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 3 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 3 } },
-
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 3, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X - 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 0, yPos: 0 - 64 - (128 + 32) * 4 } },
-        { count: 60 + 120 * 4 * 4, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY00_2_H, xPos: SCREEN_CENTER_X + 128 * 2, yPos: 0 - 64 - (128 + 32) * 4 } },
-
-        // ボス前
-        { count: 3200 - 60, cmd: CMD.DISP_WARNING, param: {} },
-        { count: 3200, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
-
-        // ボス
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
-        { count: 3200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
-    ],
-    // STG6
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 6" } },
-
-        { count: 0, cmd: CMD.CLEAR_ENEMY_ARRAYS, param: {} },
-
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-        { count: 0, cmd: CMD.FADE_IN, param: { idx: 1 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.FADE_OUT, param: { idx: 0 } },
-
-        // １画面分スクロールした辺りで次の面の準備
-        { count: 900, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
-        { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 0, sprName: "stg07", yPos: -SCREEN_HEIGHT * 1.5, ySize: 1600 * 5, alpha: 0.0 } },
 
         // ザコ
         { count: 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.ENEMY04_0, xPos: SCREEN_CENTER_X + 128 * 3, yPos: 0 - 64 - (128 + 32) * 0 } },
@@ -1186,52 +1050,23 @@ const ctrlTable = [
 
         // ボス前
         { count: 3200 - 60, cmd: CMD.DISP_WARNING, param: {} },
-        { count: 3200, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-
-        // ボス
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS02MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
-        { count: 3200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
-    ],
-    // STG7
-    [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 7" } },
-
-        { count: 0, cmd: CMD.CLEAR_ENEMY_ARRAYS, param: {} },
-
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 0 } },
-        { count: 0, cmd: CMD.FADE_IN, param: { idx: 0 } },
-        { count: 0, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-        { count: 0, cmd: CMD.FADE_OUT, param: { idx: 1 } },
-
-        // １画面分スクロールした辺りで次の面の準備
-        { count: 900, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-        { count: 900, cmd: CMD.SET_SCROLL_DATA, param: { idx: 1, sprName: "stg08", yPos: -SCREEN_HEIGHT * 1.5, ySize: 1600 * 5, alpha: 0.0 } },
-
-        // ボス前
-        { count: 3200 - 60, cmd: CMD.DISP_WARNING, param: {} },
         { count: 3200, cmd: CMD.STOP_SCROLL, param: { idx: 0 } },
 
         // ボス
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
         { count: 3200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 3200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
     ],
-    // STG8
+    // STG6
     [
-        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "STAGE 8" } },
+        { count: 0, cmd: CMD.DISP_STAGE_NUM, param: { str: "FINAL STAGE" } },
 
         { count: 0, cmd: CMD.CLEAR_ENEMY_ARRAYS, param: {} },
 
@@ -1269,7 +1104,11 @@ const ctrlTable = [
         { count: 720 - 60, cmd: CMD.DISP_WARNING, param: {} },
         { count: 720, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
         // STG3ボス
-        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 720 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 720 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
         { count: 720 + 2 * 60 + 2, cmd: CMD.START_SCROLL, param: { idx: 1 } },
 
@@ -1277,13 +1116,13 @@ const ctrlTable = [
         { count: 960 - 60, cmd: CMD.DISP_WARNING, param: {} },
         { count: 960, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
         // STG4ボス
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
-        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS01MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_0, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        { count: 960 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS02MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 960 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
         { count: 960 + 2 * 60 + 2, cmd: CMD.START_SCROLL, param: { idx: 1 } },
 
@@ -1291,46 +1130,38 @@ const ctrlTable = [
         { count: 1200 - 60, cmd: CMD.DISP_WARNING, param: {} },
         { count: 1200, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
         // STG5ボス
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
-        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS02MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_1, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
+        { count: 1200 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
         { count: 1200 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
         { count: 1200 + 2 * 60 + 2, cmd: CMD.START_SCROLL, param: { idx: 1 } },
+
+        // ボスラッシュ終了
+        { count: 1440 - 60, cmd: CMD.RESET_BOSSSRUSH, param: {} },
 
         // STG6ボス前
         { count: 1440 - 60, cmd: CMD.DISP_WARNING, param: {} },
         { count: 1440, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
-        // STG6ボス
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
-        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS03MOD, xPos: SCREEN_CENTER_X, yPos: -128 } },
-        { count: 1440 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
-        { count: 1440 + 2 * 60 + 2, cmd: CMD.START_SCROLL, param: { idx: 1 } },
-
-        // ボスラッシュ終了
-        { count: 1680 - 60, cmd: CMD.RESET_BOSSSRUSH, param: {} },
-
-        // STG7ボス前
-        { count: 1680 - 60, cmd: CMD.DISP_WARNING, param: {} },
-        { count: 1680, cmd: CMD.STOP_SCROLL, param: { idx: 1 } },
         // STG7ボス
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 90 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02, xPos: SCREEN_CENTER_X, yPos: -128, deg: 270 } },
-        { count: 1680 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
-        { count: 1680 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO01_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 0 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 60 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 120 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 180 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 240 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS_ZAKO02_2, xPos: SCREEN_CENTER_X, yPos: -128, deg: 300 } },
+        { count: 1440 + 2 * 60, cmd: CMD.SET_ENEMY, param: { loop: 0, define: EN_DEF.BOSS04, xPos: SCREEN_CENTER_X, yPos: -128 } },
+        { count: 1440 + 2 * 60 + 1, cmd: CMD.STOP_CTRL_COUNTER, param: {} },
     ],
 ];

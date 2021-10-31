@@ -42,77 +42,171 @@ const COLLI_ATTR = defineEnum({
 const SHOT_TYPE = defineEnum({
     NONE: {
         spd: 0,
+        bullet: BULLET_DEF.EN_B_24,
+    },
+
+    //
+    SNIPE_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_B_48,
     },
     SNIPE_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_B_24,
     },
     SNIPE_H: {
         spd: 24,
+        bullet: BULLET_DEF.EN_B_24,
     },
+
+    //
     WAY_OF_4_N: {
         spd: 16,
         cnt: 4,
+        bullet: BULLET_DEF.EN_O_24,
     },
     WAY_OF_8_N: {
         spd: 16,
         cnt: 8,
+        bullet: BULLET_DEF.EN_O_24,
     },
     WAY_OF_16_N: {
         spd: 16,
         cnt: 16,
+        bullet: BULLET_DEF.EN_O_24,
     },
     WAY_OF_32_N: {
         spd: 16,
         cnt: 32,
+        bullet: BULLET_DEF.EN_O_24,
+    },
+
+    // 
+    SECTOR_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
     },
     SECTOR_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
+    },
+    SECTOR_UP_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
+        cnt: 270 - 45,
     },
     SECTOR_UP_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
         cnt: 270 - 45,
+    },
+    SECTOR_DOWN_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
+        cnt: 90 - 45,
     },
     SECTOR_DOWN_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
         cnt: 90 - 45,
+    },
+    SECTOR_LEFT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
+        cnt: 180 - 45,
     },
     SECTOR_LEFT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
         cnt: 180 - 45,
+    },
+    SECTOR_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
+        cnt: 0 - 45,
     },
     SECTOR_RIGHT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
         cnt: 0 - 45,
+    },
+    SECTOR_DIR_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_P_48,
     },
     SECTOR_DIR_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_P_24,
+    },
+
+    //
+    SEMICIRCLE_UP_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 270 - 90,
     },
     SEMICIRCLE_UP_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
         cnt: 270 - 90,
     },
-    SEMICIRCLE_DOWN_N: {
+    SEMICIRCLE_DOWN_L: {
         spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
         cnt: 90 - 90,
+    },
+    SEMICIRCLE_DOWN_N: {
+        spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
+        cnt: 90 - 90,
+    },
+    SEMICIRCLE_LEFT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 180 - 90,
     },
     SEMICIRCLE_LEFT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
         cnt: 180 - 90,
+    },
+    SEMICIRCLE_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 0 - 90,
     },
     SEMICIRCLE_RIGHT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
         cnt: 0 - 90,
+    },
+
+    // 
+    SPIRAL_LEFT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_M_48,
+        cnt: -4,
     },
     SPIRAL_LEFT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_M_24,
         cnt: -4,
+    },
+    SPIRAL_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_M_48,
+        cnt: 4,
     },
     SPIRAL_RIGHT_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_M_24,
         cnt: 4,
     },
+
+    //
     DEGREE_N: {
         spd: 16,
+        bullet: BULLET_DEF.EN_Y_24,
     },
 });
 
@@ -569,7 +663,7 @@ const EN_DEF = defineEnum({
     },
 
     // ボス用ザコ
-    BOSS_ZAKO01: {
+    BOSS_ZAKO01_0: {
         sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
@@ -578,7 +672,7 @@ const EN_DEF = defineEnum({
         attr: EN_ATTR.BOSS_ZAKO,
         isBossZako: true,
         spd: 8,
-        life: 3,
+        life: 10,
         pts: 30,
         item: false,
 
@@ -586,16 +680,86 @@ const EN_DEF = defineEnum({
         shotInterval: 30,
         shotBurst: 1,
     },
-    BOSS_ZAKO02: {
+    BOSS_ZAKO02_0: {
         sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 128 - 32 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
         attr: EN_ATTR.BOSS_ZAKO,
         isBossZako: true,
         spd: 8,
-        life: 3,
+        life: 10,
+        pts: 30,
+        item: false,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+
+    BOSS_ZAKO01_1: {
+        sprName: "enemy08",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 20,
+        pts: 30,
+        item: false,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+    BOSS_ZAKO02_1: {
+        sprName: "enemy08",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 20,
+        pts: 30,
+        item: false,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+
+    BOSS_ZAKO01_2: {
+        sprName: "enemy08",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 20,
+        pts: 30,
+        item: false,
+
+        shotType: SHOT_TYPE.SNIPE_N,
+        shotInterval: 30,
+        shotBurst: 1,
+    },
+    BOSS_ZAKO02_2: {
+        sprName: "enemy08",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+        ],
+        attr: EN_ATTR.BOSS_ZAKO,
+        isBossZako: true,
+        spd: 8,
+        life: 20,
         pts: 30,
         item: false,
 
@@ -609,8 +773,9 @@ const EN_DEF = defineEnum({
         sprName: "boss01",
         sprSize: { x: 256, y: 256 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -40, y: 20 }, radius: 44 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 40 }, radius: 44 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 40, y: 20 }, radius: 44 },
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
@@ -618,72 +783,52 @@ const EN_DEF = defineEnum({
         pts: 1000,
         item: false,
     },
-    BOSS01MOD: {
-        sprName: "boss04",
-        sprSize: { x: 384, y: 384 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 100,
-        pts: 20000,
-        item: false,
-    },
     BOSS02: {
         sprName: "boss02",
         sprSize: { x: 256, y: 256 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128 + 40, y: 0 }, radius: 40 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -16, y: -4 }, radius: 80 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 96, y: -4 }, radius: 48 },
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
-        pts: 20000,
+        life: 500,
+        pts: 2000,
         item: false,
     },
-    BOSS02MOD: {
-        sprName: "boss06",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 100,
-        pts: 20000,
-        item: false,
-    },
-    BOSS03: {
+    BOSS01MOD: {
         sprName: "boss03",
         sprSize: { x: 384, y: 384 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -64, y: -64 }, radius: 96 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -48, y: 64 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 48, y: -64 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 80, y: 32 }, radius: 96 },
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
-        pts: 20000,
+        life: 600,
+        pts: 3000,
         item: false,
     },
-    BOSS03MOD: {
-        sprName: "boss07",
-        sprSize: { x: 640, y: 640 },
+    BOSS02MOD: {
+        sprName: "boss04",
+        sprSize: { x: 384, y: 384 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -48, y: 0 - 8 }, radius: 128 + 8 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 - 16 }, radius: 128 + 16 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 48, y: 0 - 24 }, radius: 128 + 8 },
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
-        pts: 20000,
+        life: 700,
+        pts: 4000,
         item: false,
     },
-    BOSS04: {
+    BOSS03: {
+        // 未使用
+        // 後で消す
         sprName: "boss05",
         sprSize: { x: 512, y: 512 },
         colliData: [
@@ -692,7 +837,43 @@ const EN_DEF = defineEnum({
         ],
         attr: EN_ATTR.BOSS,
         spd: 8,
-        life: 100,
+        life: 800,
+        pts: 5000,
+        item: false,
+    },
+    BOSS03MOD: {
+        sprName: "boss05",
+        sprSize: { x: 512, y: 512 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 24, y: -128 + 16 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 128 - 16 }, radius: 128 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: 256 - 96 }, radius: 48 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -80 }, radius: 48 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 256 - 90 }, radius: 32 },
+        ],
+        attr: EN_ATTR.BOSS,
+        spd: 8,
+        life: 800,
+        pts: 10000,
+        item: false,
+    },
+    BOSS04: {
+        sprName: "boss06",
+        sprSize: { x: 512, y: 512 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 128 + 32 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128 + 16, y: 128 - 8 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 128 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128 - 16, y: 128 - 8 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128 - 56, y: 128 - 32 - 8 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128 + 56, y: 128 - 32 - 16 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -128 - 16, y: -256 + 104 }, radius: 40 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 128 + 16 + 4, y: -256 + 112 }, radius: 40 },
+        ],
+        attr: EN_ATTR.BOSS,
+        spd: 8,
+        life: 1000,
         pts: 20000,
         item: false,
     },
