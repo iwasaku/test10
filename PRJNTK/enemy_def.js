@@ -131,6 +131,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 2,
         pts: 10,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 90,
@@ -140,10 +141,11 @@ const EN_DEF = defineEnum({
      * 直進
      * ゆっくり
      * 硬い
+     * 8方向へ弾を撃つ
      * 初期位置で進行方向が決まる
      */
     ENEMY00_1: {
-        sprName: "enemy01",
+        sprName: "enemy04",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -152,6 +154,7 @@ const EN_DEF = defineEnum({
         spd: 4,
         life: 10,
         pts: 10,
+        item: true,
 
         shotType: SHOT_TYPE.WAY_OF_8_N,
         shotInterval: 60,
@@ -164,7 +167,7 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY00_2_N: {
-        sprName: "enemy01",
+        sprName: "enemy07",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -173,6 +176,7 @@ const EN_DEF = defineEnum({
         spd: 2,
         life: 10,
         pts: 10,
+        item: false,
 
         shotType: SHOT_TYPE.NONE,
         shotInterval: 90,
@@ -186,15 +190,16 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY00_2_H: {
-        sprName: "enemy01",
+        sprName: "enemy07",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 65 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 2,
         life: 100,
         pts: 10,
+        item: true,
 
         shotType: SHOT_TYPE.NONE,
         shotInterval: 90,
@@ -206,15 +211,17 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY00_3_LEFT: {
-        sprName: "enemy01",
+        sprName: "enemy02",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 16, y: -16 }, radius: 40 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -12, y: 20 }, radius: 40 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 2,
         pts: 10,
+        item: true,
 
         shotType: SHOT_TYPE.SPIRAL_LEFT_N,
         shotInterval: 3,
@@ -226,15 +233,17 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY00_3_RIGHT: {
-        sprName: "enemy01",
+        sprName: "enemy02",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 16, y: -16 }, radius: 40 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -12, y: 20 }, radius: 40 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 2,
         pts: 10,
+        item: true,
 
         shotType: SHOT_TYPE.SPIRAL_RIGHT_N,
         shotInterval: 3,
@@ -246,15 +255,18 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY01_0: {
-        sprName: "enemy01",
+        sprName: "enemy03",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -8, y: -40 }, radius: 24 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 24 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 32 }, radius: 24 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 2,
         pts: 20,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 60,
@@ -266,15 +278,18 @@ const EN_DEF = defineEnum({
      * 初期位置で進行方向が決まる
      */
     ENEMY01_1: {
-        sprName: "enemy01",
+        sprName: "enemy03",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -8, y: -40 }, radius: 24 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 24 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 32 }, radius: 24 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 60,
@@ -285,19 +300,22 @@ const EN_DEF = defineEnum({
      * １回曲がる
      */
     ENEMY02_0: {
-        sprName: "enemy01",
+        sprName: "enemy05",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -32, y: 16 }, radius: 28 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 38 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 32, y: -8 }, radius: 28 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 45,
-        shotBurst: 5,
+        shotBurst: 1,
 
         turn: 1,
     },
@@ -306,21 +324,48 @@ const EN_DEF = defineEnum({
      * ２回曲がる
      */
     ENEMY02_1: {
-        sprName: "enemy01",
+        sprName: "enemy05",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -32, y: 16 }, radius: 28 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 38 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 32, y: -8 }, radius: 28 },
         ],
         attr: EN_ATTR.ENEMY,
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
-        shotType: SHOT_TYPE.WAY_OF_16_N,
+        shotType: SHOT_TYPE.WAY_OF_8_N,
         shotInterval: 45,
-        shotBurst: 5,
+        shotBurst: 1,
 
         turn: 2,
+    },
+    /**
+     * 追尾
+     * 4回曲がる
+     */
+    ENEMY02_2: {
+        sprName: "enemy05",
+        sprSize: { x: 128, y: 128 },
+        colliData: [
+            { attr: COLLI_ATTR.BOTH, ofs: { x: -32, y: 16 }, radius: 28 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 38 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 32, y: -8 }, radius: 28 },
+        ],
+        attr: EN_ATTR.ENEMY,
+        spd: 8,
+        life: 3,
+        pts: 30,
+        item: true,
+
+        shotType: SHOT_TYPE.WAY_OF_16_N,
+        shotInterval: 60,
+        shotBurst: 2,
+
+        turn: 4,
     },
     /**
      * 自機の近くで反転
@@ -328,7 +373,7 @@ const EN_DEF = defineEnum({
      * 反転時に弾を撃つ
      */
     ENEMY03_0: {
-        sprName: "enemy01",
+        sprName: "enemy06",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -337,6 +382,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SECTOR_N,
         shotInterval: 5,
@@ -348,7 +394,7 @@ const EN_DEF = defineEnum({
      * 反転時に弾を撃つ
      */
     ENEMY03_1: {
-        sprName: "enemy01",
+        sprName: "enemy06",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -357,6 +403,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SECTOR_N,
         shotInterval: 5,
@@ -368,7 +415,7 @@ const EN_DEF = defineEnum({
      * 一時停止時に弾を撃つ
      */
     ENEMY04_0: {
-        sprName: "enemy01",
+        sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -377,6 +424,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -388,7 +436,7 @@ const EN_DEF = defineEnum({
      * 一時停止時に弾を撃つ
      */
     ENEMY04_1: {
-        sprName: "enemy01",
+        sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -397,6 +445,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -415,6 +464,7 @@ const EN_DEF = defineEnum({
         spd: 24,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SEMICIRCLE_DOWN_N,
         shotInterval: 10,
@@ -430,6 +480,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.WAY_OF_32_N,
         shotInterval: 1,
@@ -445,6 +496,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -460,6 +512,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -475,6 +528,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -490,6 +544,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -506,6 +561,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: true,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 5,
@@ -514,7 +570,7 @@ const EN_DEF = defineEnum({
 
     // ボス用ザコ
     BOSS_ZAKO01: {
-        sprName: "enemy01",
+        sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
@@ -524,22 +580,24 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 3,
         pts: 30,
+        item: false,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
         shotBurst: 1,
     },
     BOSS_ZAKO02: {
-        sprName: "enemy01",
+        sprName: "enemy08",
         sprSize: { x: 128, y: 128 },
         colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
+            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 128 - 32 },
         ],
         attr: EN_ATTR.BOSS_ZAKO,
         isBossZako: true,
         spd: 8,
         life: 3,
         pts: 30,
+        item: false,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
@@ -558,6 +616,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 1000,
+        item: false,
     },
     BOSS01MOD: {
         sprName: "boss04",
@@ -570,6 +629,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
     BOSS02: {
         sprName: "boss02",
@@ -582,6 +642,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
     BOSS02MOD: {
         sprName: "boss06",
@@ -594,6 +655,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
     BOSS03: {
         sprName: "boss03",
@@ -606,6 +668,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
     BOSS03MOD: {
         sprName: "boss07",
@@ -618,6 +681,7 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
     BOSS04: {
         sprName: "boss05",
@@ -630,12 +694,13 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 100,
         pts: 20000,
+        item: false,
     },
 
     // アイテム
     ITEM_SHOT: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
+        sprName: "item_shot",
+        sprSize: { x: 64, y: 64 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
@@ -643,10 +708,11 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 0,
         pts: 0,
+        item: false,
     },
     ITEM_SPEED: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
+        sprName: "item_speed",
+        sprSize: { x: 64, y: 64 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
@@ -654,10 +720,11 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 0,
         pts: 0,
+        item: false,
     },
     ITEM_BOMB: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
+        sprName: "item_bomb",
+        sprSize: { x: 64, y: 64 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
@@ -665,10 +732,11 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 0,
         pts: 0,
+        item: false,
     },
     ITEM_LIFE: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
+        sprName: "item_life",
+        sprSize: { x: 64, y: 64 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
@@ -676,21 +744,11 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 0,
         pts: 0,
-    },
-    ITEM_LIFE_MAX: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
-        ],
-        attr: EN_ATTR.ITEM,
-        spd: 8,
-        life: 0,
-        pts: 0,
+        item: false,
     },
     ITEM_FAIRY: {
-        sprName: "enemy01",
-        sprSize: { x: 128, y: 128 },
+        sprName: "item_fairy",
+        sprSize: { x: 64, y: 64 },
         colliData: [
             { attr: COLLI_ATTR.BOTH, ofs: { x: 0, y: 0 }, radius: 64 },
         ],
@@ -698,5 +756,6 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 0,
         pts: 0,
+        item: false,
     },
 });

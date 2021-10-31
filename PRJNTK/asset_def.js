@@ -3,10 +3,17 @@ var ASSETS = {
         misaki_gothic: "https://cdn.leafscape.be/misaki/misaki_gothic_web.woff2"
     },
     image: {
-        //        "player": "./resource/squid.png",
-        "player": "./resource/arrow_u_128.png",
+        "player": "./resource/squid.png",
+        //"player": "./resource/arrow_u_128.png",
 
-        "enemy01": "./resource/enemy/ice.png",
+        "enemy01": "./resource/enemy/enemy_a.png",
+        "enemy02": "./resource/enemy/enemy_b.png",
+        "enemy03": "./resource/enemy/enemy_c.png",
+        "enemy04": "./resource/enemy/enemy_d.png",
+        "enemy05": "./resource/enemy/enemy_e.png",
+        "enemy06": "./resource/enemy/enemy_f.png",
+        "enemy07": "./resource/enemy/enemy_g.png",
+        "enemy08": "./resource/enemy/enemy_h.png",
 
         "boss01": "./resource/boss/boss.png",
         "boss02": "./resource/boss/boss.png",
@@ -62,6 +69,12 @@ var ASSETS = {
         "stg06": "./resource/stage/stg_6.png?2",
         "stg07": "./resource/stage/stg_7.png?2",
         "stg08": "./resource/stage/stg_8.png?2",
+
+        "item_shot": "./resource/item/item_shot.png?2",
+        "item_speed": "./resource/item/item_speed.png?2",
+        "item_bomb": "./resource/item/item_life_max.png?2",
+        "item_life": "./resource/item/item_life.png?2",
+        "item_fairy": "./resource/item/fairly.png?2",
 
         "explosion": "./resource/expl/expl_48.png",
     },
