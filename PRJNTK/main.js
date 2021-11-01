@@ -1,5 +1,5 @@
 phina.globalize();
-//console.log = function () { };  // ログを出す時にはコメントアウトする
+console.log = function () { };  // ログを出す時にはコメントアウトする
 let isMUTEKI = false;
 let isNoSHOT = false;
 let dispCollision = false;
@@ -144,7 +144,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: 'β1.0.0',
+            text: 'β1.1.0',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -601,8 +601,14 @@ phina.define('MainScene', {
                         height: 150,
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
+                    let message = "PROJECT N.T.K. スコア: " + nowScore + "\n";
+                    message += " STG：" + (nowStageNum + 1) + "\n";
+                    if (nowLoopCount > 0) {
+                        message += " 周回数:" + (nowLoopCount + 1);
+                    }
+                    message += "\n";
                     var twitterURL = phina.social.Twitter.createURL({
-                        text: "PROJECT N.T.K. スコア: " + nowScore,
+                        text: message,
                         hashtags: ["ネムレス", "NEMLESSS"],
                         url: "https://iwasaku.github.io/test10/PRJNTK/",
                     });
@@ -834,6 +840,7 @@ phina.define("PlayerSprite", {
 
         if (--this.shotIntvlTimer <= 0) {
             if (isNoSHOT) return;
+            this.shotIntvlTimer = -1;
             switch (this.shotLv) {
                 case 7:
                     {
@@ -844,12 +851,12 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y + 32, 0, +16).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 7;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 7;
                 // THRU
                 case 6:
                     let plBullet = PlBulletSprite(++uidCounter, this.x, this.y + 64, 0, +16).addChildTo(group8);
                     plBulletArray.push(plBullet);
-                    this.shotIntvlTimer = 7;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 7;
                 // THRU
                 case 5:
                     {
@@ -860,7 +867,6 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x + 32, this.y - 32 - 32, +16, 0).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-
                     {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32 + 32, -16, 0).addChildTo(group8);
                         plBulletArray.push(plBullet);
@@ -869,7 +875,7 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32 - 32, -16, 0).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 8;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 7;
                 // THRU
                 case 4:
                     {
@@ -880,7 +886,7 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 64, this.y - 32, -16, 0).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 8;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 7;
                 // THRU
                 case 3:
                     {
@@ -891,7 +897,7 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 0, this.y - 64, -8, -16).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 9;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 7;
                 // THRU
                 case 2:
                     {
@@ -902,7 +908,7 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, -8, -16).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 9;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 8;
                 // THRU
                 case 1:
                     {
@@ -913,14 +919,14 @@ phina.define("PlayerSprite", {
                         let plBullet = PlBulletSprite(++uidCounter, this.x - 32, this.y - 32, 0, -16).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 10;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 9;
                 // THRU
                 case 0:
                     {
                         let plBullet = PlBulletSprite(++uidCounter, this.x, this.y - 64, 0, -16).addChildTo(group8);
                         plBulletArray.push(plBullet);
                     }
-                    this.shotIntvlTimer = 10;
+                    if (this.shotIntvlTimer === -1) this.shotIntvlTimer = 10;
                 // THRU
                 default:
                     break;
@@ -1026,8 +1032,8 @@ phina.define("EnemySprite", {
                 bossZako01Move(this, true);
                 break;
             case EN_DEF.BOSS_ZAKO02_0:
+            case EN_DEF.BOSS_ZAKO02_1:
             case EN_DEF.BOSS_ZAKO02_2:
-            case EN_DEF.BOSS_ZAKO02_3:
                 bossZako01Move(this, false);
                 break;
 
