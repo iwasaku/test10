@@ -713,7 +713,7 @@ const EN_DEF = defineEnum({
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
-        shotBurst: 1,
+        shotBurst: 2,
     },
     BOSS_ZAKO02_1: {
         sprName: "enemy08",
@@ -730,7 +730,7 @@ const EN_DEF = defineEnum({
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
-        shotBurst: 1,
+        shotBurst: 2,
     },
 
     BOSS_ZAKO01_2: {
@@ -742,13 +742,13 @@ const EN_DEF = defineEnum({
         attr: EN_ATTR.BOSS_ZAKO,
         isBossZako: true,
         spd: 8,
-        life: 20,
+        life: 30,
         pts: 30,
         item: false,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
-        shotBurst: 1,
+        shotBurst: 3,
     },
     BOSS_ZAKO02_2: {
         sprName: "enemy08",
@@ -759,13 +759,13 @@ const EN_DEF = defineEnum({
         attr: EN_ATTR.BOSS_ZAKO,
         isBossZako: true,
         spd: 8,
-        life: 20,
+        life: 30,
         pts: 30,
         item: false,
 
         shotType: SHOT_TYPE.SNIPE_N,
         shotInterval: 30,
-        shotBurst: 1,
+        shotBurst: 3,
     },
 
     // ボス

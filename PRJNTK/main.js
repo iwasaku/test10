@@ -602,11 +602,10 @@ phina.define('MainScene', {
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
                     let message = "PROJECT N.T.K.\nスコア: " + nowScore + "\n";
-                    message += " ステージ：" + (nowStageNum + 1) + "\n";
+                    message += "ステージ：" + (nowStageNum + 1) + "\n";
                     if (nowLoopCount > 0) {
-                        message += " 周回数:" + (nowLoopCount + 1);
+                        message += "周回数:" + (nowLoopCount + 1) + "\n";
                     }
-                    //                    message += "\n";
                     var twitterURL = phina.social.Twitter.createURL({
                         text: message,
                         hashtags: ["ネムレス", "NEMLESSS"],
@@ -974,6 +973,13 @@ phina.define("EnemySprite", {
         this.shotBurstTimer = 0;
         this.shotTarget = Vector2(player.x, player.y);
         this.life = this.define.life + nowLoopCount;
+        if (this.define.attr.isBoss) {
+            this.life = Math.round(this.define.life * (1.1 ** nowLoopCount));
+        } else if (this.define.attr.isBossZako) {
+            this.life = this.define.life + nowLoopCount * 5;
+        } else {
+            this.life = this.define.life + nowLoopCount * 2;
+        }
         this.isReady = false;
     },
 
