@@ -144,7 +144,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: 'β1.1.0',
+            text: 'β1.1.1',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -601,12 +601,12 @@ phina.define('MainScene', {
                         height: 150,
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
-                    let message = "PROJECT N.T.K. スコア: " + nowScore + "\n";
-                    message += " STG：" + (nowStageNum + 1) + "\n";
+                    let message = "PROJECT N.T.K.\nスコア: " + nowScore + "\n";
+                    message += " ステージ：" + (nowStageNum + 1) + "\n";
                     if (nowLoopCount > 0) {
                         message += " 周回数:" + (nowLoopCount + 1);
                     }
-                    message += "\n";
+                    //                    message += "\n";
                     var twitterURL = phina.social.Twitter.createURL({
                         text: message,
                         hashtags: ["ネムレス", "NEMLESSS"],
