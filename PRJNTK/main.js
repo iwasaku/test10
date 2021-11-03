@@ -144,7 +144,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: 'β1.2.0',
+            text: 'β1.2.1',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
