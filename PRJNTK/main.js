@@ -3781,6 +3781,18 @@ function checkPlayerToEnemy() {
                     // 無敵時間外
                     if (--player.lifeLeft >= 1) {
                         // 残ライフが1以上
+                        player.lifeParts = 0;
+
+                        player.shotLv -= 2;
+                        if (player.shotLv < 0) {
+                            player.shotLv = 0;
+                        }
+
+                        player.spd -= 0.4;
+                        if (player.spd < 1.0) {
+                            player.spd = 1.0;
+                        }
+
                         player.invincivleTimer = 60;
                     } else {
                         // 死亡
@@ -3866,7 +3878,7 @@ function checkPlayerToEnemy() {
 function itemAppear(tmpEne) {
     // アイテム出現
     if (tmpEne.define.item) {
-        if (++itemAppearCounter >= 5) {
+        if (++itemAppearCounter >= 5 + nowLoopCount) {
             itemAppearCounter = 0;
             let itemDefine;
             switch (itemAppearKind) {
