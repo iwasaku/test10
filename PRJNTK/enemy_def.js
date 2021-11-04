@@ -150,6 +150,11 @@ const SHOT_TYPE = defineEnum({
         bullet: BULLET_DEF.EN_G_24,
         cnt: 270 - 90,
     },
+    SEMICIRCLE_DOWN_XL: {
+        spd: 8,
+        bullet: BULLET_DEF.EN_R_48,
+        cnt: 90 - 90,
+    },
     SEMICIRCLE_DOWN_L: {
         spd: 12,
         bullet: BULLET_DEF.EN_G_48,
@@ -824,21 +829,6 @@ const EN_DEF = defineEnum({
         spd: 8,
         life: 700,
         pts: 4000,
-        item: false,
-    },
-    BOSS03: {
-        // 未使用
-        // 後で消す
-        sprName: "boss05",
-        sprSize: { x: 512, y: 512 },
-        colliData: [
-            { attr: COLLI_ATTR.BOTH, ofs: { x: -128, y: -128 }, radius: 128 },
-            { attr: COLLI_ATTR.BOTH, ofs: { x: 128, y: 128 }, radius: 128 },
-        ],
-        attr: EN_ATTR.BOSS,
-        spd: 8,
-        life: 800,
-        pts: 5000,
         item: false,
     },
     BOSS03MOD: {
