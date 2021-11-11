@@ -144,7 +144,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: 'β1.2.2',
+            text: 'β2.0.0',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -840,6 +840,7 @@ phina.define("PlayerSprite", {
         if (--this.shotIntvlTimer <= 0) {
             if (isNoSHOT) return;
             this.shotIntvlTimer = -1;
+
             switch (this.shotLv) {
                 case 7:
                     {
@@ -972,7 +973,6 @@ phina.define("EnemySprite", {
         this.shotBurstCounter = 0;
         this.shotBurstTimer = 0;
         this.shotTarget = Vector2(player.x, player.y);
-        this.life = this.define.life + nowLoopCount;
         if (this.define.attr.isBoss) {
             this.life = Math.round(this.define.life * (1.1 ** nowLoopCount));
         } else if (this.define.attr.isBossZako) {
@@ -980,6 +980,7 @@ phina.define("EnemySprite", {
         } else {
             this.life = this.define.life + nowLoopCount * 2;
         }
+        this.defineLife = this.life;
         this.isReady = false;
     },
 
@@ -1116,7 +1117,7 @@ phina.define("CollisionSprite", {
         this.shotBurstCounter = 0;
         this.shotBurstTimer = 0;
         this.shotTarget = Vector2(player.x, player.y);
-        this.life = this.define.life + nowLoopCount;
+        this.life = 0;
         this.isReady = false;
     },
 
@@ -1679,13 +1680,13 @@ function enemy07Move(tmpEne, shotFlag) {
  */
 function boss02Move(tmpEne) {
     let lifeStep;
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
         lifeStep = 1;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
         // 2/4~1/4
         lifeStep = 2;
     } else {
@@ -1725,7 +1726,7 @@ function boss02Move(tmpEne) {
                         tmpEne.setScale(-1, 1); // 右向き
                         tmpEne.localStatus = 2;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = 1;
                     break;
@@ -1751,7 +1752,7 @@ function boss02Move(tmpEne) {
 
                         tmpEne.localStatus = 4;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = -1;
                     break;
@@ -1766,6 +1767,9 @@ function boss02Move(tmpEne) {
                         tmpEne.localCounter = 0;
                         tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
+                        if (lifeStep !== 0) {
+                            // チヌカッター発射
+                        }
                     }
                     sign = -1;
                     break;
@@ -1776,7 +1780,7 @@ function boss02Move(tmpEne) {
                         tmpEne.setScale(1, 1); // 左向き
                         tmpEne.localStatus = 6;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = -1;
                     break;
@@ -1801,7 +1805,7 @@ function boss02Move(tmpEne) {
                         tmpEne.setScale(-1, 1); // 右向き
                         tmpEne.localStatus = 8;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = 1;
                     break;
@@ -1832,6 +1836,27 @@ function boss02Move(tmpEne) {
                 let yOfs = Math.sin(rad) * 128 * sign;
                 tmpEne.y = yOfs + 256 + 64;
             }
+            if (tmpEne.localStatus === 0) {
+            } else if (lifeStep === 0) {
+                if (tmpEne.localTimer % 60 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutter(tmpEne, Vector2(+8.0, -8.0));
+                    shotChinuCutter(tmpEne, Vector2(-8.0, -8.0));
+                }
+            } else if (lifeStep === 1) {
+                if (tmpEne.localTimer % 50 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutter(tmpEne, Vector2(+8.0, -8.0));
+                    shotChinuCutter(tmpEne, Vector2(-8.0, -8.0));
+                }
+            } else {
+                if (tmpEne.localTimer % 40 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutter(tmpEne, Vector2(+8.0, -8.0));
+                    shotChinuCutter(tmpEne, Vector2(-8.0, -8.0));
+                }
+            }
+
             tmpEne.localCounter++;
             break;
         case EN_STATUS.DEAD_INIT:
@@ -1866,13 +1891,13 @@ function boss02Move(tmpEne) {
  */
 function boss02ModMove(tmpEne) {
     let lifeStep;
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
         lifeStep = 1;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
         // 2/4~1/4
         lifeStep = 2;
     } else {
@@ -1892,9 +1917,9 @@ function boss02ModMove(tmpEne) {
             }
         }
         if (zakoCnt != 0) {
-            //ザコが残っていたらボスのライフは1/10以下にならない
-            if (tmpEne.life < tmpEne.define.life * (1 / 10)) {
-                tmpEne.life = tmpEne.define.life * (1 / 10);
+            //ザコが残っていたらボスのライフは3/10以下にならない
+            if (tmpEne.life < tmpEne.defineLife * (3 / 10)) {
+                tmpEne.life = tmpEne.defineLife * (3 / 10);
             }
         }
     }
@@ -1923,12 +1948,30 @@ function boss02ModMove(tmpEne) {
                     }
                     break;
                 case 1:
-                    // 0.5秒待って右へ移動
-                    if (++tmpEne.localCounter > 30) {
-                        tmpEne.spd = Vector2(8, 0); // 右へ移動
-                        tmpEne.localStatus = 2;
+                    // n秒待って右へ移動
+                    if (lifeStep === 0) {
+                        if (++tmpEne.localCounter > 30) {
+                            tmpEne.spd = Vector2(8, 0); // 右へ移動
+                            tmpEne.localStatus = 2;
+                        } else {
+                            boss01Shot(tmpEne, lifeStep, true);
+                        }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        if (++tmpEne.localCounter > 120) {
+                            tmpEne.spd = Vector2(8, 0); // 右へ移動
+                            tmpEne.localStatus = 2;
+                        } else {
+                            if (tmpEne.localCounter < 30) {
+                                shotByDegree(tmpEne, tmpEne.localCounter * 6, 8, BULLET_DEF.EN_B_48);
+                            } else if (tmpEne.localCounter < 60) {
+                                shotByDegree(tmpEne, 180 - ((tmpEne.localCounter - 30) * 6), 8, BULLET_DEF.EN_B_48);
+                            } else if (tmpEne.localCounter < 90) {
+                                shotByDegree(tmpEne, (tmpEne.localCounter - 60) * 6, 8, BULLET_DEF.EN_B_48);
+                            } else {
+                                shotByDegree(tmpEne, 180 - ((tmpEne.localCounter - 90) * 6), 8, BULLET_DEF.EN_B_48);
+                                boss01Shot(tmpEne, lifeStep, false);
+                            }
+                        }
                     }
                     sign = 1;
                     break;
@@ -1953,7 +1996,7 @@ function boss02ModMove(tmpEne) {
 
                         tmpEne.localStatus = 4;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = -1;
                     break;
@@ -1972,12 +2015,30 @@ function boss02ModMove(tmpEne) {
                     sign = -1;
                     break;
                 case 5:
-                    // 0.5秒待って左へ移動
-                    if (++tmpEne.localCounter > 30) {
-                        tmpEne.spd = Vector2(-8, 0); // 左へ移動
-                        tmpEne.localStatus = 6;
+                    // n秒待って左へ移動
+                    if (lifeStep === 0) {
+                        if (++tmpEne.localCounter > 30) {
+                            tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                            tmpEne.localStatus = 6;
+                        } else {
+                            boss01Shot(tmpEne, lifeStep, true);
+                        }
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        if (++tmpEne.localCounter > 120) {
+                            tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                            tmpEne.localStatus = 6;
+                        } else {
+                            if (tmpEne.localCounter < 30) {
+                                shotByDegree(tmpEne, tmpEne.localCounter * 6, 8, BULLET_DEF.EN_B_48);
+                            } else if (tmpEne.localCounter < 60) {
+                                shotByDegree(tmpEne, 180 - ((tmpEne.localCounter - 30) * 6), 8, BULLET_DEF.EN_B_48);
+                            } else if (tmpEne.localCounter < 90) {
+                                shotByDegree(tmpEne, (tmpEne.localCounter - 60) * 6, 8, BULLET_DEF.EN_B_48);
+                            } else {
+                                shotByDegree(tmpEne, 180 - ((tmpEne.localCounter - 90) * 6), 8, BULLET_DEF.EN_B_48);
+                                boss01Shot(tmpEne, lifeStep, false);
+                            }
+                        }
                     }
                     sign = -1;
                     break;
@@ -2001,7 +2062,7 @@ function boss02ModMove(tmpEne) {
                         tmpEne.spd = Vector2(8, 0); // 右へ移動
                         tmpEne.localStatus = 8;
                     } else {
-                        boss01Shot(tmpEne, lifeStep);
+                        boss01Shot(tmpEne, lifeStep, true);
                     }
                     sign = 1;
                     break;
@@ -2056,12 +2117,14 @@ function boss02ModMove(tmpEne) {
             break;
     }
 }
-function boss01Shot(tmpEne, lifeStep) {
+function boss01Shot(tmpEne, lifeStep, execSnipe) {
     switch (lifeStep) {
         case 0:
         case 1:
             if (tmpEne.shotIntervalTimer % 2 === 0) {
-                shotSnipe(tmpEne, SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                if (execSnipe) {
+                    shotSnipe(tmpEne, SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                }
             }
             break;
         case 2:
@@ -2069,8 +2132,10 @@ function boss01Shot(tmpEne, lifeStep) {
             break;
         case 3:
             if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 2, 8)) {
-                shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
-                shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                if (execSnipe) {
+                    shotSnipeOfs(tmpEne, Vector2(+64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                    shotSnipeOfs(tmpEne, Vector2(-64, 0), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
+                }
             }
             break;
         default:
@@ -2103,13 +2168,13 @@ function boss01Shot01(tmpEne, shotType, interval, shotBurst) {
  */
 function boss01Move(tmpEne) {
     let lifeStep;
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
         lifeStep = 1;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
         // 2/4~1/4
         lifeStep = 2;
     } else {
@@ -2260,13 +2325,13 @@ function boss01Move(tmpEne) {
  */
 function boss01ModMove(tmpEne) {
     let lifeStep;
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
         lifeStep = 1;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
         // 2/4~1/4
         lifeStep = 2;
     } else {
@@ -2287,8 +2352,8 @@ function boss01ModMove(tmpEne) {
         }
         if (zakoCnt != 0) {
             //ザコが残っていたらボスのライフは1/10以下にならない
-            if (tmpEne.life < tmpEne.define.life * (1 / 10)) {
-                tmpEne.life = tmpEne.define.life * (1 / 10);
+            if (tmpEne.life < tmpEne.defineLife * (1 / 10)) {
+                tmpEne.life = tmpEne.defineLife * (1 / 10);
             }
         }
     }
@@ -2352,11 +2417,12 @@ function boss01ModMove(tmpEne) {
                         tmpEne.localCounter = 0;
                         tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 5;
-                        //if (lifeStep >= 2) {
-                        //    shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_XL.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_XL.spd, SHOT_TYPE.SEMICIRCLE_DOWN_XL.bullet);
-                        //}
-                        if (lifeStep === 3) {
-                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_L.spd, SHOT_TYPE.SEMICIRCLE_DOWN_L.bullet);
+                        if (lifeStep >= 2) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_XL.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_XL.spd, SHOT_TYPE.SEMICIRCLE_DOWN_XL.bullet);
+                        }
+                        if (lifeStep >= 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_XL.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_XL.spd - 1, SHOT_TYPE.SEMICIRCLE_DOWN_XL.bullet);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_XL.cnt, SHOT_TYPE.SEMICIRCLE_DOWN_XL.spd - 2, SHOT_TYPE.SEMICIRCLE_DOWN_XL.bullet);
                         }
                     }
                     boss02Shot(tmpEne, lifeStep);
@@ -2482,15 +2548,15 @@ function boss02Shot(tmpEne, lifeStep) {
 function boss03ModMove(tmpEne) {
     let lifeStep;
     let spd;
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
         spd = 8 * 2;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
         lifeStep = 1;
         spd = 8 * 3;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
         // 2/4~1/4
         lifeStep = 2;
         spd = 8 * 4;
@@ -2501,10 +2567,10 @@ function boss03ModMove(tmpEne) {
     }
 
     // ザコチェック
+    let zakoCnt = 0;
     if (tmpEne.status != EN_STATUS.INIT) {
         var self = this;
         //  ザコの存在チェック
-        let zakoCnt = 0;
         for (let jj = 0; jj < self.enemyArray.length; jj++) {
             let zako = self.enemyArray[jj];
             if (zako.define.attr.isBossZako) {
@@ -2512,9 +2578,9 @@ function boss03ModMove(tmpEne) {
             }
         }
         if (zakoCnt != 0) {
-            //ザコが残っていたらボスのライフは1/10以下にならない
-            if (tmpEne.life < tmpEne.define.life * (1 / 10)) {
-                tmpEne.life = tmpEne.define.life * (1 / 10);
+            //ザコが残っていたらボスのライフは5/10以下にならない
+            if (tmpEne.life < tmpEne.defineLife * (5 / 10)) {
+                tmpEne.life = tmpEne.defineLife * (5 / 10);
             }
         }
     }
@@ -2629,9 +2695,77 @@ function boss03ModMove(tmpEne) {
                         tmpEne.shotBurstTimer = 0;
                         tmpEne.localCounter = 0;
                         tmpEne.shotTarget = Vector2(player.x, player.y);
-                        tmpEne.localStatus = 1;
+                        if (zakoCnt !== 0) {
+                            tmpEne.localStatus = 1;
+                        } else {
+                            tmpEne.localStatus = 9;
+                            tmpEne.collisionEnable = false;
+                        }
                     }
                     break;
+                case 9:
+                    // 0.5秒で消えてから中央へ移動
+                    if (++tmpEne.localCounter > 60) {
+                        // 中央へ瞬間移動
+                        tmpEne.x = SCREEN_CENTER_X;
+                        tmpEne.y = SCREEN_CENTER_Y;
+                        tmpEne.alpha = 0.0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 10;
+                    } else {
+                        if (tmpEne.localCounter > 30) {
+                            tmpEne.alpha = 1.0 - ((tmpEne.localCounter - 30) / 30.0);
+                        } else {
+                            boss03Shot(tmpEne, lifeStep);
+                        }
+                    }
+                    break;
+                case 10:
+                    // 0.5秒で出現
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.alpha = 1.0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 11;
+                        tmpEne.collisionEnable = true;
+                    } else {
+                        tmpEne.alpha = tmpEne.localCounter / 30.0;
+                    }
+                    break;
+                case 11:
+                    // 2秒間攻撃
+                    if (++tmpEne.localCounter > 2 * 60) {
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 12;
+                        tmpEne.collisionEnable = false;
+                    } else {
+                        shotSpiralOfs(tmpEne, Vector2(-158, -128), -16, -90, SHOT_TYPE.SPIRAL_LEFT_XL.spd, SHOT_TYPE.SPIRAL_LEFT_XL.bullet);
+                        shotSpiralOfs(tmpEne, Vector2(-158, -128), 16, -90, SHOT_TYPE.SPIRAL_RIGHT_XL.spd, SHOT_TYPE.SPIRAL_RIGHT_XL.bullet);
+                    }
+                    break;
+                case 12:
+                    // 0.5秒で消えてから右上へ移動
+                    if (++tmpEne.localCounter > 30) {
+                        // 中央へ瞬間移動
+                        tmpEne.x = SCREEN_WIDTH - (128 + 64);
+                        tmpEne.y = 256 + 64;
+                        tmpEne.alpha = 0.0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 13;
+                    } else {
+                        tmpEne.alpha = 1.0 - (tmpEne.localCounter / 30.0);
+                    }
+                    break;
+                case 13:
+                    // 0.5秒で出現
+                    if (++tmpEne.localCounter > 30) {
+                        tmpEne.alpha = 1.0;
+                        tmpEne.localCounter = 0;
+                        tmpEne.localStatus = 2;
+                        tmpEne.collisionEnable = true;
+                    } else {
+                        tmpEne.alpha = tmpEne.localCounter / 30.0;
+                    }
+                    break
                 default:
             }
             tmpEne.localCounter++;
@@ -2663,12 +2797,17 @@ function boss03Shot(tmpEne, lifeStep) {
     let shotType;
     switch (tmpEne.localStatus) {
         case 1:
+        case 9:
+            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_RIGHT_L;
+            break;
         case 3:
-            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_L;
+            shotType = SHOT_TYPE.SEMICIRCLE_DOWN_LEFT_L;
             break;
         case 5:
+            shotType = SHOT_TYPE.SEMICIRCLE_UP_LEFT_L;
+            break;
         case 7:
-            shotType = SHOT_TYPE.SEMICIRCLE_UP_L;
+            shotType = SHOT_TYPE.SEMICIRCLE_UP_RIGHT_L;
             break;
     }
     /**
@@ -2695,10 +2834,16 @@ function boss03Shot(tmpEne, lifeStep) {
             }
             break;
         case 2:
-            boss03Shot01(tmpEne, shotType, 10, 4);
+            if (shotType !== undefined) {
+                boss03Shot01(tmpEne, shotType, 10, 4);
+            } else {
+                console.log("boss03Shot02 is null");
+            }
             break;
         case 3:
-            boss03Shot01(tmpEne, shotType, 2, 8);
+            if (shotType !== undefined) {
+                boss03Shot01(tmpEne, shotType, 2, 8);
+            }
             break;
         default:
     }
@@ -2706,7 +2851,7 @@ function boss03Shot(tmpEne, lifeStep) {
 function boss03Shot01(tmpEne, shotType, interval, shotBurst) {
     if (tmpEne.shotIntervalTimer % interval === 0) {
         if (--tmpEne.shotBurstTimer <= 0) {
-            shotSemicircle(tmpEne, shotType.cnt, shotType.spd, shotType.bullet);
+            shotSemicircleOfs(tmpEne, Vector2(-158, -128), shotType.cnt, shotType.spd, shotType.bullet);
             tmpEne.shotBurstTimer = 2;
             if (++tmpEne.shotBurstCounter >= shotBurst) {
                 tmpEne.shotBurstCounter = 0;
@@ -2728,7 +2873,7 @@ function boss03Shot01(tmpEne, shotType, interval, shotBurst) {
  * 左右に直線で動く
  * 周囲にザコが発生
  * ボスを中心に円軌道で移動
- * ザコが全滅するまでボスのライフは1/10までしか減らない
+ * ザコが全滅するまでボスのライフは減らない
  * ザコが全滅すると左右に移動しつつまれに体当たり（上下移動）を行う
  * 下限到達時にN方向へ弾を撃つ
  * 徐々に加速する
@@ -2739,18 +2884,18 @@ function boss04Move(tmpEne) {
     let lifeStep;
     //横移動の途中で一旦停止してから縦移動へ
     //戻ったら元の横移動を継続する
-    if (tmpEne.life > tmpEne.define.life * (3 / 4)) {
+    if (tmpEne.life > tmpEne.defineLife * (3 / 4)) {
         //1~3/4
         lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (2 / 4)) {
+    } else if (tmpEne.life > tmpEne.defineLife * (2 / 4)) {
         // 4/3~2/4
-        lifeStep = 0;
-    } else if (tmpEne.life > tmpEne.define.life * (1 / 4)) {
-        // 2/4~1/4
         lifeStep = 1;
+    } else if (tmpEne.life > tmpEne.defineLife * (1 / 4)) {
+        // 2/4~1/4
+        lifeStep = 2;
     } else {
         // 1/4~0
-        lifeStep = 2;
+        lifeStep = 3;
     }
 
     // ザコチェック
@@ -2766,7 +2911,7 @@ function boss04Move(tmpEne) {
         }
         if (zakoCnt != 0) {
             //ザコが残っていたらボスのライフは減らない
-            tmpEne.life = tmpEne.define.life;
+            tmpEne.life = tmpEne.defineLife;
         }
     }
 
@@ -2801,8 +2946,39 @@ function boss04Move(tmpEne) {
                             tmpEne.spd = Vector2(0, 32); // 下へ移動
                             tmpEne.localStatus = 9;
                         } else {
-                            tmpEne.spd = Vector2(8, 0); // 右へ移動
-                            tmpEne.localStatus = 2;
+                            // n秒待って右へ移動
+                            if (lifeStep === 0) {
+                                if (++tmpEne.localCounter > 30) {
+                                    tmpEne.spd = Vector2(8, 0); // 右へ移動
+                                    tmpEne.localStatus = 2;
+                                } else {
+                                    boss01Shot(tmpEne, lifeStep, true);
+                                }
+                            } else {
+                                if (++tmpEne.localCounter > 240) {
+                                    tmpEne.spd = Vector2(8, 0); // 右へ移動
+                                    tmpEne.localStatus = 2;
+                                } else {
+                                    if (tmpEne.localCounter < 30) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), tmpEne.localCounter * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 60) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), 180 - ((tmpEne.localCounter - 30) * 6), 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 90) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), (tmpEne.localCounter - 60) * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 120) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), 180 - (tmpEne.localCounter - 90) * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 150) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), (tmpEne.localCounter - 120) * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 180) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), 180 - (tmpEne.localCounter - 150) * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else if (tmpEne.localCounter < 210) {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), (tmpEne.localCounter - 180) * 6, 8, BULLET_DEF.EN_B_48);
+                                    } else {
+                                        shotByDegreeOfs(tmpEne, Vector2(0, 160), 180 - ((tmpEne.localCounter - 210) * 6), 8, BULLET_DEF.EN_B_48);
+                                        boss01Shot(tmpEne, lifeStep, false);
+                                    }
+                                }
+                            }
                         }
                     } else {
                         boss04Shot(tmpEne, lifeStep);
@@ -2909,8 +3085,26 @@ function boss04Move(tmpEne) {
                             tmpEne.spd = Vector2(0, 32); // 下へ移動
                             tmpEne.localStatus = 13;
                         } else {
-                            tmpEne.spd = Vector2(-8, 0); // 左へ移動
-                            tmpEne.localStatus = 6;
+                            //tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                            //tmpEne.localStatus = 6;
+                            // n秒待って右へ移動
+                            if (lifeStep === 0) {
+                                if (++tmpEne.localCounter > 30) {
+                                    tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                                    tmpEne.localStatus = 6;
+                                } else {
+                                    boss01Shot(tmpEne, lifeStep, true);
+                                }
+                            } else {
+                                if (++tmpEne.localCounter > 240) {
+                                    tmpEne.spd = Vector2(-8, 0); // 左へ移動
+                                    tmpEne.localStatus = 6;
+                                } else {
+                                    shotSpiralOfs(tmpEne, Vector2(0, 160), -16, 90, SHOT_TYPE.SPIRAL_LEFT_XL.spd, SHOT_TYPE.SPIRAL_LEFT_XL.bullet);
+                                    shotSpiralOfs(tmpEne, Vector2(0, 160), 16, 90, SHOT_TYPE.SPIRAL_RIGHT_XL.spd, SHOT_TYPE.SPIRAL_RIGHT_XL.bullet);
+                                }
+                            }
+
                         }
                     } else {
                         boss04Shot(tmpEne, lifeStep);
@@ -2928,6 +3122,13 @@ function boss04Move(tmpEne) {
                         tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 14;
                         shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
+                        if (lifeStep >= 2) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                        }
+                        if (lifeStep >= 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd - 1, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd - 2, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                        }
                     }
                     break;
                 case 14:
@@ -2982,6 +3183,13 @@ function boss04Move(tmpEne) {
                         tmpEne.shotTarget = Vector2(player.x, player.y);
                         tmpEne.localStatus = 16;
                         shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_L.cnt, SHOT_TYPE.SEMICIRCLE_UP_L.spd, SHOT_TYPE.SEMICIRCLE_UP_L.bullet);
+                        if (lifeStep >= 2) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                        }
+                        if (lifeStep >= 3) {
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd - 1, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                            shotSemicircle(tmpEne, SHOT_TYPE.SEMICIRCLE_UP_XL.cnt, SHOT_TYPE.SEMICIRCLE_UP_XL.spd - 2, SHOT_TYPE.SEMICIRCLE_UP_XL.bullet);
+                        }
                     }
                     break;
                 case 16:
@@ -3012,6 +3220,28 @@ function boss04Move(tmpEne) {
                     break;
                 default:
             }
+
+            if (tmpEne.localStatus === 0) {
+            } else if (lifeStep === 0) {
+                if (tmpEne.localTimer % 60 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutterOfs(tmpEne, Vector2(128 + 16 + 4, -256 + 112), Vector2(+8.0, -8.0));
+                    shotChinuCutterOfs(tmpEne, Vector2(-128 - 16, -256 + 104), Vector2(-8.0, -8.0));
+                }
+            } else if (lifeStep === 1) {
+                if (tmpEne.localTimer % 50 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutterOfs(tmpEne, Vector2(128 + 16 + 4, -256 + 112), Vector2(+8.0, -8.0));
+                    shotChinuCutterOfs(tmpEne, Vector2(-128 - 16, -256 + 104), Vector2(-8.0, -8.0));
+                }
+            } else {
+                if (tmpEne.localTimer % 40 === 0) {
+                    // チヌカッター発射
+                    shotChinuCutterOfs(tmpEne, Vector2(128 + 16 + 4, -256 + 112), Vector2(+8.0, -8.0));
+                    shotChinuCutterOfs(tmpEne, Vector2(-128 - 16, -256 + 104), Vector2(-8.0, -8.0));
+                }
+            }
+
             tmpEne.localCounter++;
             break;
         case EN_STATUS.DEAD_INIT:
@@ -3039,14 +3269,15 @@ function boss04Move(tmpEne) {
 function boss04Shot(tmpEne, lifeStep) {
     switch (lifeStep) {
         case 0:
+        case 1:
             if (tmpEne.shotIntervalTimer % 2 === 0) {
                 shotSnipeOfs(tmpEne, Vector2(0, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
             }
             break;
-        case 1:
+        case 2:
             boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 10, 4);
             break;
-        case 2:
+        case 3:
             if (boss01Shot01(tmpEne, SHOT_TYPE.SEMICIRCLE_DOWN_L, 2, 8)) {
                 shotSnipeOfs(tmpEne, Vector2(+128, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
                 shotSnipeOfs(tmpEne, Vector2(0, 160), SHOT_TYPE.SNIPE_H.spd, SHOT_TYPE.SNIPE_H.bullet);
@@ -3205,13 +3436,21 @@ function enemyShot(tmpEne) {
             shotSectorDeg(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
         case SHOT_TYPE.SEMICIRCLE_UP_L:
-        case SHOT_TYPE.SEMICIRCLE_DOWN_L:
-        case SHOT_TYPE.SEMICIRCLE_LEFT_L:
+        case SHOT_TYPE.SEMICIRCLE_UP_RIGHT_L:
         case SHOT_TYPE.SEMICIRCLE_RIGHT_L:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_RIGHT_L:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_L:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_LEFT_L:
+        case SHOT_TYPE.SEMICIRCLE_LEFT_L:
+        case SHOT_TYPE.SEMICIRCLE_UP_LEFT_L:
         case SHOT_TYPE.SEMICIRCLE_UP_N:
-        case SHOT_TYPE.SEMICIRCLE_DOWN_N:
-        case SHOT_TYPE.SEMICIRCLE_LEFT_N:
+        case SHOT_TYPE.SEMICIRCLE_UP_RIGHT_N:
         case SHOT_TYPE.SEMICIRCLE_RIGHT_N:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_RIGHT_N:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_N:
+        case SHOT_TYPE.SEMICIRCLE_DOWN_LEFT_N:
+        case SHOT_TYPE.SEMICIRCLE_LEFT_N:
+        case SHOT_TYPE.SEMICIRCLE_UP_LEFT_N:
             shotSemicircle(tmpEne, tmpEne.define.shotType.cnt, tmpEne.define.shotType.spd, tmpEne.define.shotType.bullet);
             break;
         case SHOT_TYPE.SPIRAL_LEFT_L:
@@ -3309,6 +3548,20 @@ function shotNWayOfs(tmpEne, ofs, n, spd, bulletDefine) {
     }
 }
 
+function shotChinuCutter(tmpEne, spd) {
+    shotChinuCutterOfs(tmpEne, Vector2(0, 0), spd);
+}
+/**
+ * 
+ * @param {*} tmpEne 
+ * @param {*} ofs 
+ * @param {*} spd 
+ */
+function shotChinuCutterOfs(tmpEne, ofs, spd) {
+    let enBullet = EnBulletSprite(++uidCounter, BULLET_DEF.EN_CHINU_CUTTER, tmpEne.x + ofs.x, tmpEne.y + ofs.y, spd.x, spd.y).addChildTo(group7);
+    enBulletArray.push(enBullet);
+}
+
 /**
  * 
  * @param {*} tmpEne 
@@ -3381,7 +3634,7 @@ function shotSemicircleOfs(tmpEne, ofs, deg, spd, bulletDefine) {
  * @param {*} bulletDefine 
  */
 function shotSpiral(tmpEne, deg, spd, bulletDefine) {
-    shotSpiralOfs(tmpEne, Vector2(0, 0), deg, spd, bulletDefine);
+    shotSpiralOfs(tmpEne, Vector2(0, 0), deg, 0, spd, bulletDefine);
 }
 /**
  * 
@@ -3391,8 +3644,8 @@ function shotSpiral(tmpEne, deg, spd, bulletDefine) {
  * @param {*} spd 
  * @param {*} bulletDefine 
  */
-function shotSpiralOfs(tmpEne, ofs, deg, spd, bulletDefine) {
-    shotByDegreeOfs(tmpEne, ofs, tmpEne.localTimer * deg, spd, bulletDefine);
+function shotSpiralOfs(tmpEne, ofsPos, deg, ofsDeg, spd, bulletDefine) {
+    shotByDegreeOfs(tmpEne, ofsPos, (tmpEne.localTimer * deg) + ofsDeg, spd, bulletDefine);
 }
 
 /*
@@ -3496,17 +3749,48 @@ phina.define("EnBulletSprite", {
         this.superInit(ebdef.sprName, ebdef.sprSize.x, ebdef.sprSize.y);
         this.direct = '';
         this.spd = Vector2(xSpd, ySpd);
+        this.spdScalar = 8;
         this.zRot = 0;
         this.setPosition(xPos, yPos).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("circle");
         this.radius = 0;
+        this.localTimer = 0;
+        this.localCounter = 0;
+        this.localStatus = 0;
         this.status = EN_STATUS.INIT;
     },
 
     update: function (app) {
         if (player.status.isDead) return;
-        this.zRot += 20;
+        if (this.define === BULLET_DEF.EN_CHINU_CUTTER) {
+            switch (this.localStatus) {
+                case 0:
+                    // しばらく初期速度で移動
+                    if (++this.localCounter > 30) {
+                        this.localCounter = 0;
+                        this.localStatus = 1;
+                        let from = Vector2(this.x, this.y);
+                        let to = Vector2(player.x, player.y);
+                        this.spd = Vector2.sub(to, from).normalize().mul(this.spdScalar);
+                    }
+                    let tmpScale = 0.5 + this.localCounter * 2 / 30;
+                    this.setScale(tmpScale, tmpScale);
+                    this.zRot += 8;
+                    break;
+                case 1:
+                    // 加速
+                    this.spdScalar *= 1.5;
+                    if (this.spdScalar > 24) this.spdScalar = 24;
+                    this.spd = this.spd.normalize().mul(this.spdScalar);
+                    this.setScale(2, 2);
+                    this.zRot += 20;
+                    break;
+                default:
+            }
+        } else {
+            this.zRot += 20;
+        }
         this.rotation = this.zRot;
         this.x += this.spd.x;
         this.y += this.spd.y;

@@ -139,6 +139,14 @@ const BULLET_DEF = defineEnum({
         radius: 23,
         lv: 5,
     },
+
+    // 特殊
+    EN_CHINU_CUTTER: {
+        sprName: "en_blt_chinu",
+        sprSize: { x: 64, y: 64 },
+        radius: 64,
+        lv: 5,
+    },
 });
 
 const BOMB_DEF = defineEnum({

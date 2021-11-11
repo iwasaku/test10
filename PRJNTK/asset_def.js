@@ -47,6 +47,8 @@ var ASSETS = {
         "en_blt_p_48": "./resource/bullet/eb_p_48.png",
         "en_blt_m_48": "./resource/bullet/eb_m_48.png",
 
+        "en_blt_chinu": "./resource/bullet/chinu.png",
+
         "bomb01": "./resource/bomb/NTK_01.png",
         "bomb02": "./resource/bomb/NTK_02.png",
         "bomb03": "./resource/bomb/NTK_03.png",

@@ -140,6 +140,11 @@ const SHOT_TYPE = defineEnum({
     },
 
     //
+    SEMICIRCLE_UP_XL: {
+        spd: 8,
+        bullet: BULLET_DEF.EN_R_48,
+        cnt: 270 - 90,
+    },
     SEMICIRCLE_UP_L: {
         spd: 12,
         bullet: BULLET_DEF.EN_G_48,
@@ -149,6 +154,36 @@ const SHOT_TYPE = defineEnum({
         spd: 16,
         bullet: BULLET_DEF.EN_G_24,
         cnt: 270 - 90,
+    },
+    SEMICIRCLE_UP_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 315 - 90,
+    },
+    SEMICIRCLE_UP_RIGHT__N: {
+        spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
+        cnt: 315 - 90,
+    },
+    SEMICIRCLE_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 0 - 90,
+    },
+    SEMICIRCLE_RIGHT_N: {
+        spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
+        cnt: 0 - 90,
+    },
+    SEMICIRCLE_DOWN_RIGHT_XL: {
+        spd: 8,
+        bullet: BULLET_DEF.EN_R_48,
+        cnt: 45 - 90,
+    },
+    SEMICIRCLE_DOWN_RIGHT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 45 - 90,
     },
     SEMICIRCLE_DOWN_XL: {
         spd: 8,
@@ -165,6 +200,16 @@ const SHOT_TYPE = defineEnum({
         bullet: BULLET_DEF.EN_G_24,
         cnt: 90 - 90,
     },
+    SEMICIRCLE_DOWN_LEFT_L: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_G_48,
+        cnt: 135 - 90,
+    },
+    SEMICIRCLE_DOWN_LEFT_N: {
+        spd: 16,
+        bullet: BULLET_DEF.EN_G_24,
+        cnt: 135 - 90,
+    },
     SEMICIRCLE_LEFT_L: {
         spd: 12,
         bullet: BULLET_DEF.EN_G_48,
@@ -175,18 +220,23 @@ const SHOT_TYPE = defineEnum({
         bullet: BULLET_DEF.EN_G_24,
         cnt: 180 - 90,
     },
-    SEMICIRCLE_RIGHT_L: {
+    SEMICIRCLE_UP_LEFT_L: {
         spd: 12,
         bullet: BULLET_DEF.EN_G_48,
-        cnt: 0 - 90,
+        cnt: 225 - 90,
     },
-    SEMICIRCLE_RIGHT_N: {
+    SEMICIRCLE_UP_LEFT_N: {
         spd: 16,
         bullet: BULLET_DEF.EN_G_24,
-        cnt: 0 - 90,
+        cnt: 225 - 90,
     },
 
     // 
+    SPIRAL_LEFT_XL: {
+        spd: 10,
+        bullet: BULLET_DEF.EN_R_48,
+        cnt: -4,
+    },
     SPIRAL_LEFT_L: {
         spd: 12,
         bullet: BULLET_DEF.EN_M_48,
@@ -196,6 +246,11 @@ const SHOT_TYPE = defineEnum({
         spd: 16,
         bullet: BULLET_DEF.EN_M_24,
         cnt: -4,
+    },
+    SPIRAL_RIGHT_XL: {
+        spd: 12,
+        bullet: BULLET_DEF.EN_R_48,
+        cnt: 4,
     },
     SPIRAL_RIGHT_L: {
         spd: 12,
@@ -211,7 +266,8 @@ const SHOT_TYPE = defineEnum({
     //
     DEGREE_N: {
         spd: 16,
-        bullet: BULLET_DEF.EN_Y_24,
+        bullet: BULLET_DEF.EN_M_24,
+        cnt: 4,
     },
 });
 
