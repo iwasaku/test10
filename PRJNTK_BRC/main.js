@@ -607,14 +607,14 @@ phina.define('MainScene', {
                         height: 150,
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
-                    let message = "PROJECT N.T.K. BOSSS RUSH STAGE\nスコア: " + nowScore + "\n";
+                    let message = "PROJECT N.T.K. Ver. BOSSS RUSH CORE\nスコア: " + nowScore + "\n";
                     if (nowLoopCount > 0) {
                         message += "周回数:" + (nowLoopCount + 1) + "\n";
                     }
                     var twitterURL = phina.social.Twitter.createURL({
                         text: message,
                         hashtags: ["ネムレス", "NEMLESSS"],
-                        url: "https://iwasaku.github.io/test10/PRJNTK_BRS/",
+                        url: "https://iwasaku.github.io/test10/PRJNTK_BRC/",
                     });
                     window.open(twitterURL);
                 };
