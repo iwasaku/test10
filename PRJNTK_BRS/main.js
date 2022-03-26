@@ -1,8 +1,9 @@
 phina.globalize();
+
 console.log = function () { };  // ログを出す時にはコメントアウトする
-let isMUTEKI = false;
-let isNoSHOT = false;
-let dispCollision = false;
+let isMUTEKI = false;           // true:当たり判定無し
+let isNoSHOT = false;           // true:弾を撃たない
+let dispCollision = false;      // true:コリジョンを表示する
 
 // 表示プライオリティは 0：奥 → 9：手前 の順番
 let group0 = null;  // BG
@@ -144,7 +145,7 @@ phina.define("TitleScene", {
             fill: 'white',
         }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
         Label({
-            text: '- Ver. BOSSS RUSH CORE -',
+            text: '- Ver.B.R.S. -',
             fontSize: 60,
             fontFamily: "misaki_gothic",
             fill: 'white',
@@ -495,7 +496,7 @@ phina.define('MainScene', {
                                 clearEnemyArrays();
                                 break;
                             case CMD.DISP_STAGE_NUM:
-                                stageNumLabel.text = getStageStr();
+                                stageNumLabel.text = getStageStr(true);
                                 stageNumLabel.alpha = 0;
                                 stageNumLabelTimer = 60;
                                 break;
@@ -607,14 +608,13 @@ phina.define('MainScene', {
                         height: 150,
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
-                    let message = "PROJECT N.T.K. Ver. BOSSS RUSH CORE\nスコア: " + nowScore + "\n";
-                    if (nowLoopCount > 0) {
-                        message += "周回数:" + (nowLoopCount + 1) + "\n";
-                    }
+                    let message = "PROJECT N.T.K. Ver.B.R.S. ";
+                    message += "(" + getStageStr(false) + ")\n";
+                    message += "スコア: " + nowScore + "\n";
                     var twitterURL = phina.social.Twitter.createURL({
                         text: message,
                         hashtags: ["ネムレス", "NEMLESSS"],
-                        url: "https://iwasaku.github.io/test10/PRJNTK_BRC/",
+                        url: "https://iwasaku.github.io/test10/PRJNTK_BRS/",
                     });
                     window.open(twitterURL);
                 };
@@ -817,7 +817,7 @@ phina.define("PlayerSprite", {
         this.shotIntvlTimer = 0;
         this.shotLv = 7;
 
-        this.lifeLeft = 0;
+        this.lifeLeft = 3;
         this.lifeMax = 3;
         this.lifeParts = 0;
         this.invincivleTimer = 15;
@@ -4725,18 +4725,21 @@ function getNextIdx() {
     if (getCurrentIdx() === 0) return 1;
     else return 0;
 }
-function getStageStr() {
+function getStageStr(flag) {
     if (nowLoopCount === 0) {
-        return "OSK";
-    }
-    if (nowLoopCount === 1) {
         return "TYO";
     }
+    if (nowLoopCount === 1) {
+        return "OSK";
+    }
     if (nowLoopCount === 2) {
-        return "OSK_VERY\nHARD";
+        if (flag) return "OSK_VERY\nHARD";
+        return "OSK_VERY HARD";
     }
     if ((nowLoopCount - 1) <= 9) {
-        return "OSK\nVERYx" + (nowLoopCount - 1) + " HARD";
+        if (flag) return "OSK\nVERYx" + (nowLoopCount - 1) + " HARD";
+        return "OSK VERYx" + (nowLoopCount - 1) + " HARD";
     }
-    return "OSK\nVERYx" + (nowLoopCount - 1) + "\nHARD";
+    if (flag) return "OSK\nVERYx" + (nowLoopCount - 1) + "\nHARD";
+    return "OSK VERYx" + (nowLoopCount - 1) + " HARD";
 }
