@@ -21,7 +21,9 @@ let nowLifeLeftLabel = null;
 let nowBombLeftLabel = null;
 let ntkGaugeLabel = null;
 
-let tweetButton = null;
+let xButton = null;
+let threadsButton = null;
+let bskyButton = null;
 let restartButton = null;
 let bombButton = null;
 let bombButtonStatus = BB_STATUS.WAIT;
@@ -68,6 +70,11 @@ const LIFE_MAX = 10;
 const SCORE_MAX = 999999999;
 const STG_NUM_MAX = 6;
 
+// 共有ボタン用
+let postText = null;
+const postURL = "https://iwasaku.github.io/test10/PRJNTK/";
+const postTags = "#ネムレス #NEMLESSS";
+
 // ローディング画面
 phina.define('LoadingScene', {
     superClass: 'DisplayScene',
@@ -112,17 +119,21 @@ phina.define("InitScene", {
     init: function (option) {
         // 親クラス初期化
         this.superInit(option);
-        // 背景色
-        this.backgroundColor = 'black';
-        // ラベル
-        Label({
-            text: '',
-            fontSize: 48,
-            fill: 'yellow',
-        }).addChildTo(this).setPosition(this.gridX.center(), this.gridY.center());
+        this.font1 = false;
+        this.font2 = false;
     },
     update: function (app) {
-        this.exit();
+        // フォント読み込み待ち
+        var self = this;
+        document.fonts.load('10pt "misaki_gothic"').then(function () {
+            self.font1 = true;
+        });
+        document.fonts.load('10pt "icomoon"').then(function () {
+            self.font2 = true;
+        });
+        if (this.font1 && this.font2) {
+            self.exit();
+        }
     }
 });
 /*
@@ -134,8 +145,7 @@ phina.define("TitleScene", {
     init: function (option) {
         // 親クラス初期化
         this.superInit(option);
-        // 背景色
-        this.backgroundColor = 'black';
+
         // ラベル
         Label({
             text: 'PROJECT\nN.T.K',
@@ -170,8 +180,6 @@ phina.define('MainScene', {
         that = this;
         // 親クラス初期化
         this.superInit(option);
-        // 背景色
-        this.backgroundColor = 'black';//    this.backgroundColor = '#ffaaaa';
 
         if (!randomMode) randomSeed = 3557;
 
@@ -354,7 +362,9 @@ phina.define('MainScene', {
         itemAppearShootCounter = 1;
         itemAppearFairyCounter = 5;
         itemAppearBombCounter = 5;
-        tweetButton = null;
+        xButton = null;
+        threadsButton = null;
+        bskyButton = null;
         restartButton = null;
     },
     update: function (app) {
@@ -590,28 +600,67 @@ phina.define('MainScene', {
                 deadStatus = 1;
                 bombButton.x = SCREEN_CENTER_X;
                 bombButton.y = SCREEN_CENTER_Y;
-                tweetButton = Button(
+
+                postText = "PROJECT N.T.K.\nスコア: " + nowScore + "\n";
+                postText += "ステージ：" + (nowStageNum + 1);
+                if (nowLoopCount > 0) {
+                    postText += "\n周回数:" + (nowLoopCount + 1);
+                }
+
+                // X
+                xButton = Button(
                     {
-                        text: "TWEET",
+                        text: String.fromCharCode(0xe902),
                         fontSize: 80,
-                        fontFamily: "misaki_gothic",
-                        align: "center",
-                        baseline: "middle",
-                        width: 300,
+                        fontFamily: "icomoon",
+                        fill: "#7575EF",  // ボタン色
+                        stroke: '#DEE3FF',         // 枠色
+                        strokeWidth: 5,         // 枠太さ
+                        cornerRadius: 8,
+                        width: 96,
                         height: 150,
                     }
-                ).addChildTo(this).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
-                    let message = "PROJECT N.T.K.\nスコア: " + nowScore + "\n";
-                    message += "ステージ：" + (nowStageNum + 1) + "\n";
-                    if (nowLoopCount > 0) {
-                        message += "周回数:" + (nowLoopCount + 1) + "\n";
+                ).addChildTo(group4).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2) - 128, SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
+                    // https://developer.x.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent
+                    let shareURL = "https://x.com/intent/tweet?text=" + encodeURIComponent(postText + "\n" + postTags + "\n") + "&url=" + encodeURIComponent(postURL);
+                    window.open(shareURL);
+                };
+                // threads
+                threadsButton = Button(
+                    {
+                        text: String.fromCharCode(0xe901),
+                        fontSize: 80,
+                        fontFamily: "icomoon",
+                        fill: "#7575EF",  // ボタン色
+                        stroke: '#DEE3FF',         // 枠色
+                        strokeWidth: 5,         // 枠太さ
+                        cornerRadius: 8,
+                        width: 96,
+                        height: 150,
                     }
-                    var twitterURL = phina.social.Twitter.createURL({
-                        text: message,
-                        hashtags: ["ネムレス", "NEMLESSS"],
-                        url: "https://iwasaku.github.io/test10/PRJNTK/",
-                    });
-                    window.open(twitterURL);
+                ).addChildTo(group4).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
+                    // https://developers.facebook.com/docs/threads/threads-web-intents/
+                    // web intentでのハッシュタグの扱いが環境（ブラウザ、iOS、Android）によって違いすぎるので『#』を削って通常の文字列にしておく
+                    let shareURL = "https://www.threads.net/intent/post?text=" + encodeURIComponent(postText + "\n\n" + postTags.replace(/#/g, "")) + "&url=" + encodeURIComponent(postURL);
+                    window.open(shareURL);
+                };
+                // Bluesky
+                bskyButton = Button(
+                    {
+                        text: String.fromCharCode(0xe900),
+                        fontSize: 80,
+                        fontFamily: "icomoon",
+                        fill: "#7575EF",  // ボタン色
+                        stroke: '#DEE3FF',         // 枠色
+                        strokeWidth: 5,         // 枠太さ
+                        cornerRadius: 8,
+                        width: 96,
+                        height: 150,
+                    }
+                ).addChildTo(group4).setPosition(SCREEN_CENTER_X - (SCREEN_CENTER_X / 2) + 128, SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onclick = function () {
+                    // https://docs.bsky.app/docs/advanced-guides/intent-links
+                    let shareURL = "https://bsky.app/intent/compose?text=" + encodeURIComponent(postText + "\n" + postTags + "\n" + postURL);
+                    window.open(shareURL);
                 };
 
                 restartButton = Button(
@@ -624,6 +673,9 @@ phina.define('MainScene', {
                         width: 300,
                         height: 150,
                         fill: "rgba(0, 0, 0, 1.0)",    // ボタン色
+                        stroke: '#DEE3FF',         // 枠色
+                        strokeWidth: 5,         // 枠太さ
+                        cornerRadius: 8,
                     }
                 ).addChildTo(this).setPosition(SCREEN_CENTER_X + (SCREEN_CENTER_X / 2), SCREEN_CENTER_Y + (SCREEN_CENTER_Y / 2)).onpush = function () {
                     that.exit();
@@ -642,6 +694,8 @@ phina.main(function () {
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
         assets: ASSETS,
+        backgroundColor: 'black',
+
         // シーンのリストを引数で渡す
         scenes: [
             {
